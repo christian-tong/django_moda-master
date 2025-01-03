@@ -1,0 +1,106 @@
+{% load static %}
+{% load my_templatetag %}
+<img id="logo" src=" {% static 'img/logo-oficial-red.svg' %}" alt="Girl in a jacket" width="200" height="80">
+<p class="centrado"><b>MODA TOURS S.A.C</b></p>
+<p class="centrado">
+    {{principal.empresa.direccion}} <br>
+    {{principal.ubigeo.ubigeo_completo}}<br>
+    <b>RUC: &nbsp; {{principal.empresa.numDoc}}</b><br>
+    TELEFONOS: <tel>{{principal.movilUno}} - {{principal.movilDos}}</tel>
+</p>
+{% if image_qr is not None %}
+<p class="centrado"><b>{{movimiento.faturaboleta.tipoDocumento | upper}} ELECTRÓNICA </b></p>
+
+{% else %}
+<p class="centrado"><b>TICKET </b></p>
+
+{% endif %}
+
+<p class="centrado">{{movimiento.faturaboleta.serie}}-{{movimiento.faturaboleta.numero}}</p>
+
+
+<div class="section">
+    <p><b>CLIENTE</b></p>
+    <div class="divider"></div>
+    <p><b>TIP.DOC:</b> {{movimiento.faturaboleta.cliente.tipoDoc}} &nbsp;&nbsp; <b>N°.DOC: </b>
+        {{movimiento.faturaboleta.cliente.numDoc}}</p>
+    <p> {{movimiento.faturaboleta.cliente | upper}}</p>
+    <p><b>DIRECCION:</b> {{movimiento.faturaboleta.cliente.direccion | nonep}}</p>
+
+    <p><b>FORMA DE PAGO:</b> CONTADO</p>
+    <div class="divider"></div>
+
+    {% if image_qr is not None %}
+        <p><b>FECHA EMISIÓN</b>:&nbsp; {{movimiento.faturaboleta.fechaFact |date:'d/m/Y' }} | {{movimiento.faturaboleta.hora | date:'H:i'}}</p>
+        <p><b>FECHA VENCIMI</b>:&nbsp; {{movimiento.faturaboleta.fechaFact |date:'d/m/Y'}}</p>
+    {% else %}
+        <p><b>FECHA EMISIÓN</b>:&nbsp; {{movimiento.create |date:'d/m/Y'}} | {{movimiento.create | date:'H:i'}}</p>
+        <p><b>FECHA VENCIMI</b>:&nbsp; {{movimiento.create |date:'d/m/Y'}}</p>
+    {% endif %}
+
+    <p><b>MONEDA</b>:&nbsp; SOLES</p>
+    <p><b>IGV</b>:&nbsp; 18.00%</p>
+</div>
+
+<table>
+    <thead>
+        <tr>
+            <th class="cantidad">CANT.</th>
+            <th class="producto">DESCRIPCIÓN</th>
+            <th class="pu">P.U</th>
+            <th class="importep">IMPORTE</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for item in movimiento.detallemov_set.all %}
+        <tr>
+            <td>{{item.cantidad}}</td>
+            <td>{{item.descripcion}}</td>
+            <td>{{item.valorUnitario}}</td>
+            <td class="centrado">{{item.subTotal}}</td>
+        </tr>
+        {% endfor %}
+        <tr>
+            <td colspan="4" class="right-align">
+                <p><b>EXONERADA: S/.</b>&nbsp; {{totales}}</p>
+                <p><b>GRAVADA: S/.</b>&nbsp; 0.00</p>
+                <p><b>IGV: S/.</b>&nbsp; 0.00</p>
+                <p><b>TOTAL: S/.</b>&nbsp; {{totales}}</p>
+
+            </td>
+        </tr>
+    </tbody>
+</table>
+<p><b>SON: </b>&nbsp; {{num_letras}}</p>
+
+{% if image_qr is not None %}
+<div class="row section">
+    <div class="col s6">{{ image_qr|safe }}</div>
+    <div class="col s6">
+        <p class="centrado" style="font-size: 8px;">Representación impresa de la FACTURA
+            ELECTRÓNICA, visita
+            www.nubefact.com/20393819660
+            Autorizado mediante Resolución de Intendencia
+            No.034-005-0005315
+        </p>
+    </div>
+</div>
+{% else %}
+<div class=" section">
+    <p><b>Observación:</b></p>
+    <p class="centrado">Este documento es un ticket.<br>
+        Si dese puede cajear por una: Boleta o Factura
+    </p>
+</div>
+
+{% endif %}
+
+
+<div class="section">
+    <p class="centrado">BIENES TRANSFERIDOS EN LA AMOZONIA<br>
+        PARA SER CONSUMIDOS EN LA MISMA</p>
+    <br>
+    <p class="centrado">¡GRACIAS POR SU PREFERENCÍA!</p>
+</div>
+
+<br><br>

@@ -1,0 +1,99 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <!-- Tell the browser to be responsive to screen width -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="apple-touch-icon" sizes="76x76" href="/static/assets/img/apple-icon.png">
+    <link rel="icon" type="image/png" href="/static/assets/img/favicon.png">
+    
+    <meta name="keywords"
+          content="Moda Tours moda tours pasajes turismo">
+    <meta name="description"
+          content=" ">
+
+    <meta name="robots" content="noindex,nofollow">
+
+    <title>
+        Moda Tours | Login
+    </title>
+    <!--Import Google Icon Font-->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    <style>
+      .iframe-container {
+          width: 100%; /* El ancho del contenedor es 100% del contenedor padre */
+          height: 0; /* Establece la altura inicial en 0 */
+          padding-bottom: 56.25%; /* 16:9 Aspect Ratio (9 / 16 * 100) */
+          position: relative; /* Permite posicionar el iframe de manera absoluta */
+          }
+    
+      .iframe-container iframe {
+          width: 100%; /* El iframe ocupa todo el ancho del contenedor */
+          height: 100%; /* El iframe ocupa todo el alto del contenedor */
+          position: absolute; /* Permite que el iframe se ajuste al contenedor */
+          top: 0; /* Coloca el iframe en la parte superior del contenedor */
+          left: 0; /* Coloca el iframe en la parte izquierda del contenedor */
+          overflow: hidden;
+    scrollbar-width: thin; /* Delgado */
+    scrollbar-color: #888 #eee; /* Color de la barra y del fondo */
+          }
+    
+    </style>
+</head>
+
+<body >
+  <div class="containerm">
+
+    <nav >
+      <div class="nav-wrapper yellow darken-2">
+        <a href="#!" class="brand-logo" style="padding-left: 5px;" >ModaTours.com.pe</a>
+        <a href="#" data-target="mobile-demo" class="sidenav-trigger"><i class="material-icons">menu</i></a>
+        <ul class="right hide-on-med-and-down">
+          <li><a class="deep-orange darken-1 btn" href="{% url 'sistema:account-login' %}">Ingresar <i class="material-icons right">exit_to_app</i></a></li>
+          
+        </ul>
+      </div>
+    </nav>
+  
+    <ul class="sidenav" id="mobile-demo">
+      <li><a class="deep-orange darken-1 btn" href="{% url 'sistema:account-login' %}">Ingresar <i class="material-icons right">exit_to_app</i></a></li>
+    </ul>
+           
+    
+    <div class="iframe-container">
+      <iframe src="https://modatourssac.com/" frameborder="0" allowfullscreen ></iframe> 
+    </div>
+
+  </div>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+
+
+    {% if messages %}
+      {% for m in messages %}
+        <script>
+            Swal.fire({
+              "title":"",
+              "text":"{{m}}",
+              "icon":"{{m.tags}}" 
+            })
+        </script>
+      {% endfor %}
+    {% endif %}
+
+    <script>
+      $(document).ready(function(){
+    $('.sidenav').sidenav();
+  });
+    </script>
+</body>
+</html>
+
+
+
+
+
+

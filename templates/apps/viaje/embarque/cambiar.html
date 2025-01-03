@@ -1,0 +1,144 @@
+{% extends "layouts/base-demo.html" %}
+{% load static %}
+{% load my_templatetag %}
+
+{% block title %} Cambiar {% endblock %} 
+
+{% block css %}
+
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.css">
+<style>
+    .masOpcionVisible{        
+        display: none;
+    }
+    input:required {
+  background-color: yellow;
+
+}
+.input-field {
+    position: relative;
+    margin-top: 0.8rem;
+    margin-bottom: 0rem; 
+}
+.card .card-content {
+    padding: 0px 20px 0px 20px; 
+}
+
+
+.estetica{
+    font-size: 3rem !important;
+    height: 3rem !important;
+    background-color: #78909c  !important;
+    color: #ffffff  !important;
+    border-radius: 20px !important;
+    margin-top: 5px !important;
+    padding-left: 10px !important;
+}
+</style>
+ 
+
+{% endblock css %}
+
+{% block breadcrumb %}
+<div class="nav-content px5 red lighten-1">
+  <a href="#" class="breadcrumb">Home</a>
+  <a href="#" class="breadcrumb">Embarque</a>
+  <a href="#!" class="breadcrumb">Cambiar</a>
+</div>
+{% endblock breadcrumb %}
+
+
+{% block content %}
+{% if boleto.errors %}
+    {% for m in boleto.errors %}
+    {{m}}        
+    {% endfor %}  
+{% endif %}
+
+<div class="progress hide" id="preload">
+    <div class="indeterminate"></div>
+</div>
+
+<form method="POST" id="form_cambio_embarque" onsubmit="enviarForm(event)">
+    {% csrf_token %}
+    <input type="hidden" name="idasiento" id="id_idasiento" value="">
+    <div class="row" >
+
+    <div class="col s12 m12 l7">  
+    <div class="card">
+        <div class="card-content white-text">
+            <fieldset>
+                <legend class="red-text">ESCOGER RUTA PROGRAMADA</legend>
+                
+                <table id="example" class="display black-text" width="100%">
+                    <thead>
+                        <tr>
+                            <th>ITEM</th>
+                            <th>RUTA</th>
+                            <th>FECHA</th>
+                            <th>HORA</th>
+                            <th>ACCIÓN</th>
+                        </tr>
+                    </thead>
+                </table>
+            </fieldset>
+            <fieldset>
+                <legend class="red-text">DATOS DE EMBARQUE</legend>
+                <div class="row">
+                    <div class="input-field col s12 m12 l6 ">
+                        {{boleto.lugar_abordo}}
+                        {{boleto.lugar_abordo.label_tag}}
+                        {{boleto.lugar_abordo.errors}} 
+                    </div>
+                    <div class="input-field col s12 m12 l6">
+                        {{boleto.lugar_bajada}}
+                        {{boleto.lugar_bajada.label_tag}}
+                        {{boleto.lugar_bajada.errors}} 
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="input-field col s12 m12 l4">
+                        {{boleto.hora_abordo}}
+                        {{boleto.hora_abordo.label_tag}}
+                        {{boleto.hora_abordo.errors}} 
+                    </div>
+                    <div class="input-field col s12 m12 l4">
+                        {{boleto.numAsiento}}
+                        {{boleto.numAsiento.label_tag}}
+                        {{boleto.numAsiento.errors}} 
+                    </div>
+                    <div class="input-field col s12 m12 l4">
+                        <i class="material-icons prefix red-text">contact_phone</i>
+                        {{boleto.telefono}}
+                        {{boleto.telefono.label_tag}}
+                    </div>
+                </div>
+            </fieldset>
+        </div>
+        <div class="card-action">                    
+            <a href="#" class="btn color-secundary">Cancelar</a>
+            <button class="btn waves-effect waves-light color-primary disabled" id="btn-send" type="submit" name="action">Reprogramar
+                <i class="material-icons right">attach_money</i>
+            </button> 
+        </div> 
+    </div>
+    </div>
+
+    <div class="col s12 m12 l5" id="model_carro">
+        <!-- ahui va el modelo de carro con los asientos-->
+    </div>
+
+</form>
+
+
+  {% endblock content %}
+
+
+    
+  
+  {% block js %}
+    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.js"></script>
+
+    <script src="{% static 'js/apps/viaje/cambiar.js' %}"></script>
+  {% endblock js %}
+      

@@ -1,0 +1,151 @@
+{% extends "layouts/base-demo.html" %}
+{% load my_templatetag %}
+
+{% block title %} Encomienda Listar {% endblock %} 
+
+{% block css %}
+<style>
+    td{
+      padding: 3px 5px !important;
+    }
+
+  .contenedor{
+    padding: 20px;;
+  }
+
+</style>
+
+{% endblock css %}
+
+{% block breadcrumb %}
+<div class="nav-content px5 red lighten-1">
+  <a href="{% url 'sistema:home-index' %}" class="breadcrumb">Home</a>
+  <a href="#" class="breadcrumb">Envio</a>
+  <a href="#" class="breadcrumb">Encomienda</a>
+  <a href="#!" class="breadcrumb">Lista</a>
+</div>
+{% endblock breadcrumb %}
+
+
+{% block content %}
+
+
+<div class="row">
+    <form class="col s12 m6 l6" >
+      <div class="row">
+        <div class="input-field col s12">          
+            <input id="icon_prefix" type="text" name="q" value="{{q}}" class="validate" placeholder="Buscar por persona o documento del consignado">
+            <label for="icon_prefix">Buscar</label>
+            <i class="material-icons prefix red-text">search</i>                    
+        </div>
+      </div>
+    </form>  
+    <div class="input-field col s12 m6 l6">
+        <div class="right">
+          <a  class="btn color-primary" href="{% url 'envio:encomienda-add' %}"><i class="material-icons left">add</i>Nueva Encomienda</a>
+        </div>
+    </div>
+
+</div>
+<div class="divider"></div>
+
+<table id="table_idf" class="highlight responsive-table">
+    <thead>
+      <tr>
+          <th>Item</th>
+          <th>Fecha</th>
+          <th>Numero</th>
+          <th>Origen</th>
+          <th>Destino</th>
+          <th>Remite</th>
+          <th>Consignado</th>
+          <th>Teléfono</th>
+          <th>ContraEntr</th>
+          <th>Estado</th>
+          <th colspan="2">Acción</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      {% for encomienda in entity %}
+      <tr>
+          <td>{{forloop.counter}}</td>
+          <td>{{encomienda.venta.create | date:'d/m/Y' }} {{encomienda.venta.create | date:'H:m' }}</td>
+          <td>{{encomienda.numDocumento }}</td>
+          <td>{{encomienda.agenciaOrigen}}</td>
+          <td>{{encomienda.agenciaDestino}}</td>
+          <td>{{encomienda.remite}}</td>
+          <td>{{encomienda.consignado}}</td>
+          <td>{{encomienda.numeroContacto | nonep}}</td>
+          <td>{{encomienda.esContraEntrega | estadosino }}</td>
+       
+            {% ifequal encomienda.estado 'agenciaOrigen'  %} 
+              <td style="color: red;">{{encomienda.get_estado_display }}</td>
+            {% endifequal %}  
+
+            {% ifequal encomienda.estado 'enCamino'  %} 
+              <td style="color: orange;">{{encomienda.get_estado_display }}</td>
+            {% endifequal %}  
+
+            {% ifequal encomienda.estado 'agenciaDestino'  %} 
+              <td style="color: green;">{{encomienda.get_estado_display }}</td>
+            {% endifequal %} 
+
+            {% ifequal encomienda.estado 'recepcionado'  %} 
+              <td style="color: rgb(69, 79, 224);">{{encomienda.get_estado_display }}</td>
+            {% endifequal %}  
+            
+
+          <td>               
+            {% ifequal encomienda.estado 'agenciaDestino'  %}             
+              <a href="/envio/encomienda/recepcion/?fromCityName=Tarapoto%20%28Todos%29&fromCityId=195648&toCityName=Lima%20%28Todos%29&toCityId=195105&onward=20-Jan-2022&encom_pk={{encomienda.id}}&srcCountry=PER&destCountry=PER&opId=0&busType=Any" class="collection-item">
+                <i class="material-icons left">publish</i>
+              </a>
+            {% endifequal %}                        
+          </td>
+
+          <td>
+            <!--Verifica si fue pagada-->        
+            {% if not encomienda.venta.movimientocaja and not encomienda.esContraEntrega %}
+            <a href="/tesoreria/movimiento/add?fromCityName=Tarapoto%20%28Todos%29&fromCityId=195648&toCityName=Lima%20%28Todos%29&toCityId=195105&onward=20-Jan-2022&mov={{encomienda.venta.id}}&srcCountry=PER&destCountry=PER&opId=0&tipomov=encomiendaSalida&busType=Any"
+             class="collection-item color-primary">
+              <i class="material-icons left color-primary-text">attach_money</i>
+            </a>
+              
+            {% else %}
+                <a href="/envio/encomienda/print/?fromCityName=Tarapoto%20%28Todos%29&fromCityId=195648&toCityName=Lima%20%28Todos%29&toCityId=195105&onward=20-Jan-2022&encom_pk={{encomienda.id}}&srcCountry=PER&destCountry=PER&opId=0&busType=Any" 
+                class="collection-item">
+                  <i class="material-icons left">print</i>
+                </a>
+              
+                {% endif %}   
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+</table>
+<div class="container center">
+  {% include 'includes/paginator.html' %}
+</div>
+
+{% endblock content %}
+
+  
+  {% block js %}
+
+      {% if messages %}
+      {% for m in messages %}
+          <script>
+              visibleAlert(
+                  title="Información",
+                  text="{{m}}",
+                  icon="{{m.tags}}"        
+              )
+          </script>
+      {% endfor %}
+      {% endif %}
+
+
+
+  {% endblock js %}
+      

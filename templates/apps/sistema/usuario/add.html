@@ -1,0 +1,185 @@
+{% extends "layouts/base-demo.html" %}
+
+{% block title %} Register User {% endblock %} 
+
+<!-- Plugins CSS goes HERE  -->
+{% block css %}
+<style>
+    .input-field {
+    position: relative;
+    margin-top: 0.8rem;
+    margin-bottom: 0rem; 
+    }
+    .card .card-content {
+        padding: 0px 20px 0px 20px; 
+    }
+</style>
+{% endblock css %}
+
+{% block breadcrumb %}
+<div class="nav-content px5 red lighten-1">
+  <a href="#!" class="breadcrumb">Home</a>
+  <a href="{% url 'persona:list' %}" class="breadcrumb">Usuario</a>
+  <a href="#!" class="breadcrumb">Nuevo</a>
+</div>
+{% endblock breadcrumb %}
+
+{% block content %}
+
+{% if usuario.errors %}
+    {% for m in usuario.errors %}
+    {{m}}        
+    {% endfor %}  
+{% endif %}
+
+<div class="container">
+    <div class="container">
+    <div class="row">
+        <div class="col s12 m12 l12">
+            
+        <form method="POST" enctype="multipart/form-data" class="section77">
+            {% csrf_token %}
+            <div class="card">
+            <div class="card-content red-text">
+                <span class="card-title">Nuevo Usuario</span>
+                
+                <div class="row">
+                    <div class="input-field col s12 m12 l12">
+                        {{usuario.persona}}
+                        {{usuario.persona.label_tag}}
+                        {{usuario.persona.errors}}                         
+                        
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="input-field col s12 m12 l6">
+                        {{usuario.username}}
+                        {{usuario.username.label_tag}}
+                        {{usuario.username.errors}} 
+                        
+                    </div>
+                    <div class="input-field col s12 m12 l6">
+                        {{usuario.email}}
+                        {{usuario.email.label_tag}}
+                        {{usuario.email.errors}} 
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="input-field col s12 m12 l6">
+                        {{usuario.password}}
+                        {{usuario.password.label_tag}}
+                        {{usuario.password.errors}}   
+                    </div>
+                    <div class="input-field col s12 m12 l6">
+                        {{usuario.password1}}
+                        {{usuario.password1.label_tag}}
+                        {{usuario.password.errors}}   
+                    </div>
+                </div>
+                <!--
+                <div class="row">                    
+                    <div class="input-field col s12 m12 l6">
+                        {{user.groups}}
+                        {{user.groups.label_tag}}
+                        {{user.groups.errors}}    
+                    </div>
+                    <div class="input-field col s12 m12 l6">
+                        {{user.agencia}}
+                        {{user.agencia.label_tag}}
+                        {{user.agencia.errors}}  
+                    </div>
+                </div>  -->
+            
+                <div class="row">
+                    <div class="input-field col s12 m12 l6">
+                        <div class="switch">
+                            {{usuario.is_active.label_tag}}
+                            &nbsp;&nbsp;&nbsp;
+                            <label>
+                                No
+                                {{usuario.is_active}}
+                                <span class="lever"></span>
+                                Si
+                            </label>
+                        </div>  
+                    </div>
+                    <div class="input-field col s12 m12 l6">
+                        <div class="switch">
+                            {{usuario.is_staff.label_tag}}
+                            &nbsp;&nbsp;&nbsp;
+                            <label>
+                                No
+                                {{usuario.is_staff}}
+                                <span class="lever"></span>
+                                Si
+                            </label>
+                        </div> 
+                        
+                    </div>
+                    <!--
+                    <div class="input-field col s12 m12 l4">
+                        <div class="switch">
+                            {{user.is_superuser.label_tag}}
+                            &nbsp;&nbsp;&nbsp;
+                            <label>
+                                No
+                                {{user.is_superuser}}
+                                <span class="lever"></span>
+                                Si
+                            </label>
+                        </div> 
+                        
+                    </div>  -->
+                </div>
+
+            </div>
+            <br>
+            <div class="card-action">                    
+                <a href="#" class="btn color-secundary">Cancelar</a>
+                <button class="btn waves-effect waves-light color-primary" type="submit" name="action">Guardar
+                    <i class="material-icons right">send</i>
+                </button> 
+            </div>
+            </div>
+        </form>
+        </div>
+        </div>
+
+    </div>
+</div>
+
+
+{% endblock content %}
+
+{% block js %}
+
+    <script>
+        var cond = true
+        
+        $(document).ready(function(){
+
+            $('select').formSelect();
+
+
+            $('#id_tipoDoc').removeAttr("required");
+
+
+        });  
+    </script>
+
+    {% if messages %}
+    {% for m in messages %}
+        <script>
+            visibleAlert(
+                title="Correcto!!",
+                text="{{m}}",
+                icon="{{m.tags}}"        
+            )
+        </script>
+    {% endfor %}
+    {% endif %}
+
+{% endblock js %}
+
+
+<!-- https://www.youtube.com/watch?v=wRNzGxbeuX8-->

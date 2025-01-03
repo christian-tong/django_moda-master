@@ -1,0 +1,330 @@
+{% extends "layouts/base-demo.html" %}
+{% load static %}
+
+
+{% block title %} Register {% endblock %} 
+
+<!-- Plugins CSS goes HERE  -->
+{% block css %}
+<style>
+    .input-field {
+    position: relative;
+    margin-top: 0.8rem;
+    margin-bottom: 0rem; 
+    }
+    .card .card-content {
+        padding: 0px 20px 0px 20px; 
+    }
+    i.left {
+    margin-right: 0px !important;
+}
+
+</style>
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+{% endblock css %}
+
+{% block breadcrumb %}
+<div class="nav-content px5 red lighten-1">
+  <a href="#!" class="breadcrumb">Home</a>
+  <a href="{% url 'persona:list' %}" class="breadcrumb">Caja</a>
+  <a href="#!" class="breadcrumb">Nuevo </a>
+</div>
+{% endblock breadcrumb %}
+
+{% block content %}
+    {% if medioPagos777.errors %}
+        {% for m in medioPagos.errors %}
+        {{m}}        
+        {% endfor %}  
+    {% endif %}
+    <div class="divider"></div>
+    {% if factura88888.errors %}
+        {% for m in factura.errors %}
+        {{m}}        
+        {% endfor %}  
+    {% endif %}
+
+    <div class="progress hide" id="preload">
+        <div class="indeterminate"></div>
+    </div>
+
+<form method="POST" onsubmit="enviarForm(event)">
+    {% csrf_token %}
+<div class="row" >
+    
+    <div class="col s12 m12 l8">
+        <div class="row">
+        <div class="col s12 m12 l12">           
+        
+            <div class="card">
+                <!--
+                <div class="card-content white-text">
+          
+                    <span class="card-title red-text">Movimiento de caja.  N° 00001</span>
+                   
+                    <div class="row">
+                      <div class="input-field col s12 m12 l5">
+                          {{cajaMov.caja}}
+                          {{cajaMov.caja.label_tag}}
+                          {{cajaMov.caja.errors}} 
+                          
+                          
+                      </div>
+                      <div class="input-field col s12 m12 l7">
+                          {{cajaMov.tipoMov}}
+                          {{cajaMov.tipoMov.label_tag}}
+                          {{cajaMov.tipoMov.errors}} 
+                          
+                      </div>
+                  </div>
+                  <div class="row">
+                      <div class="input-field col s12 m12 l3">
+                          {{cajaMov.movFecha}}
+                          {{cajaMov.movFecha.label_tag}}
+                      </div>
+                      <div class="input-field col s12 m12 l6">
+                          {{cajaMov.descripcion}}
+                          {{cajaMov.descripcion.label_tag}}
+                          {{cajaMov.descripcion.errors}} 
+                      </div>
+                      <div class="input-field col s12 m12 l3">
+                          {{cajaMov.monto}}
+                          {{cajaMov.monto.label_tag}}
+                          {{cajaMov.monto.errors}} 
+                      </div>
+                  </div>
+   
+                </div> -->
+                <div class="divider"></div>
+                <div class="card-content white-text">
+                    <span class="card-title color-primary-text">Facturación. </span>
+
+                    <p class="pb2 blue-text right" style="margin-bottom: 10px; font-size: 2rem;"> Monto a pagar: S/. <span id="id_monto">{{ montoCobrar }}</span></p>
+                    
+                    <div class="row">
+                        <div class="input-field col s12 m12 l12">
+                            {{factura.tipoDocumento}}
+                            {{factura.tipoDocumento.label_tag}}
+                            {{factura.tipoDocumento.errors}} 
+                            
+                            
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="input-field col s12 m12 l12">
+                            {{factura.cliente}}
+                            {{factura.cliente.errors}} 
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="input-field col s12 m12 l12 grey" id="poblarSelect">
+                            
+                        </div>
+                    </div>
+
+                </div>
+            <div class="card-action">                    
+                <a href="#" class="btn color-secundary">Cancelar</a>
+                <button class="btn waves-effect waves-light color-primary disabled" type="submit" name="action" id="btn-send">Guardar
+                    <i class="material-icons right">send</i>
+                </button> 
+            </div>
+            </div>
+        
+        </div>
+        </div>
+    </div>
+    <div class="col s12 m12 l4">
+        <div class="row">
+            <div class="col s12 m12">
+              <div class="card yellow lighten-5">
+                <div class="card-content white-text">
+                  <span class="card-title color-primary-text">Medio de Pagos. </span>
+                  
+                  {{ medioPagos.management_form }}
+                    <div id="formContent">
+                    {% for medioPago in medioPagos%}  
+                        <div class="row valign-wrapper fila-formset" id="form-{{forloop.counter0}}-add_fila_pago">
+                            <div class="input-field col s12 m12 l6 form-0-add_columna_tipo_pago">
+                                {{medioPago.tipoMedioPago}}
+                                {{medioPago.tipoMedioPago.label_tag}}
+                                {{medioPago.tipoMedioPago.errors}} 
+                                
+                            </div>
+                            <div class="input-field col s12 m12 l3">
+                                {{medioPago.monto}}
+                                {{medioPago.monto.label_tag}}
+                                {{medioPago.monto.errors}} 
+                            </div>
+                            <div class="input-field col s12 m12 l3" >
+                                <a href="#" class="btn-eliminar" delete="form-{{forloop.counter0}}-add_fila_pago"><i class="material-icons left">delete</i>Eliminar</a>
+
+                            </div>
+                        </div>
+                    {% endfor %}
+                    </div>
+                    <div class="row">
+                        <div class="col s3">
+                            <a href="#" onclick="addInput(event)"><i class="material-icons left">add</i>Pago</a>
+                        </div>
+                    </div>                  
+ 
+                </div>
+                <div class="card-content center green accent-2">
+                    <h4 class='white-text ' id="id_total"></h4>
+                  </div>
+              </div>
+            </div>
+          </div>
+
+    </div>
+
+</div>
+
+</form>
+{% endblock content %}
+
+{% block js %}
+
+    <script>
+        var cond = true
+        
+        $(document).ready(function(){          
+         
+            
+            $('#id_tipoDocumento').removeAttr("required");
+            $('#id_cliente').removeAttr("required");
+
+
+        });  
+    </script>
+
+    {% if messages %}
+    {% for m in messages %}
+    
+        <script>
+            visibleAlert(
+                title="Correcto!!",
+                text="{{m}}",
+                icon="{{m.tags}}"        
+            )
+        </script>
+    {% endfor %}
+    {% endif %}
+
+    <script>
+        
+        let filas_en_formset = "";
+        let totalForms = "";
+        let contenedor_formset = "";
+        let formCount = filas_en_formset.length
+        
+
+        declara_datos = ()=>{
+                    filas_en_formset = document.getElementsByClassName('fila-formset');
+                    totalForms = document.querySelector("#id_form-TOTAL_FORMS");
+                    contenedor_formset = document.querySelector('#formContent');
+                    formCount = filas_en_formset.length
+        }
+ 
+        function updateForms(e) { 
+            e.preventDefault();          
+            let count = 0;
+            const formRegex = RegExp(`form-(\\d){1}-`, 'g');
+            for (let form of filas_en_formset) {
+                
+                console.log(form)                
+                form.innerHTML = form.innerHTML.replace(formRegex, `form-${count}-`)
+                form.id = `form-${count}-add_fila_pago`
+                count +=1
+            }
+        }
+
+
+        function addInput(e) {
+            e.preventDefault();
+            declara_datos()
+            const newPagoForm = filas_en_formset[0].cloneNode(true);
+
+            const formRegex = RegExp(`form-(\\d){1}-`, 'g');
+
+            newPagoForm.innerHTML = newPagoForm.innerHTML.replace(formRegex, `form-${formCount}-`);
+
+            contenedor_formset.appendChild(newPagoForm);
+            totalForms.setAttribute('value', `${formCount + 1}`);
+
+            var newtipopago = newPagoForm.querySelector(`div #id_form-${formCount}-tipoMedioPago`).cloneNode( true );
+            var newtipopago_label = newPagoForm.querySelector(`div label `).cloneNode( true );
+
+            let selec = newPagoForm.querySelector('div')
+            selec.innerHTML = ""
+            selec.append(newtipopago)
+            selec.appendChild(newtipopago_label)
+
+            newPagoForm.querySelector(`div #id_form-${formCount}-monto`).value = 0;
+
+            newPagoForm.id = `form-${formCount}-add_fila_pago`
+            //newPagoForm.querySelector('a').setAttribute("delete", `form-${formCount}-add_fila_pago`);
+
+
+            $('.select').formSelect();            
+            
+        }
+
+        $(document).on('click','.btn-eliminar', function(e){
+
+            e.preventDefault();
+            declara_datos()
+            iddelte = $(this).attr("delete");
+            var forms = document.querySelector('#id_form-TOTAL_FORMS')
+            
+            if (iddelte !=='form-0-add_fila_pago' ){
+                 $('#'+iddelte).remove()
+                 total_pago()
+                 totalForms.setAttribute('value', `${formCount - 1}`);
+                 updateForms()
+            }           
+        });
+
+        total_pago = ()=>{
+
+            montoApagar = document.getElementById('id_monto').innerHTML
+            inputs = document.querySelectorAll("#formContent input[type=number]")
+            suma_pagos=0
+            inputs.forEach(element => {                
+                suma_pagos +=parseFloat(element.value)                
+            });
+            mensaje =''
+            montoApagar = montoApagar.split(',')
+            montoApagar=parseFloat(montoApagar[0]+"."+montoApagar[1])
+
+            btn = document.querySelector('button[type=submit]')
+      
+            if(montoApagar == suma_pagos) {
+                mensaje = "Completo"
+                btn.classList.remove("disabled");
+            }
+            else if (montoApagar<suma_pagos) {
+                mensaje = `Vuelto: S/. ${(suma_pagos - montoApagar).toFixed(2)}`
+                btn.classList.remove("disabled");
+            }
+            else{
+                mensaje = `Debe: S/. ${(montoApagar - suma_pagos).toFixed(2)}` 
+                btn.classList.add("disabled");
+            }
+
+            document.getElementById('id_total').innerHTML = mensaje     
+            
+        }
+ 
+        total_pago()
+    </script>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+<script src="{% static 'js/apps/caja/add.js' %}"></script>
+{% endblock js %}
+
+
+
+<!-- https://www.youtube.com/watch?v=wRNzGxbeuX8 -->
+
+

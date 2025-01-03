@@ -1,0 +1,116 @@
+{% extends "layouts/base-demo.html" %}
+{% load static %}
+
+{% block title %} Register {% endblock %} 
+
+<!-- Plugins CSS goes HERE  -->
+{% block css %}
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+{% endblock css %}
+
+{% block breadcrumb %}
+<div class="nav-content px5 red lighten-1">
+  <a href="#" class="breadcrumb">Home</a>
+  <a href="{% url 'persona:list' %}" class="breadcrumb">Empresa</a>
+  <a href="{% url 'persona:list' %}" class="breadcrumb">Conductor</a>
+  <a href="#!" class="breadcrumb">Nuevo</a>
+</div>
+{% endblock breadcrumb %}
+
+{% block content %}
+
+    {% if form.errors %}
+        {% for m in form.errors %}
+        {{m}}        
+        {% endfor %}  
+    {% endif %}
+    <div class="progress hide" id="preload">
+        <div class="indeterminate"></div>
+    </div>
+    <div class="container">
+        <div class="container">            
+        <div class="row">
+            <div class="col s12 m12 l12">
+                
+            <form method="POST" enctype="multipart/form-data" onsubmit="enviarForm(event)">
+                {% csrf_token %}
+              <div class="card">
+                
+                <div class="card-content white-text">
+                    <span class="card-title red-text">Nuevo Conductor</span>
+                    <div class="row">
+                        <div class="input-field col s12 m12 l12">
+                            {{form.chofer}}
+                            {{form.chofer.errors}}                       
+                        </div>                        
+                    </div>
+                    <div class="row">
+                        <div class="input-field col s12 m12 l4 ">                        
+                            {{form.numLicencia}}
+                            {{form.numLicencia.label_tag}}
+                            {{form.numLicencia.errors}}                    
+                        </div>
+                        <div class="input-field col s12 m12 l4">
+                            {{form.clase}}
+                            {{form.clase.label_tag}}
+                            {{form.clase.errors}}                       
+                        </div>
+                        <div class="input-field col s12 m12 l4 ">                        
+                            {{form.categoria}}
+                            {{form.categoria.label_tag}}
+                            {{form.categoria.errors}}                    
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="input-field col s12 m12 l6">
+                            {{form.fechaExpedicion}}
+                            {{form.fechaExpedicion.label_tag}}
+                            {{form.fechaExpedicion.errors}}                       
+                        </div>
+                        <div class="input-field col s12 m12 l6 ">                        
+                            {{form.fechaRevalidacion}}
+                            {{form.fechaRevalidacion.label_tag}}
+                            {{form.fechaRevalidacion.errors}}                    
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="input-field col s12 m12 l2 ">                        
+                            {{form.activo}}
+                            {{form.activo.label_tag}}
+                            {{form.activo.errors}}                    
+                        </div>
+                    </div>
+
+                </div>
+                <div class="card-action">                    
+                    <a href="{% url 'persona:list' %}" class="btn color-secundary">Cancelar</a>
+                    <button class="btn waves-effect waves-light color-primary" id="btn-send" type="submit" name="action">Guardar
+                        <i class="material-icons right">send</i>
+                    </button> 
+                </div>
+              </div>
+            </form>
+            </div>
+          </div>
+
+    </div>
+</div>
+
+{% endblock content %}
+
+{% block js %}
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+    <script>
+        
+        $(document).ready(function() {
+        autocomplete('chofer','/persona/autocomplite/','Buscar Conductor...');
+    
+    });
+    </script>
+   
+
+{% endblock js %}
+
+
+<!-- https://www.youtube.com/watch?v=wRNzGxbeuX8-->

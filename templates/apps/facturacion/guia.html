@@ -1,0 +1,78 @@
+{% load static %}
+    <img id="logo" src=" {% static 'img/logo-oficial-red.svg' %}" alt="Girl in a jacket" width="200" height="80">
+    <p class="centrado"><b>MODA TOURS S.A.C</b></p>
+    <p class="centrado">
+        {{movimiento.agencia.direccion}} <br>
+        {{movimiento.agencia.ubigeo.ubigeo_completo}}<br>
+        RUC: &nbsp; {{movimiento.agencia.empresa.numDoc}}<br>
+        TELÉFONO: <tel>{{movimiento.agencia.movilUno}}</tel>
+    </p>
+    <br>
+    <p class="centrado"><b>GUÍA DE ENVÍO - 00{{movimiento.encomienda.numDocumento}}</b></p>
+    <div class="divider"></div>
+
+    <p class=""><b>ORIGEN:</b> &nbsp;&nbsp;&nbsp;&nbsp; {{movimiento.encomienda.agenciaOrigen}}</p>
+    <p class=""><b>DESTINO:</b> &nbsp;&nbsp;&nbsp; {{movimiento.encomienda.agenciaDestino}}</p>                   
+    <p><b>REMITENTE:</b> &nbsp;&nbsp;&nbsp;&nbsp; {{movimiento.encomienda.remite}}</p>
+    <p><b>CONSIGNADO:</b> &nbsp; {{movimiento.encomienda.consignado}}</p>
+    {% if movimiento.encomienda.esContraEntrega%}
+        <p><b>DIRECCION:</b> &nbsp;&nbsp; {{movimiento.encomienda.domicilio}}</p>
+    {% else %}
+        <p><b>TIPO ENTREGA:</b> &nbsp;&nbsp; AGENCIA </p>
+    {% endif %}
+    
+    
+    {% if movimiento.encomienda.esContraEntrega%}
+    <p><b>PAGO:</b> &nbsp;&nbsp; CONTRA ENTREGA </p>
+    {% else %}
+    <p><b>PAGO:</b> &nbsp;&nbsp; EN EFECTIVO </p>
+    {% endif %}
+    <p><b>TELÉFONO:</b> &nbsp;&nbsp; {{movimiento.encomienda.numeroContacto}} </p>
+        
+                              
+    
+    <br>
+    <div class="divider"></div>
+    <p>Fecha:&nbsp; {{movimiento.create}}</p>
+    <table>
+        <thead>
+            <tr>
+                <th class="cantidad">CANT.</th>
+                <th class="producto">DESCRIPCIÓN</th>
+                <th class="pu">P.U</th>
+                <th class="importep">IMPORTE</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in movimiento.detallemov_set.all %}
+                <tr >
+                    <td>{{item.cantidad}}</td>
+                    <td>{{item.descripcion}}</td>
+                    <td>{{item.valorUnitario}}</td>
+                    <td class="centrado">{{item.subTotal}}</td>
+                </tr>
+            {% endfor %}
+                
+            
+            <tr>
+                <td>TOTAL</td>
+                <td></td>
+                <td></td>
+                <td class="centrado">S/. {{movimiento.encomienda.precio}}</td>
+            </tr>
+        </tbody>
+    </table>
+    <br>
+    <div class="center">{{ image_qr|safe }}</div>
+    <p class="centrado">¡GRACIAS POR SU PREFERENCÍA!</p>
+    
+    <br><br>
+    <div class="divider"></div>
+    <p class="centrado">DATOS DE RECEPCIÓN</p>
+    <p>Nombres y Apellidos: </p>
+    <p>DNI: </p>
+    <p >Fecha: <span style="float: right;padding-right: 40%;">Firma:</span></p>
+    <p>Hora: <span style="float: right;padding-right: 40%;">Huella Digital</span></p>
+    <div class="huella"></div>
+    
+    

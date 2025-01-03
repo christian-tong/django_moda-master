@@ -1,0 +1,191 @@
+{% extends "layouts/base-demo.html" %}
+{% load my_templatetag %}
+
+{% block title %} Programa Listar {% endblock %} 
+
+{% block css %}
+<style>
+    td{
+      padding: 3px 5px !important;
+    }
+
+  .contenedor{
+    padding: 20px;;
+  }
+  .row{
+      margin-bottom: 0px;
+  }
+
+</style>
+
+{% endblock css %}
+
+{% block breadcrumb %}
+<div class="nav-content px5 red lighten-1">
+  <a href="#" class="breadcrumb">Home</a>
+  <a href="#" class="breadcrumb">Viaje</a>
+  <a href="#" class="breadcrumb">Programa</a>
+  <a href="#" class="breadcrumb">Listar</a>
+</div>
+{% endblock breadcrumb %}
+
+
+{% block content %}
+
+<div class="row yellow lighten-5">
+    <div class="col s12 m9 l9 block">
+        <!-- formulario buscar-->
+      <form method="POST">
+          {% csrf_token %}
+          <div class="row ">
+              <div class="col s12 m10 l10 ">            
+                  <div class="row">
+                      <div class="input-field col s12 m12 l3">
+                          {{parametroBuscar.rutaOrigen}}
+                          {{parametroBuscar.rutaOrigen.label_tag}}
+                          {{parametroBuscar.rutaOrigen.errors}} 
+                          
+                          
+                      </div>
+                      <div class="input-field col s12 m12 l3">
+                          {{parametroBuscar.rutaDestino}}
+                          {{parametroBuscar.rutaDestino.label_tag}}
+                          {{parametroBuscar.rutaDestino.errors}} 
+                          
+                      </div>
+
+                      <div class="input-field col s12 m12 l3">
+                          {{parametroBuscar.fechaViaje}}
+                          {{parametroBuscar.fechaViaje.label_tag}}
+                          {{parametroBuscar.fechaViaje.errors}} 
+                          
+                      </div>
+
+                      <div class="input-field col s12 m12 l3">
+                          <div class="switch">
+                              {{parametroBuscar.activo.label_tag}}
+                              &nbsp;&nbsp;&nbsp;
+                              <label>
+                                No
+                                {{parametroBuscar.activo}}
+                                <span class="lever"></span>
+                                Si
+                              </label>
+                          </div> 
+                          
+                      </div>
+                  </div>                    
+              </div>
+              <div class="input-field  col s12 m2 l2">
+                  <button class="btn waves-effect waves-light color-primary" type="submit" name="action">Buscar
+                    <i class="material-icons left">search</i>
+                  </button>
+              </div>
+              
+          </div>
+      </form>
+    </div>
+    <div class="input-field col s12 m3 l3">
+        <div class="right">
+            <a  class="btn color-primary" href="{% url 'viaje:programa-add' %}"><i class="material-icons left">add</i>Nueva Programación</a>
+        </div>
+    </div>
+
+</div>
+<div class="divider"></div>
+
+<table id="table_idf" class="highlight responsive-table">
+    <thead>
+      <tr>
+          <th>Item</th>
+          <th>Ruta</th>
+          <th>Fecha</th>
+          <th>Hora</th>
+          <th>Vehículo</th>
+          <th>Conductor</th>
+          <th>Precio</th>
+          <th>Estado</th>
+          <th class="centerv">Acción</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      {% for programa in entity %}
+      <tr>
+        <td>{{forloop.counter}}</td>
+        <td>{{programa.nombreViaje }}</td>
+        <td>{{programa.fechaViaje }}</td>
+        <td>{{programa.horaViaje}}</td>
+        <td>{{programa.vehiculo.placa}}</td>
+        <td>{{programa.piloto.chofer.denominacion}}</td>
+        <td>{{programa.precio}}</td>
+        <td>{{programa.activo | estadosino}}</td>
+        <td class="">
+          
+          <ul class="left">
+            <li><a class="dropdown-trigger" href="#!" data-target="dropdown1" onclick="asignaUrl('{{programa.id}}')"><i class="material-icons right">format_list_bulleted</i></a></li>
+          </ul>
+
+            
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <ul id='dropdown1' class='dropdown-content color-primary-text'>
+    <li><a id="url_add_boleto" href="javascript:{}" onclick="document.getElementById('form_embarque').submit();" ><i class="material-icons">airport_shuttle</i>Nuevo Embarque</a></li>
+    <li class="divider" tabindex="-1"></li>
+    <li><a href="#" id="url_manifiesto"><i class="material-icons">view_module</i>Manifiesto</a></li>
+    <li class="divider" tabindex="-1"></li>
+    <li><a href="#" id="url_programacion"><i class="material-icons">edit</i>Editar Programación</a></li>
+  
+  </ul>
+
+  <form method="post" action="{% url 'viaje:embarque-add' %}" id="form_embarque">
+    {% csrf_token %}
+    <input type="hidden" name="id_programa" value="" class="id_prog_embarque">
+  </form>
+
+  
+  <div class="container center">
+    {% include 'includes/paginator.html' %}
+  </div>
+
+  {% endblock content %}
+
+  
+  {% block js %}
+
+      {% if messages %}
+      {% for m in messages %}
+          <script>
+              visibleAlert(
+                  title="",
+                  text="{{m}}",
+                  icon="{{m.tags}}"        
+              )
+          </script>
+      {% endfor %}
+      {% endif %}
+
+
+<script>        
+    $(document).ready(function(){
+        $('select').formSelect();
+        
+        $('#{{parametroBuscar.rutaOrigen.auto_id}}').removeAttr("required");
+        $('#{{parametroBuscar.rutaDestino.auto_id}}').removeAttr("required");
+        
+    });  
+
+    function asignaUrl(id_programa){      
+      $(".id_prog_embarque").val(id_programa);
+      $("#url_manifiesto").attr('href',`/viaje/manifiesto/edit/?fromCityName=Tarapoto%20%28Todos%29&fromCityId=195648&toCityName=Lima%20%28Todos%29&toCityId=195105&onward=20-Jan-2022&idproruta=${id_programa}&srcCountry=PER&destCountry=PER&opId=0&busType=Any`);
+      $("#url_programacion").attr('href',`/viaje/programa/edit/?fromCityName=Tarapoto%20%28Todos%29&fromCityId=195648&toCityName=Lima%20%28Todos%29&toCityId=195105&onward=20-Jan-2022&idproruta=${id_programa}&srcCountry=PER&destCountry=PER&opId=0&busType=Any`);
+    }
+</script>
+
+
+  {% endblock js %}
+      

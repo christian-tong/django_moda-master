@@ -1,0 +1,131 @@
+{% load my_templatetag %}
+<style>
+    #table-pasajeros{
+      border-bottom: rgb(87, 97, 180) 1px solid;
+    }
+   
+    #table-pasajeros tbody tr {
+      padding-top: 3px;
+    }
+    th{
+      text-align: left;
+    }
+    #table_manifiesto1 thead tr td{
+      border-bottom: rgb(87, 97, 180) 1px dashed;
+    }
+    #table_manifiesto thead tr{
+      padding-top: 3px;
+    }
+    h1{
+      font-size: 45px;
+      font-family: Roboto;
+      font-weight: bold;
+      font-style: italic;
+      text-transform: uppercase;
+      text-decoration: underline;
+      letter-spacing: 6px;
+      color: #4416c4;
+      padding: 0px;
+      margin-bottom: -20px;
+      text-align: center;
+     
+    }
+    .encabezado{
+      background-color: #e3e3e3;
+    }
+  
+  h2 {
+      text-align: center;
+      padding: 0px;
+      margin-top: -100px;
+  }
+  h3 {
+      text-align: center;
+      font-size: 25px;
+  }
+  </style>
+  <div class="encabezado">
+  <h1>MODA TOURS</h1>
+  <h2>
+    <span>El Encanto de Viajar</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    <span style="color: red;">RUC:20393819660</span>
+  </h2>
+  </div>
+  <h3><span>LIQUIDACIÓN DE ENCOMIENDAS </span> &nbsp;<span style="color: red;">N°000{{liquidacion.numDocumento}}</span></h3>
+  
+  
+        <table id="table_manifiesto" class="" style="width: 8px !important;">
+            <thead >
+                <tr>
+                    <th>Origen:</th>
+                    <td>{{liquidacion.agenciaOrigen}}</td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <th>Destino:</th>
+                    <td>{{liquidacion.agenciaDestino}}</td>
+                </tr>
+                <tr>
+                    <th>Fecha de Envio:</th>
+                    <td>{{liquidacion.fecha}}</td>
+                </tr>
+                <tr>
+                    <th>N° de Placa Vehicular:</th>
+                    <td>{{liquidacion.vehiculo.placa}}</td>
+                </tr>
+                <tr>
+                    <th>Responsable:</th>
+                    <td>{{liquidacion.conductor}}</td>
+                </tr> 
+            </thead>
+        </table>
+  
+  
+  <br>
+  <br>
+  <table id="table-pasajeros" class="">
+    <thead>
+      <tr>
+          <th>N°</th>
+          <th>BOLETO</th>
+          <th>DESTINO</th>          
+          <th>VALOR</th>
+          <th>CONTRA ENTREGA</th>
+      </tr>
+    </thead>
+  
+    <tbody>
+      {% for encomienda in encomiendas %}
+      <tr>
+        <td>{{forloop.counter}}</td>
+        <td>{{encomienda.numDocumento }}</td>
+        <td>{{encomienda.agenciaDestino}}</td>        
+        <td>{{encomienda.precio}}</td>
+        <td>{{encomienda.esContraEntrega | estadosino}}</td>
+  
+      </tr>
+      {% endfor %}
+
+    </tbody>
+  </table>
+
+  <table style="margin-top: 30px;">
+    <tr class="table-pie">
+        <th>Total de Pagos en Efectivo:</th>
+        <td>s/. {{suma_directa}}</td> 
+        <td></td> 
+        <td></td>     
+    </tr>
+    <tr>
+        <th>Total de Pagos Contra Entrega:</th>
+        <td>s/. {{suma_contra_entrega}}</td>
+    </tr>
+    <tr>
+        <th>Total:</th>
+        <td>s/. {{suma_total}}</td>
+    </tr>
+  </table>
+  <hr>
+  <p><b>Comisión de Chofer 60%:</b> s/. {{comision_chofer}}</p>
+  <p><b>Comisión de Agencia 40% :</b> s/. {{comision_agencia}}</p>

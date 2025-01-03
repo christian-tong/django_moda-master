@@ -1,0 +1,141 @@
+{% extends "layouts/base-demo.html" %}
+{% load my_templatetag %}
+{% load static %}
+
+{% block title %} Listar {% endblock %} 
+
+{% block css %}
+<style>
+    td{
+      padding: 3px 5px !important;
+    }
+
+  .contenedor{
+    padding: 20px;;
+  }
+
+</style>
+
+{% endblock css %}
+
+{% block breadcrumb %}
+<div class="nav-content px5 red lighten-1">
+  <a href="{% url 'sistema:home-index' %}" class="breadcrumb">Home</a>
+  <a href="{% url 'persona:list' %}" class="breadcrumb">Facturación</a>
+  <a href="#!" class="breadcrumb">Lista</a>
+</div>
+{% endblock breadcrumb %}
+
+
+{% block content %}
+
+<div class="row valign-wrapper">
+    <div class="col s12 m12 l4 ">
+        <form  id="form_search" >
+          <div class="input-field">
+            <input type="text" id="search" class="validate" placeholder="Buscar por persona o documento" name="q" value="{{q}}">
+            <label for="icon_prefix">Buscar</label>
+            <i class="material-icons prefix green-text">search</i> 
+          </div>
+        </form>
+    </div>
+    <div class=" col s12 m12 l5 center">
+      
+      <div class="input-field ">
+        <form action="{% url 'facturacion:comprobante-excel' %}" id="form-descarga-excel"  onsubmit="descargar_excel(event)">     
+          <input type="month" name="periodo" required="" id="id_periodo">
+          <button class="btn-small waves-effect waves-light blue" type="submit" name="action" value="error" id="btn-send">EXCEL
+            <i class="material-icons right">cloud_download</i>
+          </button>
+        </form> 
+      </div>
+      
+    </div> 
+    <div class=" col s12 m12 l3 ">
+      <a  class="btn-small color-primary right" href="#"><i class="material-icons left">add</i>Nuevo Comprobante</a>
+    </div> 
+</div>
+<div class="divider"></div>
+
+<table id="table_idf" class="highlight responsive-table">
+    <thead>
+      <tr>
+          <th>Item</th>
+          <th>Comprob</th>
+          <th>Serie</th>
+          <th>Numero</th>
+          <th>Cliente</th>
+          <th>Tipo doc</th>
+          <th>Num doc</th>
+          <th>Monto</th>
+          <th>Fecha</th>
+          <th>Facturado</th>
+          <th>Canje</th>
+          <th colspan="2" class="center">Acción</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      {% for factura in entity %}
+      <tr>
+        <td>{{forloop.counter}}</td>
+        <td>{{factura.tipoDocumento }}</td>
+        <td>{{factura.serie | nonep}}</td>
+        <td>{{factura.numero | nonep}}</td>
+        <td>{{factura.cliente | capfirst}}</td>
+        <td>{{factura.cliente.tipoDoc }}</td>
+        <td>{{factura.cliente.numDoc }}</td>
+        <td>{{factura.monto}}</td>
+        <td>{{factura.fechaFact | date:'d/m/Y'}}</td>
+        <td>{{factura.estaFacturado | estadosino}}</td>
+        <td>{{factura.iscanje | estadosino}}</td>
+        <td>           
+            <a href="/facturacion/detalle/print/?fromCityName=chintucaycuri%2520%2528Todos%2529%26fromCityId%3D195648&tipomovi={{factura.ventaMovimiento.movimientocaja.tipoMov.nombre}}&toCityName=Lima%2520%2528Todos%2529%26toCityId%3D195105%26onward%3D20-Jan-2022%26srcCountry%3DPER&mov={{factura.ventaMovimiento.id}}&destCountry=PER%26opId%3D0%26busType%3DAny" class="collection-item "><i class="material-icons left color-primary-text">print</i></a>
+        </td>
+        <td>
+            <!--factura.ventaMovimiento.id-->            
+            {% if not factura.estaFacturado %}
+              <a href="{% url 'facturacion:enviar-ose' factura.ventaMovimiento.id %}" class="collection-item enviar-ose"><i class="material-icons left">cloud_queue</i></a>
+            {% endif %}   
+        </td>
+        
+      </tr>
+      {% endfor %}
+    </tbody>
+</table>
+  <div class="container center">
+    {% include 'includes/paginator.html' %}
+  </div>
+
+  {% endblock content %}
+
+  
+  {% block js %}
+
+  {% if messages %}
+  {% for m in messages %}
+      <script>
+          visibleAlert(
+              title="",
+              text="{{m}}",
+              icon="{{m.tags}}"        
+          )
+      </script>
+  {% endfor %}
+   
+{% endif %}
+
+      <script>
+        
+        $("#btn-search").click(function() {
+          var q = $("#search").val()
+          url = $(this).attr("href");
+          window.open(url+"?q="+q,'_self');
+          return false;
+        })
+      </script>
+
+    <script src="{% static 'js/apps/facturacion/enviar-ose.js' %}"></script>
+
+  {% endblock js %}
+      

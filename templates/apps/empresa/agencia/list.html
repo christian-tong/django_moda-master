@@ -1,0 +1,129 @@
+{% extends "layouts/base-demo.html" %}
+{% load my_templatetag %}
+
+{% block title %} Listar {% endblock %} 
+
+{% block css %}
+<style>
+    td{
+      padding: 3px 5px !important;
+    }
+
+  .contenedor{
+    padding: 20px;;
+  }
+
+</style>
+
+{% endblock css %}
+
+{% block breadcrumb %}
+<div class="nav-content px5 red lighten-1">
+  <a href="#" class="breadcrumb">Home</a>
+  <a href="{% url 'persona:list' %}" class="breadcrumb">Empresa</a>
+  <a href="{% url 'persona:list' %}" class="breadcrumb">Agencía</a>
+  <a href="#!" class="breadcrumb">Lista</a>
+</div>
+{% endblock breadcrumb %}
+
+
+{% block content %}
+
+<div class="row valign-wrapper">
+    <div class="input-field col s12 m12 l6 block">
+      <div class="row">
+        <form  id="form_search" >   
+          <div class="col s8">
+            <input id="search" placeholder="Buscar por persona o documento" name="q" value="{{q}}">
+
+          </div>
+          <div class="col s4">
+            <a id="btn-search" class="btn color-primary" href="{% url 'persona:list'  %}"><i class="material-icons left">search</i>Buscar</a>
+          </div>
+        </form>
+      </div>
+    
+    </div>
+  
+    <div class="input-field col s12 m12 l6">
+      <div class="right">
+      <a  class="btn color-primary" href="{% url 'empresa:agencia-add'  %}"><i class="material-icons left">add</i>Nueva Agencía</a>
+    </div>
+    </div>
+  
+</div>
+<div class="divider"></div>
+
+<table id="table_idf" class="highlight responsive-table">
+    <thead>
+      <tr>
+          <th>Item</th>
+          <th>Nombre</th>
+          <th>Direccion</th>
+          <th>Ubigueo</th>
+          <th>Celular</th>
+          <th>Tipo</th>
+          <th>Estado</th>
+          <th>Acciones</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      {% for item in entity %}
+      <tr>
+        <td>{{forloop.counter}}</td>
+        <td>{{item.nombre}}</td>
+        <td>{{item.direccion}}</td>
+        <td>{{item.ubigeo.ubigeo_completo}}</td>
+        <td>{{item.movilUno}}</td>
+        <td>{{item.tipo}}</td>
+        <td>{{item.activo | estado}}</td>
+        <td>
+          
+            <a href="{% url 'empresa:agencia-update' item.pk %}" class="collection-item"><i class="material-icons left">edit</i></a>
+            <!-- <a href="#!" class="collection-item "><i class="material-icons left color-primary-text">delete</i></a>-->
+          
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+</table>
+  <div class="container center">
+    {% include 'includes/paginator-vista-clases.html' %}
+  </div>
+
+  {% endblock content %}
+
+  
+  {% block js %}
+
+      {% if messages %}
+      {% for m in messages %}
+          <script>
+              visibleAlert(
+                  title="",
+                  text="{{m}}",
+                  icon="{{m.tags}}"        
+              )
+          </script>
+      {% endfor %}
+      {% endif %}
+
+      <script>
+        
+        $("#btn-search").click(function() {
+          var q = $("#search").val()
+          url = $(this).attr("href");
+          window.open(url+"?q="+q,'_self');
+          return false;
+        })
+      </script>
+
+      <script>
+        $(document).ready(function() {
+    $('input#input_text, textarea#textarea2').characterCounter();
+  });
+      </script>
+
+  {% endblock js %}
+      

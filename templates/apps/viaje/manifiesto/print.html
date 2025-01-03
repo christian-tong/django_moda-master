@@ -1,0 +1,119 @@
+{% load my_templatetag %}
+<style>
+  #table-pasajeros{
+    border-bottom: rgb(87, 97, 180) 1px solid;
+  }
+ 
+  #table-pasajeros tbody tr {
+    padding-top: 3px;
+  }
+  th{
+    text-align: left;
+  }
+  #table_manifiesto1 thead tr td{
+    border-bottom: rgb(87, 97, 180) 1px dashed;
+  }
+  #table_manifiesto thead tr{
+    padding-top: 3px;
+  }
+  h1{
+    font-size: 45px;
+    font-family: Roboto;
+    font-weight: bold;
+    font-style: italic;
+    text-transform: uppercase;
+    text-decoration: underline;
+    letter-spacing: 6px;
+    color: #4416c4;
+    padding: 0px;
+    margin-bottom: -20px;
+    text-align: center;
+   
+  }
+  .encabezado{
+    background-color: #e3e3e3;
+  }
+
+h2 {
+    text-align: center;
+    padding: 0px;
+    margin-top: -100px;
+}
+h3 {
+    text-align: center;
+    font-size: 25px;
+}
+</style>
+<div class="encabezado">
+<h1>MODA TOURS</h1>
+<h2>
+  <span>El Encanto de Viajar</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  <span style="color: red;">RUC:20393810660</span>
+</h2>
+</div>
+<h3><span>MANIFIESTO DE PASAJEROS</span> &nbsp;<span style="color: red;">N°000{{manifiesto.numDocumento}}</span></h3>
+
+
+      <table id="table_manifiesto" >
+          <thead >
+              <tr>
+                  <th>Dirección:</th>
+                  <td>{{manifiesto.direccion |nonep}}</td>
+              </tr>
+              <tr>
+                  <th>Fecha de Viajes:</th>
+                  <td>{{manifiesto.fechaViaje}}</td>
+              </tr>
+              <tr>
+                  <th>N° de Placa Vehicular:</th>
+                  <td>{{manifiesto.vehiculo.placa}}</td>
+              </tr>
+              <tr>
+                  <th style="width: 20%;">Conductor Principal:</th>
+                  <td style="width: 70%;">{{manifiesto.piloto}} | Licencia: {{manifiesto.piloto.numLicencia}}</td>
+              </tr>
+              <tr>
+                  <th>Conductor Secundario:</th>
+                  <td>{{manifiesto.copiloto}} | Licencia: {{manifiesto.copiloto.numLicencia}}</td>
+              </tr>
+              <tr>
+                  <th>Ruta:</th>
+                  <td>{{manifiesto.printRutaOrigen | nonep}} 
+                  {% for dest in manifiesto.printRutaFinal.all %}
+                  - {{dest}} 
+                    
+                  {% endfor %}
+                     </td>
+              </tr>
+              <tr>
+                  <th>Modalidad de Servicio:</th>
+                  <td>{{manifiesto.modalidaServicio}}</td>
+              </tr>
+          </thead>
+      </table>
+
+
+<br>
+<br>
+<table id="table-pasajeros" class="">
+  <thead>
+    <tr>
+        <th style="width: 10%;">N°</th>
+        <th style="width: 60%;">APELLIDOS Y NOMBRES</th>
+        <th style="width: 20%;">N° DOCUMENTO</th>        
+        <th style="width: 10%;">EDAD</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    {% for pasajero in embarques %}
+    <tr>
+      <td>{{forloop.counter}}</td>
+      <td>{{pasajero.pasajero | capfirst }}</td>
+      <td>{{pasajero.pasajero.numDoc}}</td>      
+      <td>{{pasajero.pasajero.personanatural.edad | nonep}}</td>
+
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>

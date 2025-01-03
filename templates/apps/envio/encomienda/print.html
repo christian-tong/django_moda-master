@@ -1,0 +1,224 @@
+{% extends "layouts/base-demo.html" %}
+{% load static %}
+{% load my_templatetag %}
+
+{% block title %} Register {% endblock %} 
+{% block css %}
+    <style >
+
+
+        .ticket{
+            font-size: 12px;
+            font-family: 'Georgia';
+        }
+        
+        td,
+        th,
+        tr,
+        table {
+            border-top: 1px solid black;
+            border-collapse: collapse;
+        }
+        
+        td.producto,
+        th.producto {
+            width: 150;
+            max-width: 150;
+        }
+        
+        td.cantidad,
+        th.cantidad {
+            width: 40;
+            max-width: 40px;
+            word-break: break-all;
+        }
+        
+        td.importe,
+        th.importe {
+            width: 30;
+            max-width: 40px;
+            word-break: break-all;
+        }
+        td.pu,
+        th.pu {
+            width: 30px;
+            max-width: 40px;
+            word-break: break-all;
+        }
+        
+        .centrado {
+            text-align: center;
+            align-content: center;
+        }
+        
+        .ticket {
+            width: 250px;
+            max-width: 250px;
+        }
+        
+        img#logo {
+            max-width: inherit;
+            width: inherit;
+        }
+
+        p{
+            margin: 0px !important;
+        }
+        .huella {
+            border: solid 1px;
+            height: 7em;
+            width: 8em;
+            margin-left: 28%;
+            margin-bottom: 2em;
+        }
+        
+        @page { 
+            size: 80mm 220mm !important; /* width height en pulgadas */ 
+            margin: 0;
+         }
+
+        @media print {
+            .oculto-impresion,
+            .oculto-impresion * {
+                display: none !important;
+            }
+            html, body { 
+                width: 80mm;
+                min-height: 0;
+                color: #000000 !important;
+                font-size: 12px;
+                font-family: "arial", serif;
+            }
+        }
+        
+        </style>
+
+{% endblock css %}
+
+{% block breadcrumb %}
+    <div class="nav-content px5 red lighten-1 oculto-impresion">
+    <a href="#" class="breadcrumb">Home</a>
+    <a href="#" class="breadcrumb">Envio</a>
+    <a href="#" class="breadcrumb">Encomienda</a>
+    <a href="#" class="breadcrumb">Print</a>
+    </div>
+{% endblock breadcrumb %}
+
+{% block content %}
+
+    <div class="container h-100">
+    <div class="row  h-100">
+        <div class="col-sm-8 ">
+            <div class="cardx shadowx">
+                <div class="card-bodyx row">           
+                    <div class="ticket">
+                        <!-- <img id="logo"
+                        src="https://yt3.ggpht.com/-3BKTe8YFlbA/AAAAAAAAAAI/AAAAAAAAAAA/ad0jqQ4IkGE/s900-c-k-no-mo-rj-c0xffffff/photo.jpg"
+                        alt="Logotipo"> -->
+                        <img id="logo" src=" {% static 'img/logo-oficial-red.svg' %}" alt="Girl in a jacket" width="200" height="80">
+                        <p class="centrado"><b>MODA TOURS S.A.C</b></p>
+                        <p class="centrado">
+                            {{encomienda.agenciaOrigen.direccion}} <br>
+                            {{encomienda.agenciaOrigen.ubigeo}}<br>
+                            RUC: &nbsp; {{encomienda.agenciaOrigen.empresa.numDoc}}<br>
+                            TELÉFONO: <tel>{{encomienda.agenciaOrigen.movilUno}}</tel>
+                        </p>
+                        <br>
+                        <p class="centrado">GUÍA DE ENVÍO<br>N°.000{{encomienda.numDocumento}}</p>
+                        <div class="divider"></div>
+                        <p class=""><b>ORIGEN:</b> &nbsp;&nbsp;&nbsp;&nbsp; {{encomienda.agenciaOrigen}}</p>
+                        <p class=""><b>DESTINO:</b> &nbsp;&nbsp;&nbsp; {{encomienda.agenciaDestino}}</p>
+                        <p><b>REMITENTE:</b> &nbsp;&nbsp;&nbsp;&nbsp; {{encomienda.remite}}</p>
+                        <p><b>CONSIGNADO:</b> &nbsp; {{encomienda.consignado}}</p>
+
+                        {% if encomienda.aDomicilio%}
+                            <p><b>DIRECCION:</b> &nbsp;&nbsp; {{encomienda.domicilio}}</p>
+                        {% else %}
+                            <p><b>TIPO ENTREGA:</b> &nbsp;&nbsp; AGENCIA </p>
+                        {% endif %}
+                    
+                    
+                        {% if encomienda.esContraEntrega%}
+                            <p><b>PAGO:</b> &nbsp;&nbsp; CONTRA ENTREGA </p>
+                        {% else %}
+                            <p><b>PAGO:</b> &nbsp;&nbsp; EN EFECTIVO </p>
+                        {% endif %}
+                        <p><b>TELÉFONO:</b> &nbsp;&nbsp; {{encomienda.numeroContacto}} </p>
+                        <div class="divider"></div>
+                        <p>Fecha:&nbsp; {{encomienda.venta.create}}</p>
+                        <br>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th class="cantidad">CANT.</th>
+                                    <th class="producto">DESCRIPCIÓN</th>
+                                    <th class="pu">P.U</th>
+                                    <th class="importep">IMPORTE</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for item in encomienda.venta.detallemov_set.all %}
+                                    <tr >
+                                        <td>{{item.cantidad}}</td>
+                                        <td>{{item.descripcion}}</td>
+                                        <td>{{item.valorUnitario}}</td>
+                                        <td class="centrado">{{item.subTotal}}</td>
+                                    </tr>
+                                {% endfor %}
+                                    
+                                
+                                <tr>
+                                    <td>TOTAL</td>
+                                    <td></td>
+                                    <td></td>
+                                    <td class="centrado">S/. {{total}}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <br>
+                        <p class="centrado">¡GRACIAS POR SU PREFERENCÍA!</p>
+                        <br><br>
+                        <div class="divider"></div>
+                        <p class="centrado">DATOS DE RECEPCIÓN</p>
+                        <p>Nombres y Apellidos: </p>
+                        <p>DNI: </p>
+                        <p >Fecha: <span style="float: right;padding-right: 40%;">Firma:</span></p>
+                        <p>Hora: <span style="float: right;padding-right: 40%;">Huella Digital</span></p>
+                        <div class="huella"></div>
+                        
+                    </div>   
+
+                    <div class="col justify-content-center h-100 oculto-impresion x-5">
+                        <a class="btn blue" href="{% url 'envio:encomienda-list' %}">Cancelar</a>
+                        <button type="button" class="btn btn-primary red" onclick=Print_modal()>Imprimir</button>
+                    </div>           
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+{% endblock content %}
+
+{% block js %}
+
+    <script>
+        Print_modal =function(){
+                    console.log("printer")
+                    window.print();
+           
+            };
+    </script>
+
+{% if messages %}
+{% for m in messages %}
+    <script>
+        visibleAlert(
+            title="",
+            text="{{m}}",
+            icon="{{m.tags}}"        
+        )
+    </script>
+{% endfor %}
+{% endif %}
+ 
+{% endblock js %}

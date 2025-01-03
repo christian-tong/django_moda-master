@@ -1,0 +1,149 @@
+{% extends "layouts/base-demo.html" %}
+{% load my_templatetag %}
+
+{% block title %} Listar {% endblock %}
+
+{% block css %}
+<style>
+  td {
+    padding: 3px 5px !important;
+  }
+
+  .contenedor {
+    padding: 20px;
+    ;
+  }
+
+  #btn-search {
+    cursor: pointer;
+  }
+</style>
+
+{% endblock css %}
+
+{% block breadcrumb %}
+<div class="nav-content px5 red lighten-1">
+  <a href="{% url 'sistema:home-index' %}" class="breadcrumb">Home</a>
+  <a href="#" class="breadcrumb">Embarque</a>
+  <a href="#!" class="breadcrumb">Lista</a>
+</div>
+{% endblock breadcrumb %}
+
+
+{% block content %}
+
+<div class="row">
+  <form class="col s12 m8 l6" id="form_search">
+    <div class="input-field ">
+      <input id="icon_prefix" type="text" name="q" value="{{q}}" class="validate"
+        placeholder="Buscar por persona o documento">
+      <label for="icon_prefix">Buscar</label>
+      <i class="material-icons prefix red-text" id="btn-search">search</i>
+    </div>
+  </form>
+  <div class="input-field col s12 m4 l6">
+    <div class="right">
+      <a class="btn color-primary" href="{% url 'viaje:programa-list' %}"><i class="material-icons left">add</i>Nuevo
+        Embarque</a>
+    </div>
+
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<table id="table_idf" class="highlight responsive-table">
+  <thead>
+    <tr>
+      <th>Item</th>
+      <th>APELLIDOS Y NOMBRES</th>
+      <th>N° DOCUMENTO</th>
+      <th>TELEFONO</th>
+      <th>RUTA</th>
+      <th>FECHA</th>
+      <th>HORA</th>
+      <th>N° ASIENTO</th>
+      <th>OBS.</th>
+      <th>EN SALA?</th>
+      <th>Acción</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    {% for pasajero in entity %}
+    <tr>
+      <td>{{forloop.counter}}</td>
+      <td>{{pasajero.pasajero | capfirst }}</td>
+      <td>{{pasajero.pasajero.numDoc}}</td>
+      <td>{{pasajero.telefono | nonep}}</td>
+      <td>{{pasajero.lugar_abordo}} - {{pasajero.lugar_bajada}}</td>
+      <td>{{pasajero.programacionViaje.fechaViaje | date:'d/m/Y'}}</td>
+      <td>{{pasajero.hora_abordo}}</td>
+      <td>{{pasajero.numAsiento}}</td>
+      <td>{{pasajero.observacion}}</td>
+      <td> {{pasajero.enSala | estadosino}}</td>
+      <td>
+        {% if pasajero.venta.movimientocaja %}
+          <ul class="right">
+            <li><a class="dropdown-trigger" href="#!" data-target="dropdown-embarque"
+                onclick="asignaUrl('{{pasajero.id}}')"><i class="material-icons right">format_list_bulleted</i></a></li>
+          </ul>
+        {% else %}
+        
+          <a href="/tesoreria/movimiento/add?fromCityName=Tarapoto%20%28Todos%29&fromCityId=195648&toCityName=Lima%20%28Todos%29&toCityId=195105&onward=20-Jan-2022&mov={{pasajero.venta.id}}&srcCountry=PER&destCountry=PER&opId=0&tipomov=ventaPasaje&busType=Any"
+            class="collection-item color-primary">
+            <i class="material-icons right color-primary-text">attach_money</i>
+          </a>
+        {% endif %}
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+<ul id='dropdown-embarque' class='dropdown-content color-primary-text'>
+  <li><a id="url_checkin" href="#"><i class="material-icons">check_box</i>Check-in</a></li>
+  <li class="divider" tabindex="-1"></li>
+  <li><a href="#" id="url_reprogramar"><i class="material-icons">airport_shuttle</i>Reprogramar</a></li>
+  <li class="divider" tabindex="-1"></li>
+  <li><a href="#" id="url_print"><i class="material-icons">print</i>Imprimir</a></li>
+  <li class="divider" tabindex="-1"></li>
+</ul>
+<div class="container center">
+  {% include 'includes/paginator.html' %}
+</div>
+
+{% endblock content %}
+
+
+{% block js %}
+
+{% if messages %}
+{% for m in messages %}
+<script>
+  visibleAlert(
+    title = "",
+    text = "{{m}}",
+    icon = "{{m.tags}}"
+  )
+</script>
+{% endfor %}
+{% endif %}
+
+<script>
+
+  $("#btn-search").click(function () {
+    $('#form_search').submit()
+  })
+</script>
+
+<script>
+  function asignaUrl(id_embarque) {
+    $("#url_checkin").attr('href', `/viaje/embarque/edit/?fromCityName=Tarapoto%20%28Todos%29&fromCityId=195648&toCityName=Lima%20%28Todos%29&toCityId=195105&onward=20-Jan-2022&pk=${id_embarque}&srcCountry=PER&destCountry=PER&opId=0&busType=Any`);
+    $("#url_reprogramar").attr('href', `/viaje/embarque/cambiar/?fromCityName=Tarapoto%20%28Todos%29&fromCityId=195648&toCityName=Lima%20%28Todos%29&toCityId=195105&onward=20-Jan-2022&pk=${id_embarque}&srcCountry=PER&destCountry=PER&opId=0&busType=Any`);
+    $("#url_print").attr('href', `/viaje/embarque/print/?fromCityName=Tarapoto%20%28Todos%29&fromCityId=195648&toCityName=Lima%20%28Todos%29&toCityId=195105&onward=20-Jan-2022&pk=${id_embarque}&srcCountry=PER&destCountry=PER&opId=0&busType=Any`);
+  }
+
+</script>
+
+{% endblock js %}

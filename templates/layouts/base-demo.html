@@ -1,0 +1,117 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <!-- Tell the browser to be responsive to screen width -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="apple-touch-icon" sizes="76x76" href="/static/assets/img/apple-icon.png">
+    <link rel="icon" type="image/png" href="/static/assets/img/favicon.png">
+    
+    <meta name="keywords"
+          content=" Material Pro lite dashboard bootstrap 4 dashboard template">
+    <meta name="description"
+          content=" inpired from Bootstrap Framework">
+
+    <meta name="robots" content="noindex,nofollow">
+
+    <title>
+        Moda Tours | {% block title %}{% endblock %}
+    </title>
+    <!--Import Google Icon Font-->
+    <link rel="stylesheet" href="{% static 'main.css' %}">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    
+    
+    {% block css %}{% endblock css %}
+
+</head>
+
+<body>
+   
+    {% include 'includes/navigation-oficial.html' %}
+
+    <nav class="nav-extended">
+      {% block breadcrumb %}
+      {% endblock breadcrumb %} 
+    </nav> 
+
+    <div class="contenedor">  
+        {% block content %}{% endblock content %}    
+    </div>        
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="{% static 'js/index.js' %}"></script>
+    <!-- activamos el menu izquierdo sidenav  -->   
+    <script>    
+    $(document).ready(function(){
+      $('.sidenav').sidenav({
+          onOpenEnd: function(){
+            request_data_menu();
+            $('.collapsible').collapsible();
+          },
+        });
+
+      $('.dropdown-trigger').dropdown({
+          'constrainWidth':false
+        });
+
+      
+      
+
+
+    });
+
+    request_data_menu = ()=>{
+                        $.get( "{% url 'sistema:menu-list'  %}", function( data ) {
+                          var html=``
+                          $.each(data, function(key, value) {
+                              let padre = value.padre[0].nombre
+                              let icono = value.padre[0].icono
+                              html +=`<li>`
+                              html +=`<div class="collapsible-header white-text"><i class="material-icons">${icono}</i>${padre}</div>`
+                              html +=`<div class="collapsible-body">`
+                              html +=  `<ul> ` 
+                                $.each(value.hijo, function(key1, value1) {
+                                let hijo = value1.nombre
+                                html +=`<li><a href="${value1.url}"><i class="material-icons">${value1.icono}</i>${hijo}</a></li>`
+                              })
+                              html += '</ul>'
+                              html += '</div>'
+                              html += '</li>'
+                          })
+                          
+                          $('.collapsible').html(html)
+                          
+                        },'json');
+
+                        
+
+    };
+    </script>
+
+   
+
+    <script>
+      visibleAlert = function(title,text,icon){
+        Swal.fire({
+          "title":title,
+          "text":text,
+          "icon":icon
+        })
+      }
+
+    </script>
+    
+    
+    {% block js %}
+    
+    {% endblock js %}
+
+</body>
+</html>

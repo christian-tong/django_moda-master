@@ -1,0 +1,130 @@
+{% extends "layouts/base-demo.html" %}
+{% load my_templatetag %}
+{% load static %}
+
+{% block title %} Listar {% endblock %} 
+
+{% block css %}
+<style>
+    td{
+      padding: 3px 5px !important;
+    }
+
+  .contenedor{
+    padding: 20px;;
+  }
+
+</style>
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+{% endblock css %}
+
+{% block breadcrumb %}
+<div class="nav-content px5 red lighten-1">
+  <a href="#" class="breadcrumb">Home</a>
+  <a href="{% url 'persona:list' %}" class="breadcrumb">Facturación</a>
+  <a href="#!" class="breadcrumb">Enviar</a>
+  <a href="#!" class="breadcrumb">Ose</a>
+</div>
+{% endblock breadcrumb %}
+
+
+{% block content %}
+
+<div class="progress hide" id="preload">
+  <div class="indeterminate"></div>
+</div>
+
+<form method="POST" onsubmit="enviarForm(event)">
+  {% csrf_token %}
+
+  <div class="card">
+      <div class="card-content white-text">
+
+          <span class="card-title red-text">Facturacion.  N° 00001</span> 
+
+      </div>
+      <div class="divider"></div>
+      <div class="card-content white-text">
+          <p class="pb2 blue-text right" style="margin-bottom: 10px; font-size: 2rem;"> Monto: S/. <span id="id_monto">{{ montoCobrar }}</span></p>
+          
+          <div class="row">
+              <div class="input-field col s12 m12 l12">
+                  {{factura.tipoDocumento}}
+                  {{factura.tipoDocumento.label_tag}}
+                  {{factura.tipoDocumento.errors}} 
+              </div>
+          </div>
+          <div class="row">
+              <div class="input-field col s12 m12 l12">
+                  {{factura.cliente}}
+                  {{factura.cliente.errors}} 
+              </div>
+          </div>
+          <div class="row">
+              <div class="input-field col s12 m12 l12 grey" id="poblarSelect">
+                  
+              </div>
+          </div>
+
+      </div>
+  <div class="card-action">                    
+      <a href="#" class="btn color-secundary">Cancelar</a>
+      <button class="btn waves-effect waves-light color-primary " id="btn-send" type="submit" name="action">Guardar
+          <i class="material-icons right">send</i>
+      </button>
+
+      
+    </div>
+
+  </div>
+  </div>
+
+
+</form>
+</div>
+{% endblock content %}
+
+  
+  {% block js %}
+
+
+      {% if messages %}
+      {% for m in messages %}
+          <script>
+              visibleAlert(
+                  title="",
+                  text="{{factura.errors}}",
+                  icon="{{m.tags}}"        
+              )
+          </script>
+      {% endfor %}
+      {% endif %}
+
+      
+
+
+      <script>
+    $(document).ready(function() {
+      $('#id_tipoDocumento').removeAttr("required");
+      $('#id_cliente').removeAttr("required");
+
+    $('.select').formSelect();
+    autocomplete('cliente','/persona/autocomplite/','Buscar Cliente...')
+    .on('select2:select', function (e) { 
+        console.log('select event '+ e);
+        poblarSelect = document.querySelector('#poblarSelect')
+        poblarSelect.innerHTML = `<p>
+                                    Tipo doc : ${e.params.data.tipoDoc.descripcion}<br>
+                                    Num doc : ${e.params.data.numDoc}<br>
+                                    Direccion : ${e.params.data.direccion}
+                                    </p>`
+        /*for (const property in e.params.data.tipoDoc) {
+            console.log(`${property}: ${e.params.data.tipoDoc[property]}`);
+          }*/
+    });
+})
+      </script>
+<script src="{% static 'js/apps/facturacion/enviar-ose.js' %}"></script>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+  {% endblock js %}
+      

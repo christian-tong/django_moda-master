@@ -1,0 +1,249 @@
+{% extends "layouts/base-demo.html" %}
+{% load my_templatetag %}
+
+{% block title %} Register {% endblock %} 
+
+<!-- Plugins CSS goes HERE  -->
+{% block css %}
+<style>
+    .masOpcionVisible{        
+        display: none;
+    }
+    input:required {
+  background-color: yellow;
+
+}
+.input-field {
+    position: relative;
+    margin-top: 0.8rem;
+    margin-bottom: 0rem; 
+}
+.card .card-content {
+    padding: 0px 20px 0px 20px; 
+}
+.carro{
+    border: solid 3px #d50000;
+    padding-left: 20px;
+    border-radius: 20px;
+}
+.columnacarro{
+    margin-right: 5px;
+    margin-bottom: 1px;
+    /*cursor: pointer;*/
+}
+
+/* estados de asiento */
+.pasadiso{
+    background-color: #fffde7;
+    width: 8% !important;
+}
+
+.cortesia{
+    background-color: #ff5722;
+}
+
+.vendido{
+    background-color: #ffd600 ;
+}
+
+.libre{
+    background-color: #69f0ae ;
+    
+}
+
+.reservado{
+    background-color: #1e88e5 ;
+}
+.estetica{
+    font-size: 3rem !important;
+    height: 3rem !important;
+    background-color: #78909c  !important;
+    color: #ffffff  !important;
+    border-radius: 20px !important;
+    margin-top: 5px !important;
+    padding-left: 10px !important;
+}
+
+
+</style>    
+{% endblock css %}
+
+{% block breadcrumb %}
+    <div class="nav-content px5 red lighten-1">
+    <a href="#" class="breadcrumb">Home</a>
+    <a href="#" class="breadcrumb">Viaje</a>
+    <a href="#" class="breadcrumb">Programación</a>
+    <a href="#!" class="breadcrumb">Asientos</a>
+    <a href="#!" class="breadcrumb">Listar</a>
+    </div>
+{% endblock breadcrumb %}
+
+{% block content %}
+
+{% if boleto.errors %}
+    {% for m in boleto.errors %}
+    {{m}}        
+    {% endfor %}  
+{% endif %}
+<div class="container">
+    
+<div class="row" >
+    <div class="col s12 m12">
+        <div class="card yellow lighten-5">
+        <div class="card-content white-text">
+            <span class="card-title color-primary-text">Editar Asiento</span> 
+            <div class="section z-depth-3 carro">          
+                
+                {% for asientoP in viajeProgramado %}
+                    
+                    {% if asientoP.asiento.codigoMatrix == 11 %}
+                        <div class="row filacarro">
+                        <div class="col s{{anchoColumna}} columnacarro {{asientoP.estado}}" asiento ='{{asientoP.asiento.numero}}' precio ='{{asientoP.precio}}' idasiento={{asientoP.id}}>
+                            <p class="flow-text"><b>{{asientoP.asiento.numero | nonep}}</b></p>
+                            <p class="center">
+                            <span class="center">{{asientoP.precio | nonep}}</span>
+                        </p>
+                            
+                        </div> 
+                    {% else %}
+                        {% if asientoP.asiento.saltofila %}
+                            </div>
+                            <div class="row filacarro">
+                                <div class="col s{{anchoColumna}} columnacarro {{asientoP.estado}}" asiento ='{{asientoP.asiento.numero}}' precio ='{{asientoP.precio}}' idasiento={{asientoP.id}}>
+                                    <p class="flow-text"><b>{{asientoP.asiento.numero | nonep}}</b></p>
+                                    <p class="center">
+                                        <span class="center">{{asientoP.precio | nonep}}</span>
+                                    </p>
+                                </div>
+                        {% else %}  
+                            <div class="col s{{anchoColumna}} columnacarro {{asientoP.estado}}" asiento ='{{asientoP.asiento.numero}}' precio ='{{asientoP.precio}}' idasiento={{asientoP.id}}>
+                                <a href="/viaje/programa/asiento/edit/?fromCityName=Tarapoto%20%28Todos%29&fromCityId=195648&toCityName=Lima%20%28Todos%29&toCityId=195105&onward=20-Jan-2022&pk_asiento={{asientoP.id}}&srcCountry=PER&destCountry=PER&opId=0&busType=Any">
+                                    <p class="flow-text"><b>{{asientoP.asiento.numero | nonep}}</b></p>
+                                    <p class="center">
+                                        <span class="center">{{asientoP.precio | nonep}}</span>
+                                    </p>
+                                </a>
+                            </div> 
+                        {% endif %}
+                    {% endif %}                            
+                {% endfor %}
+
+                {% for asientoP in asientoProgramado %}
+                           
+                           {% if asientoP.asiento.codigoMatrix == 11 %}
+                                <div class="row filacarro">
+                                <div class="col s{{anchoColumna}} columnacarro {{asientoP.estado}}" asiento ='{{asientoP.asiento.numero}}' precio ='{{asientoP.precio}}' idasiento={{asientoP.id}}>
+                                    <p class="flow-text"><b>{{asientoP.asiento.numero | nonep}}</b></p>
+                                    <p class="center">
+                                    <span class="center">{{asientoP.precio | nonep}}</span>
+                                </p>
+                                    
+                                </div> 
+                            {% else %}
+                                {% if asientoP.asiento.saltofila %}
+                                    </div>
+                                    <div class="row filacarro">
+                                        <div class="col s{{anchoColumna}} columnacarro {{asientoP.estado}}" asiento ='{{asientoP.asiento.numero}}' precio ='{{asientoP.precio}}' idasiento={{asientoP.id}}>
+                                            <a href="/viaje/programa/asiento/edit/?fromCityName=Tarapoto%20%28Todos%29&fromCityId=195648&toCityName=Lima%20%28Todos%29&toCityId=195105&onward=20-Jan-2022&pk_asiento={{asientoP.id}}&srcCountry=PER&destCountry=PER&opId=0&busType=Any">
+                                            <p class="flow-text"><b>{{asientoP.asiento.numero | nonep}}</b></p>
+                                            <p class="center">
+                                                <span class="center">{{asientoP.precio | nonep}}</span>
+                                            </p>
+                                            </a>
+                                        </div>
+                                {% else %}  
+                                    <div class="col s{{anchoColumna}} columnacarro {{asientoP.estado}}" asiento ='{{asientoP.asiento.numero}}' precio ='{{asientoP.precio}}' idasiento={{asientoP.id}}>
+                                        <a href="/viaje/programa/asiento/edit/?fromCityName=Tarapoto%20%28Todos%29&fromCityId=195648&toCityName=Lima%20%28Todos%29&toCityId=195105&onward=20-Jan-2022&pk_asiento={{asientoP.id}}&srcCountry=PER&destCountry=PER&opId=0&busType=Any">
+                                        <p class="flow-text"><b>{{asientoP.asiento.numero | nonep}}</b></p>
+                                        <p class="center">
+                                            <span class="center">{{asientoP.precio | nonep}}</span>
+                                        </p>
+                                        </a>
+                                    </div> 
+                                {% endif %}
+                           {% endif %}                            
+                        {% endfor %}
+            </div>            
+        </div>
+        <div class="card-content " style="padding-bottom: 10px; margin-top: 30px;">
+            <span class="card-title color-primary-text">Leyenda de colores</span> 
+            <div class="row">
+                <div class="col s2 libre columnacarro" >Libre</div>
+                <div class="col s2 vendido columnacarro">Vendido</div>
+                <div class="col s2 reservado columnacarro">Reservado</div>
+                <div class="col s2 cortesia columnacarro">Cortesía</div>
+                </div>
+        </div>
+        
+        <div class="card-action">
+            <a href="{% url 'viaje:programa-list' %}"> < Atras</a>
+        </div> 
+        </div>
+    </div>
+    </div>
+
+</div>
+
+</div>
+
+
+{% endblock content %}
+
+{% block js %}
+
+    <script>
+        var cond = true
+        
+        $(document).ready(function(){        
+           
+            $('select').formSelect();
+            $('#id_pasajero').removeAttr("required");
+            $('.pasadiso').empty();
+
+            $('.columnacarro11212').click(function(){
+
+                let asiento = $(this).attr('asiento');
+                let precio = $(this).attr('precio')
+                let idasiento = $(this).attr('idasiento')
+
+                preciotxt = precio.split(',')
+                precioNumber=preciotxt[0]+"."+preciotxt[1]
+
+                $("#{{boleto.precio.auto_id}}").val(parseFloat(precioNumber))
+
+                $('#id_idasiento').val(idasiento)
+
+                $("#{{boleto.numAsiento.auto_id}}").val(asiento)
+                
+            })
+        }); 
+        
+        function precioAsiento(asiento,precio){
+
+            $('#{{boleto.numAsiento.auto_id}}').val(asiento)
+            $('._asiento').html("Asiento: <b>"+asiento+"</b")
+              
+        }
+
+    </script>
+
+    {% if messages %}
+    {% for m in messages %}
+        <script>
+            visibleAlert(
+                title="",
+                text="{{m}}",
+                icon="{{m.tags}}"        
+            )
+        </script>
+    {% endfor %}
+    {% endif %}
+
+
+
+
+</script>
+{% endblock js %}
+
+
+<!-- https://www.youtube.com/watch?v=wRNzGxbeuX8-->

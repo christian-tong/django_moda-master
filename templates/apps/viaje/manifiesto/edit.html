@@ -1,0 +1,228 @@
+{% extends "layouts/base-demo.html" %}
+{% load my_templatetag %}
+
+{% block title %} Register {% endblock %} 
+
+<!-- Plugins CSS goes HERE  -->
+{% block css %}
+<style>
+
+.masOpcionVisible{        
+        display: none;
+    }
+    input:required {
+  background-color: yellow;
+
+}
+.input-field {
+    position: relative;
+    margin-top: 0.8rem;
+    margin-bottom: 0rem; 
+}
+.card .card-content {
+    padding: 0px 20px 0px 20px; 
+}
+
+.estetica{
+    font-size: 3rem !important;
+    height: 3rem !important;
+    background-color: #78909c  !important;
+    color: #ffffff  !important;
+    border-radius: 20px !important;
+    margin-top: 5px !important;
+    padding-left: 10px !important;
+}
+
+
+</style>    
+{% endblock css %}
+
+{% block breadcrumb %}
+    <div class="nav-content px5 red lighten-1">
+    <a href="" class="breadcrumb">Home</a>
+    <a href="#" class="breadcrumb">Viaje</a>
+    <a href="#" class="breadcrumb">Manifiesto</a>
+    <a href="#" class="breadcrumb">Nuevo</a>
+    </div>
+{% endblock breadcrumb %}
+
+{% block content %}
+
+{% if form.errors %}
+    {% for m in form.errors %}
+    {{m}}        
+    {% endfor %}  
+{% endif %}
+
+<form method="POST">
+    {% csrf_token %}
+        
+    <input type="hidden" name="programacionViaje" value="{{viajeProgramado.id}}">
+    <input type="hidden" name="idrutas" value="{{idrutasdestino}}" >
+    
+<div class="row" >    
+    <div class="col s12 m12 l6">
+        <div class="row">
+        <div class="col s12 m12 l12">         
+            <div class="card">
+                <div class="card-content white-text">
+                    <span class="card-title red-text">Manifiesto de Pasajeros: N°. 00{{manifiesto.numDocumento}}</span>
+                    <div class="row">
+                        <div class="input-field col s12 m12 l12">
+                            {{form.printRutaOrigen}}
+                            {{form.printRutaOrigen.label_tag}}
+                            {{form.printRutaOrigen.errors}} 
+                        </div>
+                        <div class="input-field col s12 m12 l12">
+                            {{form.printRutaFinal}}
+                            {{form.printRutaFinal.label_tag}}
+                            {{form.printRutaFinal.errors}} 
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="input-field col s12 m12 l12">
+                            {{form.direccion}}
+                            {{form.direccion.label_tag}}
+                            {{form.direccion.errors}} 
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="input-field col s12 m12 l6">
+                            {{form.fechaViaje}}
+                            {{form.fechaViaje.label_tag}}
+                            {{form.fechaViaje.errors}} 
+                        </div>
+                        <div class="input-field col s12 m12 l6">
+                            {{form.vehiculo}}
+                            {{form.vehiculo.label_tag}}
+                            {{form.vehiculo.errors}} 
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="input-field col s12 m12 l6">
+                            {{form.piloto}}
+                            {{form.piloto.label_tag}}
+                            {{form.piloto.errors}} 
+                        </div>
+                        <div class="input-field col s12 m12 l6">
+                            {{form.copiloto}}
+                            {{form.copiloto.label_tag}}
+                            {{form.copiloto.errors}} 
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="input-field col s12 m12 l12">
+                            {{form.modalidaServicio}}
+                            {{form.modalidaServicio.label_tag}}
+                            {{form.modalidaServicio.errors}} 
+                        </div>
+                    </div>
+
+                </div>
+                <div class="card-action">                    
+                    <a href="#" class="btn-small color-secundary">Cancelar</a>                
+                    <button class="btn-small waves-effect waves-light color-primary" type="submit" name="action">Actualizar
+                        <i class="material-icons right">assignment</i>
+                    </button>                     
+                                  
+                    
+                </div>
+            </div>
+        </div>
+        </div>
+    </div>
+
+    <div class="col s12 m12 l6">
+        <div class="row" >
+            <div class="card yellow lighten-5">
+                <div class="card-content white-text">
+                  <span class="card-title color-primary-text">Pasajeros en sala</span> 
+                  <table id="table_idf" class="highlight responsive-table">
+                    <thead class="red-text">
+                      <tr>
+                        <th>N°</th>
+                        <th>APELLIDOS Y NOMBRES</th>
+                        <th>N° DE DOCUMENTO</th>
+                        <th>N° ASIENTO</th>
+                        <th>EN SALA?</th>
+                      </tr>
+                    </thead>
+                
+                    <tbody class="black-text">
+                      {% for pasajero in embarques %}
+                      <tr>
+                        <td>{{forloop.counter}}</td>
+                        <td>{{pasajero.pasajero | capfirst }}</td>
+                        <td>{{pasajero.pasajero.numDoc}}</td>
+                        <td>{{pasajero.numAsiento}}</td>
+                        <td>{{pasajero.enSala | estadosino}}</td>
+                      </tr>
+                      {% endfor %}
+                    </tbody>
+                </table>
+                
+                <div class="card-action">
+                      <!-- Dropdown Trigger -->
+                    <a class='dropdown-trigger btn-small green accent-2' href='#' data-target='dropdown1'>
+                        <i class="material-icons right">local_printshop</i>
+                        Imprimir
+                    </a>
+
+                    <!-- Dropdown Structure -->
+                    <ul id='dropdown1' class='dropdown-content'>
+                        <li><a target="_blank" href="/viaje/manifiesto/print/?fromCityName=Tarapoto%20%28Todos%29&fromCityId=195648&toCityName=Lima%20%28Todos%29&toCityId=195105&onward=20-Jan-2022&idproruta={{manifiesto.programacionViaje.id}}&&srcCountry=PER&destCountry=PER&opId=0&busType=Any">
+                            Todos
+                            </a>
+                        </li>
+                        <li class="divider" tabindex="-1"></li>
+                        <li><a target="_blank" href="/viaje/manifiesto/print/?fromCityName=Tarapoto%20%28Todos%29&fromCityId=195648&toCityName=Lima%20%28Todos%29&toCityId=195105&onward=20-Jan-2022&idproruta={{manifiesto.programacionViaje.id}}&sala=True&srcCountry=PER&destCountry=PER&opId=0&busType=Any">
+                            Si, en sala</a></li>
+                        <li class="divider" tabindex="-1"></li>
+                        <li><a target="_blank" href="/viaje/manifiesto/print/?fromCityName=Tarapoto%20%28Todos%29&fromCityId=195648&toCityName=Lima%20%28Todos%29&toCityId=195105&onward=20-Jan-2022&idproruta={{manifiesto.programacionViaje.id}}&sala=False&srcCountry=PER&destCountry=PER&opId=0&busType=Any">
+                            No, en sala</a></li>
+                    </ul>
+                </div> 
+              </div>
+            </div>         
+        </div>
+
+
+</div>
+
+</form>
+{% endblock content %}
+
+{% block js %}
+
+    <script>
+        let count = 0    
+        $(document).ready(function(){       
+            var select = $('select').formSelect();
+
+            $('#id_printRutaFinal').on('change', function() {
+                var idrutas =  M.FormSelect.getInstance(this)               
+                $('input[name=idrutas]').val(idrutas.getSelectedValues())
+            });
+        });         
+    </script>
+
+    {% if messages %}
+    {% for m in messages %}
+        <script>
+            visibleAlert(
+                title="",
+                text="{{m}}",
+                icon="{{m.tags}}"        
+            )
+        </script>
+    {% endfor %}
+    {% endif %}
+
+
+
+
+</script>
+{% endblock js %}
+
+
+<!-- https://www.youtube.com/watch?v=wRNzGxbeuX8-->

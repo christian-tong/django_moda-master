@@ -1,0 +1,20 @@
+{% extends "layouts/base-demo.html" %}
+ {% block content %}  
+  <div class="container"> 
+  <form action="#" method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    <div class="file-field input-field">
+      <div class="btn">
+        <span>File</span>
+        <input type="file" name="xlsfile">
+      </div>
+      <div class="file-path-wrapper">
+        <input class="file-path validate" type="text">
+      </div>
+    </div>
+    <button type="submit">Subir</button>  
+  </form>
+
+</div> 
+
+ {% endblock %}  

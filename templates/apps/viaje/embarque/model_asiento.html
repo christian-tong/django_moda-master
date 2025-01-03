@@ -1,0 +1,112 @@
+{% load my_templatetag %}
+<style>
+    .carro{
+    border: solid 3px #d50000;
+    padding-left: 20px;
+    border-radius: 20px;
+}
+.columnacarro{
+    margin-right: 5px;
+    margin-bottom: 1px;
+}
+
+/* estados de asiento */
+.pasadiso{
+    background-color: #fffde7;
+    width: 8% !important;
+}
+
+.cortesia{
+    background-color: #ff5722;
+}
+
+.vendido{
+    background-color: #ffd600 ;
+}
+
+.libre{
+    background-color: #69f0ae ;
+    cursor: pointer;
+}
+
+.reservado{
+    background-color: #1e88e5 ;
+}
+</style>
+<div class="card yellow lighten-5">
+    <div class="card-content white-text">
+        <span class="card-title color-primary-text">Escoger Asiento</span> 
+        <div class="section z-depth-3 carro" >          
+            
+            {% for asientoP in asientoProgramado %}
+                
+                {% if asientoP.asiento.codigoMatrix == 11 %}
+                    <div class="row filacarro">
+                    <div class="col s{{anchoColumna}} columnacarro {{asientoP.estado}}" asiento ='{{asientoP.asiento.numero}}' precio ='{{asientoP.precio}}' idasiento={{asientoP.id}}>
+                        <p class="flow-text"><b>{{asientoP.asiento.numero | nonep}}</b></p>
+                        <p class="center">
+                        <span class="center">{{asientoP.precio | nonep}}</span>
+                    </p>
+                        
+                    </div> 
+                {% else %}
+                    {% if asientoP.asiento.saltofila %}
+                        </div>
+                        <div class="row filacarro">
+                            <div class="col s{{anchoColumna}} columnacarro {{asientoP.estado}}" asiento ='{{asientoP.asiento.numero}}' precio ='{{asientoP.precio}}' idasiento={{asientoP.id}}>
+                                <p class="flow-text"><b>{{asientoP.asiento.numero | nonep}}</b></p>
+                                <p class="center">
+                                    <span class="center">{{asientoP.precio | nonep}}</span>
+                                </p>
+                            </div>
+                    {% else %}  
+                        <div class="col s{{anchoColumna}} columnacarro {{asientoP.estado}}" asiento ='{{asientoP.asiento.numero}}' precio ='{{asientoP.precio}}' idasiento={{asientoP.id}}>
+                            <p class="flow-text"><b>{{asientoP.asiento.numero | nonep}}</b></p>
+                            <p class="center">
+                                <span class="center">{{asientoP.precio | nonep}}</span>
+                            </p>
+                        </div> 
+                    {% endif %}
+                {% endif %}                            
+            {% endfor %}
+        </div>            
+        </div>
+        <div class="card-content " style="padding-bottom: 10px; margin-top: 30px;">
+            <span class="card-title color-primary-text">Leyenda de colores</span> 
+            <div class="row">
+                <div class="col s2 libre columnacarro" >Libre</div>
+                <div class="col s2 vendido columnacarro">Vendido</div>
+                <div class="col s2 reservado columnacarro">Reservado</div>
+                <div class="col s2 cortesia columnacarro">Cortesía</div>
+                </div>
+        </div>
+    </div>
+    </div>
+
+    {% if messages %}
+    {% for m in messages %}
+        <script>
+            visibleAlert(
+                title="",
+                text="{{m}}",
+                icon="{{m.tags}}"        
+            )
+        </script>
+    {% endfor %}
+    {% endif %}
+
+    <script>
+        $('.pasadiso').empty();
+
+        $('.libre').click(function(){
+
+            let asiento = $(this).attr('asiento');
+            let idasiento = $(this).attr('idasiento')
+
+            $('#id_idasiento').val(idasiento)
+            $("#id_numAsiento").val(asiento)
+
+            $("#btn-send").removeClass("disabled");
+            
+        });
+    </script>

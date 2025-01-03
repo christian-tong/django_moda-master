@@ -1,0 +1,239 @@
+{% extends "layouts/base-demo.html" %}
+{% load my_templatetag %}
+
+{% block title %} Register {% endblock %} 
+
+<!-- Plugins CSS goes HERE  -->
+{% block css %}
+<style>
+
+.masOpcionVisible{        
+        display: none;
+    }
+    input:required {
+  background-color: yellow;
+
+}
+.input-field {
+    position: relative;
+    margin-top: 0.8rem;
+    margin-bottom: 0rem; 
+}
+.card .card-content {
+    padding: 0px 20px 0px 20px; 
+}
+
+
+
+</style>    
+{% endblock css %}
+
+{% block breadcrumb %}
+    <div class="nav-content px5 red lighten-1">
+    <a href="#" class="breadcrumb">Home</a>
+    <a href="#" class="breadcrumb">Envios</a>
+    <a href="#" class="breadcrumb">Liquidación</a>
+    <a href="#" class="breadcrumb">Liquidación</a>
+    </div>
+{% endblock breadcrumb %}
+
+{% block content %}
+
+{% if liquidacion.errors %}
+    {% for m in liquidacion.errors %}
+    {{m}}        
+    {% endfor %}  
+{% endif %}
+
+<div class="container">
+    
+        <div class="card">
+            <form method="POST">
+                {% csrf_token %}
+            <div class="card-content white-text">
+                <div class="row">
+                    <span class="card-title red-text col s6">Liquidación de envios N°. 00{{correlativo}}</span>
+                    {% if not liquidacion_recp%}
+                    <button class="btn-small waves-effect waves-light color-primary right" type="submit" name="action">Actualizar
+                        <i class="material-icons right">assignment</i>
+                    </button>
+                    {% endif %}
+                </div>
+            <div class="row">
+                <div class="input-field col s12 m12 l6">
+                    {{liquidacion.agenciaOrigen}}
+                    {{liquidacion.agenciaOrigen.label_tag}}
+                    {{liquidacion.agenciaOrigen.errors}}                        
+                </div>
+                <div class="input-field col s12 m12 l6">
+                    {{liquidacion.agenciaDestino}}
+                    {{liquidacion.agenciaDestino.label_tag}}
+                    {{liquidacion.agenciaDestino.errors}} 
+                </div>
+            </div>
+            <div class="row">
+                <div class="input-field col s12 m12 l6">
+                    {{liquidacion.conductor}}
+                    {{liquidacion.conductor.label_tag}}
+                    {{liquidacion.conductor.errors}}                        
+                </div>
+                <div class="input-field col s12 m12 l6">
+                    {{liquidacion.vehiculo}}
+                    {{liquidacion.vehiculo.label_tag}}
+                    {{liquidacion.vehiculo.errors}} 
+                </div>
+            </div>
+
+
+            </div>
+            <div class="card-action">                    
+                <a href="{% url 'envio:liquidacion-list' %}" class="btn-small color-secundary">
+                    <i class="material-icons right">close</i>
+                    Cancelar
+                </a>
+                
+                {% if liquidacion_recp%}
+                <a target="_blank" href="/envio/liquidacion/print/?fromCityName=Tarapoto%20%28Todos%29&fromCityId=195648&toCityName=Lima%20%28Todos%29&toCityId=195105&onward=20-Jan-2022&li_pk={{liquidacion_pk}}&srcCountry=PER&destCountry=PER&opId=0&busType=Any" class="btn-small color-primary">
+                    <i class="material-icons right">print</i>
+                    Imprimir
+                </a>
+                &nbsp;&nbsp; 
+                    <span class="green white-text">La liquidación ya fue finalizada por: {{liquidacion_recp}}</span>
+                
+                {% else %}                
+                    
+                <a href="/envio/liquidacion/finalizar/?fromCityName=Tarapoto%20%28Todos%29&fromCityId=195648&toCityName=Lima%20%28Todos%29&toCityId=195105&onward=20-Jan-2022&li_pk={{liquidacion_pk}}&srcCountry=PER&destCountry=PER&opId=0&busType=Any" class="btn-small green accent-2">
+                    <i class="material-icons right">vertical_align_center</i>
+                    Finalizar
+                </a>
+                <a href="/envio/liquidacion/add/encomienda/?fromCityName=Tarapoto%20%28Todos%29&fromCityId=195648&toCityName=Lima%20%28Todos%29&toCityId=195105&onward=20-Jan-2022&li_pk={{liquidacion_pk}}&srcCountry=PER&destCountry=PER&opId=0&busType=Any" class="btn-small light-blue accent-2">
+                    <i class="material-icons right">vertical_align_bottom</i>
+                    Agregar
+                </a>
+                {% endif %}
+                
+                 
+                
+            </div>
+            </form>
+            
+            {% if entity %}                         
+                <form method="POST" action="/envio/liquidacion/sacar/encomienda/?fromCityName=Tarapoto%20%28Todos%29&fromCityId=195648&toCityName=Lima%20%28Todos%29&toCityId=195105&onward=20-Jan-2022&li_pk={{liquidacion_pk}}&srcCountry=PER&destCountry=PER&opId=0&busType=Any">
+                    {% csrf_token %}
+                    <div class="card-content">
+                        <table id="table_idf" class="highlight responsive-table">
+                            <thead>
+                            <tr>
+                                    <th>Item</th>
+                                    <th>Fecha</th>
+                                    <th>Numero</th>
+                                    <th>Remite</th>
+                                    <th>Consignado</th>
+                                    <th>Encomienda</th>
+                                    <th>Destino</th>
+                                    {% if not liquidacion_recp%}
+                                    <th>
+                                        <button class="btn-small waves-effect waves-light orange darken-2" type="submit" name="action">SACAR
+                                            <i class="material-icons right">vertical_align_top</i>
+                                        </button>
+                                    </th>
+                                    {%endif%}
+                            </tr>
+                            </thead>
+                        
+                            <tbody>
+                            {% for encomienda in entity %}
+                            <tr>
+                                <td>{{forloop.counter}}</td>
+                                <td>{{encomienda.venta.create | date:'d/m/Y'}}</td>
+                                <td>{{encomienda.numDocumento }}</td>
+                                <td>{{encomienda.remite}}</td>
+                                <td>{{encomienda.consignado}}</td>
+                                <td>
+                                    
+                                    {% for enc in encomienda.venta.detallemov_set.all %}
+                                        <p><span>Cant. {{enc.cantidad}}</span><br> Det. {{enc}}</p>
+                                    {% endfor %}                                
+                                    
+                                </td>
+                                <td>{{encomienda.agenciaDestino}}</td>
+                                {% if not liquidacion_recp%}
+                                <td>
+                                    <p>
+                                        <label>
+                                        <input type="checkbox" name="_selected_action" class="action-select" value="{{encomienda.id}}"/>
+                                        <span></span>
+                                        </label>
+                                    </p>
+                                </td>
+                                {% endif%}
+                                
+                            </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </form>
+            {% endif %}
+        </div>
+    
+</div>
+{% endblock content %}
+
+{% block js %}
+
+    <script>
+        var cond = true
+        
+        $(document).ready(function(){        
+           
+            $('select').formSelect();
+            $('#id_pasajero').removeAttr("required");
+
+            $('.libre').click(function(){
+
+                let asiento = $(this).attr('asiento');
+                let precio = $(this).attr('precio')
+                let idasiento = $(this).attr('idasiento')
+
+                preciotxt = precio.split(',')
+                precioNumber=preciotxt[0]+"."+preciotxt[1]
+
+                $("#{{boleto.precio.auto_id}}").val(parseFloat(precioNumber))
+
+                $('#id_idasiento').val(idasiento)
+
+                $("#{{boleto.numAsiento.auto_id}}").val(asiento)
+                
+            })
+        }); 
+        
+        function precioAsiento(asiento,precio){
+
+            $('#{{boleto.numAsiento.auto_id}}').val(asiento)
+            $('._asiento').html("Asiento: <b>"+asiento+"</b")
+              
+        }
+
+    </script>
+
+    {% if messages %}
+    {% for m in messages %}
+        <script>
+            visibleAlert(
+                title="Correcto!!",
+                text="{{m}}",
+                icon="{{m.tags}}"        
+            )
+        </script>
+    {% endfor %}
+    {% endif %}
+
+
+
+
+</script>
+{% endblock js %}
+
+
+<!-- https://www.youtube.com/watch?v=wRNzGxbeuX8-->

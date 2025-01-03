@@ -1,0 +1,116 @@
+{% extends "layouts/base-demo.html" %}
+{% load my_templatetag %}
+
+{% block title %} Listar {% endblock %} 
+
+{% block css %}
+<style>
+    td{
+      padding: 3px 5px !important;
+    }
+  .contenedor{
+    padding: 20px;;
+  }
+
+</style>
+
+{% endblock css %}
+
+{% block breadcrumb %}
+<div class="nav-content px5 red lighten-1">
+  <a href="#!" class="breadcrumb">Home</a>
+  <a href="{% url 'persona:list' %}" class="breadcrumb">Usuario</a>
+  <a href="#!" class="breadcrumb">Lista</a>
+</div>
+{% endblock breadcrumb %}
+
+
+{% block content %}
+
+<div class="row valign-wrapper">
+    <div class="input-field col s12 m12 l6 block">
+      <div class="row">
+        <div class="col s8">
+          
+          {% if q %}
+          <input id="search" placeholder="Search" name="search" value="{{q}}">
+          {% else %}
+          <input id="search" placeholder="Search" name="search" value="">
+          {% endif %}
+                  
+          
+        </div>
+        <div class="col s4">
+          <a id="btn-search" class="btn color-primary" href="{% url 'persona:list'  %}"><i class="material-icons left">search</i>Buscar</a>
+        </div>
+      </div>
+    
+    </div>
+  
+    <div class="input-field col s12 m12 l6">
+      <div class="right">
+      <a  class="btn color-primary" href="{% url 'sistema:user-add'  %}"><i class="material-icons left">add</i>Nuevo Usuario</a>
+    </div>
+    </div>
+  
+</div>
+<div class="divider"></div>
+
+<table id="table_idf" class="highlight responsive-table">
+    <thead>
+      <tr>
+          <th>Item</th>
+          <th>Nombres</th>
+          <th>Usuario</th>
+          <th>Últ. Acc. Sistema</th>
+          <th>Contraseña</th>
+          <th>Roles/Agencias</th>
+          <th>Permisos</th>
+          <th>Activo</th>
+          <th>Acción</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      {% for user in entity %}
+      <tr>
+        <td>{{user.counter}}</td>
+        <td>{{user.persona.denominacion | capfirst }}</td>
+        <td>{{user.username}}</td>
+        <td>{{user.last_login }}</td>
+        <td><a href="">Cambiar</a></td>
+        <td><a href="">Roles/Agencia<br>(1/1)</a></td>
+        <td><a href="">Permisos<br>(1)</a></td>
+        <td>{{user.is_active | estadosino}}</td>
+        <td>          
+            <a href="#" class="collection-item"><i class="material-icons left">edit</i></a>
+            <!-- <a href="#!" class="collection-item "><i class="material-icons left color-primary-text">delete</i></a>--> 
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  <div class="container center">
+    {% include 'includes/paginator.html' %}
+  </div>
+
+  {% endblock content %}
+
+  
+  {% block js %}
+
+      {% if messages %}
+      {% for m in messages %}
+          <script>
+              visibleAlert(
+                  title="Información",
+                  text="{{m}}",
+                  icon="{{m.tags}}"        
+              )
+          </script>
+      {% endfor %}
+      {% endif %}
+
+
+  {% endblock js %}
+      

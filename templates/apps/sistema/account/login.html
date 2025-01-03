@@ -1,0 +1,104 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <!-- Tell the browser to be responsive to screen width -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="apple-touch-icon" sizes="76x76" href="/static/assets/img/apple-icon.png">
+    <link rel="icon" type="image/png" href="/static/assets/img/favicon.png">
+    
+    <meta name="keywords"
+          content="Moda Tours moda tours pasajes turismo">
+    <meta name="description"
+          content=" ">
+
+    <meta name="robots" content="noindex,nofollow">
+
+    <title>
+        Moda Tours | Login
+    </title>
+    <!--Import Google Icon Font-->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+
+</head>
+
+<body >
+<div class="container">
+
+    
+    <div id="login-page" class="row" style="padding-top: 8%;">
+        <div class="col s12 m6 l5 offset-l4 z-depth-3 card-panel" style="border: 1px solid red;">
+          <form class="login-form" method="POST">
+              {% csrf_token %}
+            
+            <div class="row center-align">
+                <div class="red">
+                  <img id="logo" src=" {% static 'img/logo-oficial.svg' %}" alt="Girl in a jacket" width="200" height="100">
+                </div>
+                <p class="red-text">Bienvenido al sistema</p>
+            </div>
+            <div class="divider red"></div>
+            <div class="row">
+              <div class="input-field col s12">
+                <i class="material-icons prefix">mail_outline</i>
+                {{login.username}}
+                {{login.username.label_tag}}
+                {{login.username.errors}}
+              </div>
+            </div>
+            <div class="row">
+              <div class="input-field col s12">
+                <i class="material-icons prefix">lock_outline</i>
+                {{login.password}}
+                {{login.password.label_tag}}
+                {{login.password.errors}}
+              </div>
+            </div>
+            <div class="row">          
+              <div class="input-field col s12 m12 l12  login-text">
+                  <input type="checkbox" id="remember-me" />
+                  <label for="remember-me">Recordar</label>
+              </div>
+            </div>
+            <div class="row">
+              <div class="input-field col s12">
+                <button class="btn red col s12" type="submit" name="action">Ingresar
+                    <i class="material-icons right">send</i>
+                </button> 
+              </div>
+            </div>
+            <!-- <div class="row">
+              <div class="input-field col s6 m6 l6">
+                <p class="margin medium-small"><a href="#">Register Now!</a></p>
+              </div>
+              <div class="input-field col s6 m6 l6">
+                  <p class="margin right-align medium-small"><a href="#">Forgot password?</a></p>
+              </div>          
+            </div> -->
+    
+          </form>
+        </div>
+      </div>
+
+    </div>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    {% if messages %}
+      {% for m in messages %}
+        <script>
+            Swal.fire({
+              "title":"",
+              "text":"{{m}}",
+              "icon":"{{m.tags}}" 
+            })
+        </script>
+      {% endfor %}
+    {% endif %}
+
+</body>
+</html>

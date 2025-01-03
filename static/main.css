@@ -1,0 +1,87 @@
+header, main, footer {
+    padding-left: 302px;
+    padding-right: 5px;
+  }
+
+  @media only screen and (max-width : 992px) {
+    header, main, footer {
+      padding-left: 0;
+    }
+  }
+
+  body {
+    display: flex;
+    min-height: 100vh;
+    flex-direction: column;
+  }
+
+  main {
+    flex: 1 0 auto;
+  }
+  .nav-content{
+      padding-left: 1em;
+  }
+
+  .collapsible-header:hover {
+    background-color:#ffd600 !important ;
+ }
+ .sidenav li.active {
+  background-color: #f44336 !important;
+}
+
+ /* color de formulario  */
+ /* label color */
+ .input-field label {
+  color: #000;
+}
+/* label focus color */
+.input-field input:focus + label  {
+  color: #d50000 !important;
+}
+/* select color */
+.dropdown-content li>span {
+  color: #d50000 !important;
+}
+.dropdown-content li>a {
+  color: #d50000 !important;
+}
+/* label underline focus color */
+.input-field input:focus {
+  border-bottom: 1px solid #d50000 !important;
+  box-shadow: 0 1px 0 0 #d50000 !important;
+}
+/* valid color */
+.input-field input[type=text].valid {
+  border-bottom: 1px solid #000;
+  box-shadow: 0 1px 0 0 #000;
+}
+/* invalid color */
+.input-field input[type=text].invalid {
+  border-bottom: 1px solid #000;
+  box-shadow: 0 1px 0 0 #000;
+}
+/* icon prefix focus color */
+.input-field .prefix.active {
+  color: #000;
+}
+/* fin de color de formulario  */
+
+.color-primary{
+background-color: #d50000 !important;
+}
+.color-secundary{
+  background-color: darkgrey !important;
+}
+
+.errorlist{
+  color: #d50000 !important;
+}
+
+.color-primary-text{
+  color: #d50000 !important;
+  }
+
+  .row {
+    margin-bottom: 0px !important;
+  }
+

@@ -1,0 +1,80 @@
+{% extends "layouts/base-demo.html" %}
+
+{% block title %} Liquidacion Finalizar {% endblock %} 
+
+<!-- Plugins CSS goes HERE  -->
+{% block css %}
+
+{% endblock css %}
+
+{% block breadcrumb %}
+    <div class="nav-content px5 red lighten-1">
+    <a href="#" class="breadcrumb">Home</a>
+    <a href="#" class="breadcrumb">Envios</a>
+    <a href="#" class="breadcrumb">Liquidación</a>
+    <a href="#" class="breadcrumb">Finalizar</a>
+    </div>
+{% endblock breadcrumb %}
+
+{% block content %}
+
+{% if liquidacion.errors %}
+    {% for m in liquidacion.errors %}
+    {{m}}        
+    {% endfor %}  
+{% endif %}
+
+<div class="container">
+    <form method="POST">
+    {% csrf_token %}
+        <div class="card">
+            <div class="card-content white-text">
+                <span class="card-title red-text">¿Finalizar el proceso de liquidación?</span>
+                <div class="row">
+                    <div class="col s12 ">
+                        <div class="collection">
+                            <a href="#!" class="collection-item">Agencia Origen<span class="badge" data-badge-caption="">{{liquidacion.agenciaOrigen}}</span></a>
+                            <a href="#!" class="collection-item">Agencia Destino<span class="badge" data-badge-caption="">{{liquidacion.agenciaDestino}}</span></a>
+                            <a href="#!" class="collection-item">Conductor<span class="badge" data-badge-caption="">{{liquidacion.conductor}}</span></a>
+                            <a href="#!" class="collection-item">Placa del Vehículo<span class="badge" data-badge-caption="">{{liquidacion.vehiculo}}</span></a>
+                        </div>
+                      </div>
+                </div>
+
+            </div>
+            <div class="card-action">                    
+                <a href="/envio/liquidacion/edit/?fromCityName=Tarapoto%20%28Todos%29&fromCityId=195648&toCityName=Lima%20%28Todos%29&toCityId=195105&onward=20-Jan-2022&li_pk={{liquidacion_pk}}&srcCountry=PER&destCountry=PER&opId=0&busType=Any" class="btn color-secundary">Cancelar</a>                
+
+                <button class="btn waves-effect waves-light color-primary" type="submit" name="action">Finalizar
+                        <i class="material-icons right">assignment</i>
+                </button> 
+            </div>
+        </div>
+    </form>
+</div>
+{% endblock content %}
+
+{% block js %}
+
+
+
+    {% if messages %}
+    {% for m in messages %}
+        <script>
+            visibleAlert(
+                title="Correcto!!",
+                text="{{m}}",
+                icon="{{m.tags}}"        
+            )
+        </script>
+    {% endfor %}
+    {% endif %}
+
+
+
+
+</script>
+{% endblock js %}
+
+
+<!-- https://www.youtube.com/watch?v=wRNzGxbeuX8-->

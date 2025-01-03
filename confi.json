@@ -1,0 +1,34 @@
+{
+    "local" : {
+        "default": {
+            "ENGINE": "django.db.backends.mysql",
+            "NAME": "modatours",
+            "USER": "root",
+            "PASSWORD": "root",
+            "HOST": "localhost",
+            "PORT": "3306"
+        }
+    },    
+    "namecheap":{
+        "default": {
+        "ENGINE": "django.db.backends.mysql",
+        "NAME": "odonacmt_moda",
+        "USER": "odonacmt_admin",
+        "PASSWORD": "RUgP,6u@Y33e",
+        "HOST": "localhost",
+        "PORT": "3306"
+        }
+    },
+
+    "contabo":{
+        "default": {
+            "ENGINE": "django.db.backends.mysql",
+            "NAME": "db_modatours",
+            "USER": "root",
+            "PASSWORD": "",
+            "HOST": "localhost",
+            "PORT": "3306"
+        }
+    },
+    "SECRET_KEY" :"django-insecure-j!2)#j@@$tevji62uicsg)r%_pb!@7lk_06f*%j4e=5+ov0bc#"
+}

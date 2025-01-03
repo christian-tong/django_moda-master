@@ -1,0 +1,153 @@
+{% extends "layouts/base-demo.html" %}
+{% load my_templatetag %}
+
+{% block title %} Register {% endblock %} 
+
+<!-- Plugins CSS goes HERE  -->
+{% block css %}
+<style>
+
+.masOpcionVisible{        
+        display: none;
+    }
+    input:required {
+  background-color: yellow;
+
+}
+.input-field {
+    position: relative;
+    margin-top: 0.8rem;
+    margin-bottom: 0rem; 
+}
+.card .card-content {
+    padding: 0px 20px 0px 20px; 
+}
+
+
+
+</style>    
+{% endblock css %}
+
+{% block breadcrumb %}
+    <div class="nav-content px5 red lighten-1">
+    <a href="#" class="breadcrumb">Home</a>
+    <a href="#" class="breadcrumb">Envios</a>
+    <a href="#" class="breadcrumb">Liquidación</a>
+    <a href="#" class="breadcrumb">Nuevo</a>
+    </div>
+{% endblock breadcrumb %}
+
+{% block content %}
+
+{% if liquidacion.errors %}
+    {% for m in liquidacion.errors %}
+    {{m}}        
+    {% endfor %}  
+{% endif %}
+
+<div class="container">
+    <form method="POST">
+    {% csrf_token %}
+        <div class="card">
+            <div class="card-content white-text">
+            <span class="card-title red-text">Liquidación de envios N°. 00{{correlativo}}</span>
+
+            <div class="row">
+                <div class="input-field col s12 m12 l6">
+                    {{liquidacion.agenciaOrigen}}
+                    {{liquidacion.agenciaOrigen.label_tag}}
+                    {{liquidacion.agenciaOrigen.errors}}                        
+                </div>
+                <div class="input-field col s12 m12 l6">
+                    {{liquidacion.agenciaDestino}}
+                    {{liquidacion.agenciaDestino.label_tag}}
+                    {{liquidacion.agenciaDestino.errors}} 
+                </div>
+            </div>
+            <div class="row">
+                <div class="input-field col s12 m12 l6">
+                    {{liquidacion.conductor}}
+                    {{liquidacion.conductor.label_tag}}
+                    {{liquidacion.conductor.errors}}                        
+                </div>
+                <div class="input-field col s12 m12 l6">
+                    {{liquidacion.vehiculo}}
+                    {{liquidacion.vehiculo.label_tag}}
+                    {{liquidacion.vehiculo.errors}} 
+                </div>
+            </div>
+
+
+            </div>
+            <div class="card-action">                    
+                <a href="#" class="btn color-secundary">Cancelar</a>
+
+                
+                <button class="btn waves-effect waves-light color-primary" type="submit" name="action">Generar
+                        <i class="material-icons right">assignment</i>
+                </button> 
+                
+            </div>
+
+        </div>
+    </form>
+</div>
+{% endblock content %}
+
+{% block js %}
+
+    <script>
+        var cond = true
+        
+        $(document).ready(function(){        
+           
+            $('select').formSelect();
+            $('#id_pasajero').removeAttr("required");
+
+            $('.libre').click(function(){
+
+                let asiento = $(this).attr('asiento');
+                let precio = $(this).attr('precio')
+                let idasiento = $(this).attr('idasiento')
+
+                preciotxt = precio.split(',')
+                precioNumber=preciotxt[0]+"."+preciotxt[1]
+
+                $("#{{boleto.precio.auto_id}}").val(parseFloat(precioNumber))
+
+                $('#id_idasiento').val(idasiento)
+
+                $("#{{boleto.numAsiento.auto_id}}").val(asiento)
+                
+            })
+        }); 
+        
+        function precioAsiento(asiento,precio){
+
+            $('#{{boleto.numAsiento.auto_id}}').val(asiento)
+            $('._asiento').html("Asiento: <b>"+asiento+"</b")
+              
+        }
+
+    </script>
+
+    {% if messages %}
+    {% for m in messages %}
+        <script>
+            visibleAlert(
+                title="Correcto!!",
+                text="{{m}}",
+                icon="{{m.tags}}"        
+            )
+        </script>
+    {% endfor %}
+    {% endif %}
+
+
+
+
+</script>
+{% endblock js %}
+
+
+<!-- https://www.youtube.com/watch?v=wRNzGxbeuX8-->

@@ -1,0 +1,181 @@
+{% extends "layouts/base-demo.html" %}
+{% load my_templatetag %}
+
+{% block title %} Register {% endblock %} 
+
+<!-- Plugins CSS goes HERE  -->
+{% block css %}
+<style>
+
+.masOpcionVisible{        
+        display: none;
+    }
+    input:required {
+  background-color: yellow;
+
+}
+.input-field {
+    position: relative;
+    margin-top: 0.8rem;
+    margin-bottom: 0rem; 
+}
+.card .card-content {
+    padding: 0px 20px 0px 20px; 
+}
+
+
+
+</style>    
+{% endblock css %}
+
+{% block breadcrumb %}
+    <div class="nav-content px5 red lighten-1">
+    <a href="#" class="breadcrumb">Home</a>
+    <a href="#" class="breadcrumb">Envios</a>
+    <a href="#" class="breadcrumb">Liquidación</a>
+    <a href="#" class="breadcrumb">Agregar Encomienda</a>
+    </div>
+{% endblock breadcrumb %}
+
+{% block content %}
+
+{% if liquidacion.errors %}
+    {% for m in liquidacion.errors %}
+    {{m}}        
+    {% endfor %}  
+{% endif %}
+
+
+    <form method="POST">
+    {% csrf_token %}
+        <div class="card">
+            <div class="card-content white-text">
+            <span class="card-title red-text">Encomiendas para ser enviadas</span>
+
+            </div>
+            <div class="card-action">                    
+                <a href="/envio/liquidacion/edit/?fromCityName=Tarapoto%20%28Todos%29&fromCityId=195648&toCityName=Lima%20%28Todos%29&toCityId=195105&onward=20-Jan-2022&li_pk={{liquidacion_pk}}&srcCountry=PER&destCountry=PER&opId=0&busType=Any" class="btn color-secundary">Cancelar</a>                
+                
+                {% if entity %}
+
+                <button class="btn waves-effect waves-light color-primary" type="submit" name="action">Agregar
+                        <i class="material-icons right">assignment</i>
+                </button>  
+                {% endif %}
+            </div>
+            <div class="card-content">                
+                {% if entity %}                  
+                    <table id="table_idf" class="highlight responsive-table">
+                        <thead>
+                        <tr>
+                                <th>Item</th>
+                                <th>Fecha</th>
+                                <th>Numero</th>
+                                <th>Remite</th>
+                                <th>Consignado</th>
+                                <th>Encomienda</th>
+                                <th>Destino</th>
+                                <th>
+                                    <p>
+                                        <label>
+                                            <input type="checkbox" name="all"/>
+                                            <span>Todo</span>
+                                        </label>
+                                    </p>
+                                </th>
+                        </tr>
+                        </thead>
+                    
+                        <tbody>
+                        {% for encomienda in entity %}
+                        <tr>
+                            <td>{{forloop.counter}}</td>
+                            <td>{{encomienda.venta.create | date:'d/m/Y' }}</td>
+                            <td>{{encomienda.numDocumento }}</td>
+                            <td>{{encomienda.remite}}</td>
+                            <td>{{encomienda.consignado}}</td>
+                            <td>                                
+                                {% for enc in encomienda.venta.detallemov_set.all %}
+                                    <p><span>Cant. {{enc.cantidad}}</span><br> Det. {{enc}}</p>
+                                {% endfor %}                                
+                            </td>
+                            <td>{{encomienda.agenciaDestino}}</td>
+                            <td>
+                                <p>
+                                    <label>
+                                    <input type="checkbox" name="_selected_action" class="action-select" value="{{encomienda.id}}"/>
+                                    <span></span>
+                                    </label>
+                                </p>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                {% else %}
+                <p class="red-text yellow lighten-4 center-align">¡ No hay encomiendas en esa ruta..!</p>
+                {% endif %}
+                
+            </div>
+        </div>
+    </form>
+
+{% endblock content %}
+
+{% block js %}
+
+    <script>
+        var cond = true
+        
+        $(document).ready(function(){        
+           
+            $('select').formSelect();
+            $('#id_pasajero').removeAttr("required");
+
+            $('.libre').click(function(){
+
+                let asiento = $(this).attr('asiento');
+                let precio = $(this).attr('precio')
+                let idasiento = $(this).attr('idasiento')
+
+                preciotxt = precio.split(',')
+                precioNumber=preciotxt[0]+"."+preciotxt[1]
+
+                $("#{{boleto.precio.auto_id}}").val(parseFloat(precioNumber))
+
+                $('#id_idasiento').val(idasiento)
+
+                $("#{{boleto.numAsiento.auto_id}}").val(asiento)
+                
+            })
+        }); 
+        
+        function precioAsiento(asiento,precio){
+
+            $('#{{boleto.numAsiento.auto_id}}').val(asiento)
+            $('._asiento').html("Asiento: <b>"+asiento+"</b")
+              
+        }
+
+    </script>
+
+    {% if messages %}
+    {% for m in messages %}
+        <script>
+            visibleAlert(
+                title="Correcto!!",
+                text="{{m}}",
+                icon="{{m.tags}}"        
+            )
+        </script>
+    {% endfor %}
+    {% endif %}
+
+
+
+
+</script>
+{% endblock js %}
+
+
+<!-- https://www.youtube.com/watch?v=wRNzGxbeuX8-->

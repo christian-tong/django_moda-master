@@ -1,0 +1,115 @@
+{% extends "layouts/base-demo.html" %}
+
+{% block title %} Nuevo Programa {% endblock %} 
+
+<!-- Plugins CSS goes HERE  -->
+{% block css %}
+{% endblock css %}
+
+{% block breadcrumb %}
+<div class="nav-content px5 red lighten-1">
+  <a href="#!" class="breadcrumb">Home</a>
+  <a href="#!" class="breadcrumb">Viaje</a>
+  <a href="#!" class="breadcrumb">Programación</a>
+  <a href="#!" class="breadcrumb">Edit</a>
+</div>
+{% endblock breadcrumb %}
+
+{% block content %}
+<div class="container">        
+    <form method="POST" enctype="multipart/form-data" class="section77">
+        {% csrf_token %}
+        <div class="card">
+        <div class="card-content white-text">
+            <span class="card-title color-primary-text">Editar Programación de Viaje</span>
+            
+            <div class="row">
+                <div class="input-field col s12 m12 l6">
+                    {{programa.rutaOrigen}}
+                    {{programa.rutaOrigen.label_tag}}
+                    {{programa.rutaOrigen.errors}}                    
+                    
+                </div>
+                <div class="input-field col s12 m12 l6">
+                    {{programa.rutaDestino}}
+                    {{programa.rutaDestino.label_tag}}
+                    {{programa.rutaDestino.errors}} 
+                    
+                </div>
+            </div>
+            <div class="row">
+                <div class="input-field col s12 m12 l5">
+                    {{programa.piloto}}
+                    {{programa.piloto.label_tag}}
+                </div>
+                <div class="input-field col s12 m12 l5">
+                    {{programa.copiloto}}
+                    {{programa.copiloto.label_tag}}
+                </div>
+                <div class="input-field col s12 m12 l2">
+                    {{programa.vehiculo}}
+                    {{programa.vehiculo.label_tag}}
+                </div>
+            </div>
+            <div class="row">                
+                <div class="input-field col s12 m12 l4">
+                    {{programa.fechaViaje}}
+                    {{programa.fechaViaje.label_tag}}
+                </div>
+                <div class="input-field col s12 m12 l4">
+                    {{programa.horaViaje}}
+                    {{programa.horaViaje.label_tag}}
+                </div>
+                
+                <div class="input-field col s12 m12 l4">
+                    {{programa.precio}}
+                    {{programa.precio.label_tag}}
+                </div>
+            </div>
+
+        </div>
+        <div class="card-action">                    
+            <a href="#" class="btn color-secundary">Cancelar</a>
+            <button class="btn waves-effect waves-light color-primary" type="submit" name="action">Actualizar
+                <i class="material-icons right">send</i>
+            </button>
+            <a href="/viaje/programa/asiento/list/?fromCityName=Tarapoto%20%28Todos%29&fromCityId=195648&toCityName=Lima%20%28Todos%29&toCityId=195105&onward=20-Jan-2022&idproruta={{idproruta}}&srcCountry=PER&destCountry=PER&opId=0&busType=Any" class="btn color-secundary">
+                <i class="material-icons right">airline_seat_recline_normal</i>
+                Editar Asientos</a>
+        </div>
+        </div>
+    </form>
+
+
+</div>
+
+{% endblock content %}
+
+{% block js %}
+
+    <script>
+        
+        $(document).ready(function(){          
+
+            $('select').formSelect();
+
+            $('#id_tipoDoc').removeAttr("required");
+
+
+        });  
+    </script>
+
+    {% if messages %}
+    {% for m in messages %}
+        <script>
+            visibleAlert(
+                title="Correcto!!",
+                text="{{m}}",
+                icon="{{m.tags}}"        
+            )
+        </script>
+    {% endfor %}
+    {% endif %}
+
+{% endblock js %}
+

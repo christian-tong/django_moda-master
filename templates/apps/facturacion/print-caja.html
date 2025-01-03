@@ -1,0 +1,187 @@
+{% extends "layouts/base-demo.html" %}
+{% load static %}
+{% load my_templatetag %}
+
+{% block title %} Register {% endblock %} 
+{% block css %}
+    <style >
+        
+
+        .ticket{
+            font-size: 12px;
+            font-family: "arial", serif;
+            color: black ;
+        }
+        
+        td,
+        th,
+        tr,
+        table {
+            border-top: 1px solid black;
+            border-collapse: collapse;
+            font-size: 12px;
+        }
+        
+        td.producto,
+        th.producto {
+            width: 150;
+            max-width: 150;
+        }
+        
+        td.cantidad,
+        th.cantidad {
+            width: 40;
+            max-width: 40px;
+            word-break: break-all;
+        }
+        
+        td.importe,
+        th.importe {
+            width: 30;
+            max-width: 40px;
+            word-break: break-all;
+        }
+        td.pu,
+        th.pu {
+            width: 30px;
+            max-width: 40px;
+            word-break: break-all;
+        }
+        
+        .centrado {
+            text-align: center;
+            align-content: center;
+        }
+        
+        .ticket,.contenet-cut {
+            width: 250px;
+            max-width: 250px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        img#logo {
+            max-width: inherit;
+            width: inherit;
+        }
+
+        p{
+            margin: 0px !important;
+            font-size: 12px;
+        }
+        .huella {
+            border: solid 1px;
+            height: 7em;
+            width: 8em;
+            margin-left: 28%;
+            margin-bottom: 2em;
+        }
+        .contenet-cut{
+            border-bottom: dashed  red 1px;
+            margin-bottom: 1em;
+        }
+        .waves-effect{
+            margin: 5px ;
+        }
+        @page { 
+            size: 80mm 220mm !important; /* width height en pulgadas */ 
+            margin: 0;
+         }
+
+        @media print {
+            .oculto-impresion,
+            .oculto-impresion * {
+                display: none !important;
+            }
+            html, body { 
+                width: 80mm;
+                min-height: 0;
+                color: #000000 !important;
+                font-size: 12px;
+                font-family: "arial", serif;
+            }
+        }
+        
+        </style>
+
+{% endblock css %}
+
+{% block breadcrumb %}
+    <div class="nav-content px5 red lighten-1 oculto-impresion">
+    <a href="#" class="breadcrumb">Home</a>
+    <a href="#" class="breadcrumb">Facturación</a>
+    <a href="#" class="breadcrumb">Envios</a>
+    <a href="#" class="breadcrumb">Print</a>
+    </div>
+{% endblock breadcrumb %}
+
+{% block content %}
+
+    <div class="container h-100">
+    <div class="row  h-100">
+        <div class="col-sm-8 ">
+            <div class="cardx shadowx">
+                <div class="card-bodyx row">           
+                    <div class="ticket factura col s12" id="doc1">
+                        {% include 'apps/facturacion/documento.html' %}
+                    </div>
+                    <div class="oculto-impresion center col s2">
+                        <a class="waves-effect blue btn-small" onclick=Print_modal("lado1")><i class="material-icons left">subdirectory_arrow_left</i>Print</a>
+                        <a class="waves-effect green btn-small" onclick=Print_modal('lado2')><i class="material-icons right">subdirectory_arrow_right</i>Print</a>
+                        
+                        {% ifequal tipomovi "encomiendaSalida"  %}
+                            <a class="waves-effect red btn-small" href="{% url 'envio:encomienda-print-a5' idencomienda %}" target="_blank"><i class="material-icons right">print</i>Print A5</a>     
+                        {% endifequal %}
+                    </div>
+                    <!-- <div class="contenet-cut"><i class="material-icons">content_cut</i></div> -->
+                    <div class="ticket guia col s12 " id="doc2">                           
+                        
+                        {% ifequal tipomovi "encomiendaSalida"  %}
+                            {% include 'apps/facturacion/guia.html' %}
+                        {% else %}
+                            {% include 'apps/facturacion/embarque.html' %}
+                        {% endifequal %}                            
+                       
+                    </div>   
+                               
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+{% endblock content %}
+
+{% block js %}
+
+    <script>
+        Print_modal =function(lado){
+            document.getElementById("doc1").classList.remove("oculto-impresion")
+            document.getElementById("doc2").classList.remove("oculto-impresion")
+           
+            if(lado === "lado1"){
+                document.getElementById("doc2").classList.toggle("oculto-impresion")
+            }
+            else{
+                document.getElementById("doc1").classList.toggle("oculto-impresion")
+            }
+
+                    console.log("printer" +lado)
+                    window.print();
+           
+            };
+    </script>
+
+{% if messages %}
+    {% for m in messages %}
+        <script>
+            visibleAlert(
+                title="",
+                text="{{m}}",
+                icon="{{m.tags}}"        
+            )
+        </script>
+    {% endfor %}
+     
+ {% endif %}
+     
+{% endblock js %}

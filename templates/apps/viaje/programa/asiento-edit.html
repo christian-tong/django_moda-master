@@ -1,0 +1,92 @@
+{% extends "layouts/base-demo.html" %}
+
+{% block title %} Nuevo Programa {% endblock %} 
+
+<!-- Plugins CSS goes HERE  -->
+{% block css %}
+{% endblock css %}
+
+{% block breadcrumb %}
+<div class="nav-content px5 red lighten-1">
+  <a href="#!" class="breadcrumb">Home</a>
+  <a href="#!" class="breadcrumb">Viaje</a>
+  <a href="#!" class="breadcrumb">Programación</a>
+  <a href="#!" class="breadcrumb">Asiento</a>
+  <a href="#!" class="breadcrumb">Editar</a>
+</div>
+{% endblock breadcrumb %}
+
+{% block content %}
+
+{% if form_prog_asiento.errors %}
+    {% for m in form_prog_asiento.errors %}
+    {{m}}        
+    {% endfor %}  
+{% endif %}
+
+<div class="container">        
+    <form method="POST" enctype="multipart/form-data" class="section77">
+        {% csrf_token %}
+        <div class="card">
+        <div class="card-content white-text">
+            <span class="card-title color-primary-text">Editar asiento N° {{asiento.asiento.numero}} del Vehiculo de placa: {{asiento.asiento.vehiculo}}</span>
+            
+            <div class="row">
+                <div class="input-field col s12 m12 l6">
+                    {{form_prog_asiento.estado}}
+                    {{form_prog_asiento.estado.label_tag}}
+                    {{form_prog_asiento.estado.errors}}                    
+                    
+                </div>
+                <div class="input-field col s12 m12 l6">
+                    {{form_prog_asiento.precio}}
+                    {{form_prog_asiento.precio.label_tag}}
+                    {{form_prog_asiento.precio.errors}} 
+                    
+                </div>
+            </div>
+
+
+        </div>
+        <div class="card-action">                    
+            <a href="/viaje/programa/asiento/list/?fromCityName=Tarapoto%20%28Todos%29&fromCityId=195648&toCityName=Lima%20%28Todos%29&toCityId=195105&onward=20-Jan-2022&idproruta={{asiento.programacionViaje.id}}&srcCountry=PER&destCountry=PER&opId=0&busType=Any" class="btn color-secundary">Cancelar</a>
+            <button class="btn waves-effect waves-light color-primary" type="submit" name="action">Actualizar
+                <i class="material-icons right">send</i>
+            </button>
+        </div>
+        </div>
+    </form>
+
+
+</div>
+
+{% endblock content %}
+
+{% block js %}
+
+    <script>
+        
+        $(document).ready(function(){          
+
+            $('select').formSelect();
+
+            $('#id_tipoDoc').removeAttr("required");
+
+
+        });  
+    </script>
+
+    {% if messages %}
+    {% for m in messages %}
+        <script>
+            visibleAlert(
+                title="Correcto!!",
+                text="{{m}}",
+                icon="{{m.tags}}"        
+            )
+        </script>
+    {% endfor %}
+    {% endif %}
+
+{% endblock js %}
+

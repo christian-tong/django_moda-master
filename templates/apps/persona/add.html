@@ -1,0 +1,226 @@
+{% extends "layouts/base-demo.html" %}
+{% load static %}
+
+{% block title %} Register {% endblock %} 
+
+<!-- Plugins CSS goes HERE  -->
+{% block css %}
+<style>
+    .masOpcionVisible{        
+        display: none;
+    }
+    input:required {
+        background-color: yellow;
+    }
+    .search{
+        cursor:pointer; 
+        cursor: hand
+    }
+    #personajuridica{
+        display: none;
+    }
+</style>
+{% endblock css %}
+
+{% block breadcrumb %}
+<div class="nav-content px5 red lighten-1">
+  <a href="#" class="breadcrumb">Home</a>
+  <a href="{% url 'persona:list' %}" class="breadcrumb">Persona</a>
+  <a href="#!" class="breadcrumb">Nuevo</a>
+</div>
+{% endblock breadcrumb %}
+
+{% block content %}
+
+    {% if form.errors %}
+        {% for m in form.errors %}
+        {{m}}        
+        {% endfor %}  
+    {% endif %}
+    <div class="divider"></div>
+    {% if form_natural.errors %}
+        {% for m in form_natural.errors %}
+        {{m}}        
+        {% endfor %}  
+    {% endif %}
+    <div class="progress hide" id="preload">
+        <div class="indeterminate"></div>
+    </div>
+    <div class="container">
+        <div class="container">            
+        <div class="row">
+            <div class="col s12 m12 l12">
+                
+            <form method="POST" enctype="multipart/form-data" onsubmit="enviarForm(event)">
+                {% csrf_token %}
+              <div class="card">
+                
+                <div class="card-content white-text">
+                    
+                  <span class="card-title red-text">Nueva Persona</span>
+                  
+                  <div class="row">
+                    <div class="input-field col s12 m12 l5">
+                        {{form.tipoDoc}}
+                        {{form.tipoDoc.label_tag}}
+                        {{form.tipoDoc.errors}}                       
+                    </div>
+                    <div class="input-field col s12 m12 l7 " style="padding-right: 1em;">                        
+                        {{form.numDoc}}
+                        {{form.numDoc.label_tag}}                        
+                        <i class="material-icons prefix red-text search">search</i> 
+                        {{form.numDoc.errors}}                    
+                    </div>
+                    
+                </div>
+                <div class="" id="personajuridica">
+                    <div class="row">
+                        <div class="input-field col s12 m12 l12">
+                            {{form.denominacion}}
+                            {{form.denominacion.label_tag}}
+                            {{form.denominacion.errors}}
+                        </div>
+                    </div>
+                </div>
+                <!-- persona natural-->
+                <div class=" " id="personanatural">                
+                    <div class="row">
+                        <div class="input-field col s12 m4 l4">
+                            {{form_natural.nombres}}
+                            {{form_natural.nombres.label_tag}}
+                            {{form_natural.nombres.errors}}
+                        </div>
+                        <div class="input-field col s12 m4 l4">
+                            {{form_natural.apellidoP}}
+                            {{form_natural.apellidoP.label_tag}}
+                            {{form.apellidoP.errors}}
+                        </div>
+                        <div class="input-field col s12 m4 l4">
+                            {{form_natural.apellidoM}}
+                            {{form_natural.apellidoM.label_tag}}
+                            {{form_natural.apellidoM.errors}}
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="input-field col s12 m6 l6">
+                            {{form_natural.fechaNac}}
+                            {{form_natural.fechaNac.label_tag}}
+                            {{form_natural.fechaNac.errors}}
+                        </div>
+                        <div class="input-field col s12 m6 l6">
+                            {{form_natural.genero}}
+                            {{form_natural.genero.label_tag}}
+                            {{form_natural.genero.errors}}
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="file-field input-field">
+                            <div class="btn color-primary">
+                                {{form_natural.foto.label}}
+                                {{form_natural.foto}}
+                            </div>
+                            <div class="file-path-wrapper">
+                            <input class="file-path validate" type="text">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- fin persona natural-->
+                <div class="row">
+                    <div class="input-field col s12 m12 l12">
+                        {{form.direccion}}
+                        {{form.direccion.label_tag}}
+                        {{form.direccion.errors}}
+                    </div>
+                </div>
+
+
+                <a href="#" id='masOpcion'>Ver más Opciones</a>
+                
+                <div class="masOpcionVisible">
+                    <div class="divider"></div>
+                    <div class="row">
+                        <div class="input-field col s12 m12 l4">
+                            {{form.fijo}}
+                            {{form.fijo.label_tag}}
+                        </div>
+                        <div class="input-field col s12 m12 l4">
+                            {{form.movilUno}}
+                            {{form.movilUno.label_tag}}
+                        </div>
+                        <div class="input-field col s12 m12 l4">
+                            {{form.movilDos}}
+                            {{form.movilDos.label_tag}}
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="input-field col s12 m12 l12">
+                            {{form.correo}}
+                            {{form.correo.label_tag}}
+                        </div>
+                    </div>
+
+                </div>
+
+                </div>
+                <div class="card-action">                    
+                    <a href="{% url 'persona:list' %}" class="btn color-secundary">Cancelar</a>
+                    <button class="btn waves-effect waves-light color-primary" id="btn-send" type="submit" name="action">Guardar
+                        <i class="material-icons right">send</i>
+                    </button> 
+                </div>
+              </div>
+            </form>
+            </div>
+          </div>
+
+    </div>
+</div>
+
+{% endblock content %}
+
+{% block js %}
+
+    <script>
+        var cond = true
+        
+        $(document).ready(function(){            
+
+            /*$('select').formSelect({
+                isMultiple:true
+            });*/
+            
+
+            $("#masOpcion").click(function(){
+                
+                if(cond) { $(".masOpcionVisible").css("display", "block"); cond=false}
+                else{  $(".masOpcionVisible").css("display", "none"); cond=true}
+               
+            });
+
+            $('#id_tipoDoc').removeAttr("required");
+            $("input[type='text']").removeAttr("required");
+
+
+        });  
+    </script>
+
+    {% if messages %}
+    {% for m in messages %}
+        <script>
+            visibleAlert(
+                title="Correcto!!",
+                text="{{m}}",
+                icon="{{m.tags}}"        
+            )
+        </script>
+    {% endfor %}
+    {% endif %}
+
+    <script src="{% static 'js/apps/persona/persona.js' %}"></script>
+
+{% endblock js %}
+
+
+<!-- https://www.youtube.com/watch?v=wRNzGxbeuX8-->

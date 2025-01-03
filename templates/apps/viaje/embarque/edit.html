@@ -1,0 +1,146 @@
+{% extends "layouts/base-demo.html" %}
+{% load materializecss%}
+
+{% block title %} Register {% endblock %} 
+
+<!-- Plugins CSS goes HERE  -->
+{% block css %}
+<style>
+    .masOpcionVisible{        
+        display: none;
+    }
+    input:required {
+  background-color: yellow;
+
+}
+</style>
+{% endblock css %}
+
+{% block breadcrumb %}
+<div class="nav-content px5 red lighten-1">
+  <a href="" class="breadcrumb">Home</a>
+  <a href="" class="breadcrumb">viaje</a>
+  <a href="" class="breadcrumb">Embarque</a>
+  <a href="#!" class="breadcrumb">Editar</a>
+</div>
+{% endblock breadcrumb %}
+
+{% block content %}
+
+{% if pasajero.errors %}
+
+{% for m in pasajero.errors %}
+{{m}}
+    
+{% endfor %}
+    
+    
+{% endif %}
+    
+
+  
+    <div class="container">
+        <div class="row">
+            <div class="col s12 m12 l12">
+                
+            <form method="POST" enctype="multipart/form-data" class="section77">
+                {% csrf_token %}
+              <div class="card">
+                <div class="card-content white-text">
+                  <span class="card-title">Edit Embarque</span>
+                  
+                  <div class="row">
+                    <div class="input-field col s12 m12 l5">
+                        {{pasajero.pasajero}}
+                        {{pasajero.pasajero.label_tag}}
+                        {{pasajero.pasajero.errors}} 
+                        
+                        
+                    </div>
+                    <div class="input-field col s12 m12 l7">
+                        {{pasajero.programacionViaje}}
+                        {{pasajero.programacionViaje.label_tag}}
+                        {{pasajero.programacionViaje.errors}} 
+                        
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="input-field col s12 m12 l6">
+                        {{pasajero.numAsiento}}
+                        {{pasajero.numAsiento.label_tag}}
+                    </div>
+                    <div class="input-field col s12 m12 l6">
+                        {{pasajero.precio}}
+                        {{pasajero.precio.label_tag}}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="switch">
+                        {{pasajero.enSala.label_tag}}
+                        &nbsp;&nbsp;&nbsp;
+                        <label>
+                          No
+                          {{pasajero.enSala}}
+                          <span class="lever"></span>
+                          Si
+                        </label>
+                    </div>
+                </div>
+
+
+                </div>
+                <div class="card-action">                    
+                    <a href="{% url 'viaje:embarque-list' %}" class="btn color-secundary">Cancelar</a>
+                    <button class="btn waves-effect waves-light color-primary" type="submit" name="action">Actualizar
+                        <i class="material-icons right">send</i>
+                    </button> 
+                </div>
+              </div>
+            </form>
+            </div>
+          </div>
+
+    </div>
+
+
+{% endblock content %}
+
+{% block js %}
+
+    <script>
+        var cond = true
+        
+        $(document).ready(function(){
+            
+ 
+            $('select').formSelect();
+
+            $("#masOpcion").click(function(){
+                
+                if(cond) { $(".masOpcionVisible").css("display", "block"); cond=false}
+                else{  $(".masOpcionVisible").css("display", "none"); cond=true}
+               
+            });
+
+            $('#id_tipoDoc').removeAttr("required");
+
+
+        });  
+    </script>
+
+    {% if messages %}
+    {% for m in messages %}
+        <script>
+            visibleAlert(
+                title="Correcto!!",
+                text="{{m}}",
+                icon="{{m.tags}}"        
+            )
+        </script>
+    {% endfor %}
+    {% endif %}
+
+{% endblock js %}
+
+
+<!-- https://www.youtube.com/watch?v=wRNzGxbeuX8-->

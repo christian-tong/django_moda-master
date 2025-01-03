@@ -1,0 +1,68 @@
+{% load static %}
+<nav class="nav-extended oculto-impresion">
+    <div class="nav-wrapper  red accent-4">
+        <a href="#" class="brand-logo center yellow-text text-accent-4">
+            <img id="logo" src=" {% static 'img/logo-oficial.svg' %}" alt="Girl in a jacket"  height="80">
+        </a>
+        <!-- Slider-->
+        <a href="#" data-target="slide-out" class="sidenav-trigger show-on-large menu_nav"><i class="material-icons">menu</i></a>
+        <!-- Dropdown -->
+        <a class=" sidenav-trigger dropdown-trigger right" href="#" data-target="dropdown-user1" ><i class="material-icons">view_module</i></a>
+        <ul id="nav-mobile" class="right hide-on-med-and-down"> 
+          <li><a href="#">Bienvenido, {{user.username}}</a></li>
+          <li><a class='dropdown-trigger' href='#' data-target='dropdown-user'><i class="material-icons">person</i></a></li>
+        </ul>
+    </div>
+    <div class="divider yellow "></div>      
+</nav>
+
+<!-- Dropdown Structure web-->
+<ul id='dropdown-user' class='dropdown-content color-primary-text'>
+    <li><a href="#!"><i class="material-icons">view_module</i>Perfil</a></li>
+    
+    {% if not request.session.agencia_uno %}
+    <li class="divider" tabindex="-1"></li>
+    <li><a href=" {% url 'sistema:user-agencia-list' %}"><i class="material-icons">cloud</i>Cambiar Agencía</a></li>
+    {% endif %}        
+    
+    <li class="divider" tabindex="-1"></li>
+    <li><a href=" {% url 'sistema:account-loggout' %}"><i class="material-icons">cloud</i>Salir</a></li>
+</ul>
+
+<!-- Dropdown Structure Movil-->
+<ul id='dropdown-user1' class='dropdown-content color-primary-text'>
+    <li><a href="#!"><i class="material-icons">view_module</i>Perfil</a></li>
+    
+    {% if not request.session.agencia_uno %}
+    <li class="divider" tabindex="-1"></li>
+    <li><a href=" {% url 'sistema:user-agencia-list' %}"><i class="material-icons">cloud</i>Cambiar Agencía</a></li>
+    {% endif %}        
+    
+    <li class="divider" tabindex="-1"></li>
+    <li><a href=" {% url 'sistema:account-loggout' %}"><i class="material-icons">cloud</i>Salir</a></li>
+</ul>
+
+<!-- Slider Structure-->
+<ul id="slide-out" class="sidenav red accent-4">        
+    <li>
+        <div class="user-view">
+        <div class="background"><img src="images/office.jpg"></div>
+        <a href="#"><img src="{% static 'img/user.jpg' %}" alt="" class="circle"></a>
+        <a href="#name"><span class="name yellow-text text-accent-4">{{user.persona}}</span></a>
+        </div>
+    </li>
+    <li><div class="divider yellow "></div></li>
+    <li><h4 class="center-align white-text">{{request.session.agencia_nombre}}</h4></li>
+    <li><div class="divider yellow "></div></li>
+    <li class="menu">     
+        <a class=" collapsible-header waves-effect white-text " href="{% url 'sistema:home-index' %}"><i class="material-icons white-text">home</i>Home</a>
+    </li>
+    <li>
+        <ul class="collapsible">
+            <!-- icono de cargar -->
+        </ul>
+    </li>
+
+    <li class="menu"><div class="divider yellow"></div></li>
+</ul>
+

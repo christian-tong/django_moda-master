@@ -1,0 +1,93 @@
+{% extends "layouts/base-demo.html" %}
+{% load static %}
+
+{% block title %} Register {% endblock %} 
+
+<!-- Plugins CSS goes HERE  -->
+{% block css %}
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+{% endblock css %}
+
+{% block breadcrumb %}
+<div class="nav-content px5 red lighten-1">
+  <a href="#" class="breadcrumb">Home</a>
+  <a href="{% url 'tesoreria:tesoreria-caja-list' %}" class="breadcrumb">Cajas</a>
+  <a href="#!" class="breadcrumb">Nuevo</a>
+</div>
+{% endblock breadcrumb %}
+
+{% block content %}
+
+    {% if form.errors %}
+        {% for m in form.errors %}
+        {{m}}        
+        {% endfor %}  
+    {% endif %}
+    <div class="progress hide" id="preload">
+        <div class="indeterminate"></div>
+    </div>
+    
+    <div class="container">            
+    <div class="row">
+        <div class="col s12 m12 l12">
+            
+        <form method="POST" enctype="multipart/form-data" onsubmit="enviarForm(event)">
+            {% csrf_token %}
+            <div class="card">
+            
+            <div class="card-content white-text">
+                <span class="card-title red-text">Editar Caja</span>
+                <div class="row">
+                    <div class="input-field col s12 m12 l6">
+                        {{form.nombreCaja}}
+                        {{form.nombreCaja.label_tag}}
+                        {{form.nombreCaja.errors}}                       
+                    </div>
+                    <div class="input-field col s12 m12 l6">
+                        {{form.agencia}}
+                        {{form.agencia.label_tag}}
+                        {{form.agencia.errors}}                       
+                    </div>                     
+                </div>
+                <div class="row">
+                    <div class="input-field col s12 m12 l12 ">                        
+                        {{form.cajeros}}
+                        {{form.cajeros.errors}}
+                    </div>                        
+                </div>
+
+            </div>
+            <div class="card-action">                    
+                <a href="{% url 'tesoreria:tesoreria-caja-list' %}" class="btn color-secundary">Cancelar</a>
+                <button class="btn waves-effect waves-light color-primary" id="btn-send" type="submit" name="action">Guardar
+                    <i class="material-icons right">send</i>
+                </button> 
+            </div>
+            </div>
+        </form>
+        </div>
+        </div>
+
+    </div>
+
+
+{% endblock content %}
+
+{% block js %}
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+    <script>        
+        $(document).ready(function() {
+            $('.select').formSelect();
+            $('#id_cajeros').removeAttr("required");
+            $('#id_agencia').removeAttr("required");
+            autocomplete('cajeros','/persona/autocomplite/','Buscar personal...','personal')
+    
+    });
+    </script>
+   
+
+{% endblock js %}
+
+
+<!-- https://www.youtube.com/watch?v=wRNzGxbeuX8-->

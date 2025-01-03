@@ -1,0 +1,158 @@
+{% extends "layouts/base-demo.html" %}
+{% load my_templatetag %}
+
+{% block title %} Encomienda Entrega {% endblock %} 
+
+<!-- Plugins CSS goes HERE  -->
+{% block css %}
+<style>
+     td{
+      padding: 3px 5px !important;
+    }
+    .card .card-content {
+    padding: 0px 20px 0px 20px; 
+}
+</style>
+
+{% endblock css %}
+
+{% block breadcrumb %}
+    <div class="nav-content px5 red lighten-1">
+    <a href="#" class="breadcrumb">Home</a>
+    <a href="#" class="breadcrumb">Envios</a>
+    <a href="#" class="breadcrumb">Encomienda</a>
+    <a href="#" class="breadcrumb">Recepción</a>
+    </div>
+{% endblock breadcrumb %}
+
+{% block content %}
+
+{% if form_clie_recp.errors %}
+    {% for m in form_clie_recp.errors %}
+    {{m}}        
+    {% endfor %}  
+{% endif %}
+
+<div class="container">
+    <form method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+        <div class="card">
+            <div class="card-content white-text">
+                <span class="card-title red-text">Entrega de encomienda. N°. 000{{encomienda.numDocumento}}</span>
+                <div class="row">
+                    <div class="col s12 m6 l6 ">
+                        <div class="collection">
+                            <a href="#!" class="collection-item">Agencia de origen<span class="badge" data-badge-caption="">{{encomienda.agenciaOrigen}}</span></a>
+                            <a href="#!" class="collection-item">Agencia de destino<span class="badge" data-badge-caption="">{{encomienda.agenciaDestino}}</span></a>
+                            <a href="#!" class="collection-item">Fecha de envio<span class="badge" data-badge-caption="">{{encomienda.venta.create}}</span></a>
+                            <a href="#!" class="collection-item">Fecha de llegada<span class="badge" data-badge-caption="">{{encomienda.liquidacion_set.all.first.liquidacionrecepcion.fecha}}</span></a>
+                            <a href="#!" class="collection-item">Remitente<span class="badge" data-badge-caption="">{{encomienda.remite}}</span></a>
+                            <a href="#!" class="collection-item yellow">¿Es Contra entrega?<span class="badge" data-badge-caption="">{{encomienda.esContraEntrega | estadosino}}</span></a>
+                            
+                        </div>
+                      </div>
+                      <div class="col s12 m6 l6 ">
+                        <div class="collection">
+                            <a href="#!" class="collection-item">Consignado<span class="badge" data-badge-caption="">{{encomienda.consignado}}</span></a>
+                            <a href="#!" class="collection-item">Numero documento<span class="badge" data-badge-caption="">{{encomienda.consignado.numDoc}}</span></a>
+                            <a href="#!" class="collection-item">¿Entrega es a domicilio?<span class="badge" data-badge-caption="">{{encomienda.aDomicilio | estadosino}}</span></a>
+                            <a href="#!" class="collection-item">Direccion del domicilio<span class="badge" data-badge-caption="">{{encomienda.domicilio}}</span></a>
+                            <a href="#!" class="collection-item">Precio<span class="badge" data-badge-caption="">{{encomienda.precio}}</span></a>
+                            <a href="#!" class="collection-item">observacion<span class="badge" data-badge-caption="">{{encomienda.observacion}}</span></a>
+                            
+                        </div>
+                      </div>
+                </div>
+                <div class="row">
+                    <div class="input-field col s12 m8 l8">
+                        <table  class="highlight responsive-table red-text" >
+                            <thead>
+                              <tr>
+                                  <th>Item</th>
+                                  <th>Cant.</th>
+                                  <th>Encomienda</th>
+                              </tr>
+                            </thead>                        
+                            <tbody>
+                              {% for encomienda in encomienda.venta.detallemov_set.all %}
+                              <tr>
+                                  <td>{{forloop.counter}}</td>
+                                  <td>{{encomienda.cantidad}}</td>
+                                  <td>{{encomienda.descripcion}}</td>
+                                  
+                              </tr>
+                              {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="col s12 m4 l4">
+                        <div class="row">                        
+                            <div class="input-field">
+                            <i class="material-icons prefix red-text">vpn_key</i>
+                            {{form_clie_recp.clave}}
+                            {{form_clie_recp.clave.label_tag}}
+                            {{form_clie_recp.clave.errors}}
+
+                            </div>
+                            <div class="file-field input-field">
+                                <div class="btn-small color-primary">
+                                    {{form_clie_recp.evidencia.label}}
+                                    {{form_clie_recp.evidencia}}
+                                </div>
+                                <div class="file-path-wrapper">
+                                <input class="file-path validate" type="text">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+            </div>
+            <div class="card-action">                    
+                <a href="{% url 'envio:encomienda-list' %}" class="btn color-secundary">Cancelar</a>             
+                
+                
+                
+                {% ifequal encomienda.estado 'agenciaDestino'  %}
+                    <button class="btn waves-effect waves-light color-primary" type="submit" name="action">Entregar
+                        <i class="material-icons right">local_offer</i>
+                    </button> 
+                {% endifequal %}
+
+                {% ifequal encomienda.estado 'recepcionado'  %}
+                    <p class="red" > La ENCOMIENDA ya fue recepcionada, la fecha {{ encomienda.clienterecepcion.fecha}} </p>                   
+                {% endifequal %}
+                    
+                    
+                
+
+                
+            </div>
+        </div>
+    </form>
+</div>
+{% endblock content %}
+
+{% block js %}
+
+
+
+    {% if messages %}
+    {% for m in messages %}
+        <script>
+            visibleAlert(
+                title="",
+                text="{{m}}",
+                icon="{{m.tags}}"        
+            )
+        </script>
+    {% endfor %}
+    {% endif %}
+
+
+
+
+</script>
+{% endblock js %}
+
+
+<!-- https://www.youtube.com/watch?v=wRNzGxbeuX8-->

@@ -1,0 +1,42 @@
+{% load static %}
+    <img id="logo" src=" {% static 'img/logo-oficial-red.svg' %}" alt="Girl in a jacket" width="200" height="80">
+    <p class="centrado"><b>MODA TOURS S.A.C</b></p>
+    <p class="centrado">
+        {{movimiento.agencia.direccion}} <br>
+        {{movimiento.agencia.ubigeo.ubigeo_completo}}<br>
+        RUC: &nbsp; {{movimiento.agencia.empresa.numDoc}}<br>
+        TELÉFONO: <tel>{{movimiento.agencia.movilUno}}</tel>
+    </p>
+    <br>
+    <p class="centrado"><b>EMBARQUE N°.000{{movimiento.embarque.numDocumento}}</b></p>
+    <div class="divider"></div>
+
+    <p class=""><b>PASAJERO:</b> {{movimiento.embarque.pasajero | upper}}</p>
+    <p class=""><b>N° DOC:</b> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {{movimiento.embarque.pasajero.numDoc}}</p>
+    <p class=""><b>ORIGEN:</b> &nbsp;&nbsp;&nbsp;&nbsp; {{movimiento.embarque.lugar_abordo}}</p>
+    <p class=""><b>DESTINO:</b> &nbsp;&nbsp;&nbsp; {{movimiento.embarque.lugar_bajada}}</p>                   
+    <p><b>N° ASIENTO:</b> &nbsp;&nbsp;&nbsp;&nbsp; {{movimiento.embarque.numAsiento | title}}</p>
+    <p><b>FECHA DE VIAJE:</b> &nbsp; {{movimiento.embarque.programacionViaje.fechaViaje}}</p>
+    <p><b>HORA DE VIAJE:</b> &nbsp;&nbsp;&nbsp; {{movimiento.embarque.hora_abordo}} </p>
+    <p><b>TELÉFONO:</b> &nbsp;&nbsp; {{movimiento.embarque.telefono}}</p>                            
+    
+    <br>
+    <div class="divider"></div>
+    <p><b>F.Emisión</b>:&nbsp; {{movimiento.create | date:'d/m/Y'}} | {{movimiento.create | date:'H:i'}}</p> 
+    <br>
+    <div class=" section">
+        <p class="center"><b>IMPORTANTE:</b></p>
+        <p class="centrado"><b>SE RECOMIENDA ESTAR 1 HORA ANTES DEL VIAJE.<br>
+            EN TODO CASO PERDERÁ SU VIAJE Y NO HAY DEVOLUCIONES DE DINERO.</b>
+        </p>
+    </div>
+
+    <p class="centrado">¡GRACIAS POR SU PREFERENCÍA!</p>
+    <br><br>
+    
+    {% if image_qr is not None %}
+        {{ image_qr|safe }}
+    {% endif %}
+        
+    
+    

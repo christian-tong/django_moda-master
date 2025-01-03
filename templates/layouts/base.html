@@ -1,0 +1,56 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <!-- Tell the browser to be responsive to screen width -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="apple-touch-icon" sizes="76x76" href="/static/assets/img/apple-icon.png">
+    <link rel="icon" type="image/png" href="/static/assets/img/favicon.png">
+    
+    <meta name="keywords"
+          content=" Material Pro lite dashboard bootstrap 4 dashboard template">
+    <meta name="description"
+          content=" inpired from Bootstrap Framework">
+
+    <meta name="robots" content="noindex,nofollow">
+
+    <title>
+        Moda Tours - {% block title %}{% endblock %} | AppSeed
+    </title>
+    <!--Import Google Icon Font-->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    
+    <link rel="stylesheet" href="{% static 'main.css' %}">
+    {% block css %}{% endblock css %}
+
+</head>
+
+<body>
+    <header>     
+        {% include 'includes/navigation.html' %}       
+    </header>
+    <main >
+                {% block content %}{% endblock content %}
+          
+    </main>
+    <footer class="">
+        {% include 'includes/footer.html' %}
+    </footer>  
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+ 
+    <!-- activamos el menu izquierdo sidenav  -->   
+    <script>
+    $('.sidenav').sidenav();
+    </script>
+
+    <!-- Specific Page JS goes HERE  -->
+    {% block js %}{% endblock js %}
+
+</body>
+</html>

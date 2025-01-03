@@ -1,0 +1,177 @@
+{% extends "layouts/base-demo.html" %}
+{% load my_templatetag %}
+
+{% block title %} Register {% endblock %} 
+
+<!-- Plugins CSS goes HERE  -->
+{% block css %}
+<style>
+
+.masOpcionVisible{        
+        display: none;
+    }
+    input:required {
+  background-color: yellow;
+
+}
+.input-field {
+    position: relative;
+    margin-top: 0.8rem;
+    margin-bottom: 0rem; 
+}
+.card .card-content {
+    padding: 0px 20px 0px 20px; 
+}
+
+td{
+      padding: 3px 5px !important;
+    }
+
+  .contenedor{
+    padding: 20px;;
+  }
+
+
+</style>  
+
+{% endblock css %}
+
+{% block breadcrumb %}
+    <div class="nav-content px5 red lighten-1">
+    <a href="#" class="breadcrumb">Home</a>
+    <a href="" class="breadcrumb">Envios</a>
+    <a href="#" class="breadcrumb">Liquidación</a>
+    <a href="#" class="breadcrumb">Agregar Encomienda</a>
+    </div>
+{% endblock breadcrumb %}
+
+{% block content %}
+
+{% if liquidacion.errors %}
+    {% for m in liquidacion.errors %}
+    {{m}}        
+    {% endfor %}  
+{% endif %}
+
+
+   
+        <div class="card">
+            <div class="card-content white-text">
+            <span class="card-title red-text">Lista de liquidaciones</span>
+
+            </div>
+            <div class="card-action"> 
+                <a href="{% url 'envio:liquidacion-add' %}" class="btn waves-effect waves-light color-primary">Nuevo</a>              
+                               
+            </div>
+            <div class="card-content">
+                <table id="table_idf" class="highlight responsive-table">
+                    <thead>
+                      <tr>
+                            <th>ITEM</th>
+                            <th>FECHA</th>
+                            <th>ORIGEN</th>
+                            <th>DESTINO</th>
+                            <th>CONDUCTOR</th>
+                            <th>VEHICULO</th>
+                            <th>ACCIONES
+                            </th>
+                      </tr>
+                    </thead>
+                
+                    <tbody>
+                      {% for liquidacion in entity %}
+                      <tr>
+                        <td>{{forloop.counter}}</td>
+                        <td>{{liquidacion.fecha }}</td>
+                        <td>{{liquidacion.agenciaOrigen }}</td>
+                        <td>{{liquidacion.agenciaDestino }}</td>
+                        <td>{{liquidacion.conductor}}</td>
+                        <td>{{liquidacion.vehiculo}}</td>
+                        <td>                         
+                        </td>
+                        <td> 
+                            
+                            {% if liquidacion.finalizado %}
+                                <a target="_blank" href="/envio/liquidacion/print/?fromCityName=Tarapoto%20%28Todos%29&fromCityId=195648&toCityName=Lima%20%28Todos%29&toCityId=195105&onward=20-Jan-2022&li_pk={{liquidacion.pk}}&srcCountry=PER&destCountry=PER&opId=0&busType=Any" class="collection-item btn-floating btn-small red lighten-1">
+                                    <i class="material-icons right">print</i>
+                                </a>
+                            {% else %}
+                                <a href="/envio/liquidacion/edit/?fromCityName=Tarapoto%20%28Todos%29&fromCityId=195648&toCityName=Lima%20%28Todos%29&toCityId=195105&onward=20-Jan-2022&li_pk={{liquidacion.id}}&srcCountry=PER&destCountry=PER&opId=0&busType=Any" class="collection-item btn-floating btn-small red lighten-1"><i class="material-icons left">arrow_upward</i></a>
+                            {% endif %}
+                                
+                            
+                            &nbsp;<a href="/envio/liquidacion/recepcion/?fromCityName=Tarapoto%20%28Todos%29&fromCityId=195648&toCityName=Lima%20%28Todos%29&toCityId=195105&onward=20-Jan-2022&li_pk={{liquidacion.id}}&srcCountry=PER&destCountry=PER&opId=0&busType=Any" class="collection-item btn-small btn-floating light-blue accent-2"><i class="material-icons left">arrow_downward</i>Descarga</a>
+                            
+                        </td>
+                      </tr>
+                      {% endfor %}
+                    </tbody>
+                </table>
+                
+            </div>
+            
+        </div>
+    <div class="container center">
+      {% include 'includes/paginator.html' %}
+    </div>
+
+{% endblock content %}
+
+{% block js %}
+
+    <script>
+        var cond = true
+        
+        $(document).ready(function(){        
+           
+            $('select').formSelect();
+            $('#id_pasajero').removeAttr("required");
+
+            $('.libre').click(function(){
+
+                let asiento = $(this).attr('asiento');
+                let precio = $(this).attr('precio')
+                let idasiento = $(this).attr('idasiento')
+
+                preciotxt = precio.split(',')
+                precioNumber=preciotxt[0]+"."+preciotxt[1]
+
+                $("#{{boleto.precio.auto_id}}").val(parseFloat(precioNumber))
+
+                $('#id_idasiento').val(idasiento)
+
+                $("#{{boleto.numAsiento.auto_id}}").val(asiento)
+                
+            })
+        }); 
+        
+        function precioAsiento(asiento,precio){
+
+            $('#{{boleto.numAsiento.auto_id}}').val(asiento)
+            $('._asiento').html("Asiento: <b>"+asiento+"</b")
+              
+        }
+
+    </script>
+
+    {% if messages %}
+    {% for m in messages %}
+        <script>
+            visibleAlert(
+                title="Correcto!!",
+                text="{{m}}",
+                icon="{{m.tags}}"        
+            )
+        </script>
+    {% endfor %}
+    {% endif %}
+
+
+
+
+</script>
+{% endblock js %}
+
+
+<!-- https://www.youtube.com/watch?v=wRNzGxbeuX8-->
