@@ -35,9 +35,9 @@ from .forms import (
 from django.db.models import Q
 from desatendidos.correlativoDoc import incrementa
 from desatendidos.htmlPdf import render_to_pdf
-
-from rest_framework import viewsets
+from rest_framework.viewsets import ViewSet
 from .serializers import (
+    AsientosDisponiblesSerializer,
     ProgramacionViajeSerializer,
     ProgramacionAsientoSerializer,
     EmbarqueSerializer,
@@ -45,47 +45,61 @@ from .serializers import (
     ReservarAsientoSerializer,
 )
 
+from rest_framework.exceptions import ValidationError
+
 
 class ProgramacionViajeViewSet(viewsets.ModelViewSet):
     serializer_class = ProgramacionViajeSerializer
 
     def get_queryset(self):
-        # Filtra los viajes cuya fecha sea igual o mayor a la fecha actual
-        today = date.today()
-        return ProgramacionViaje.objects.filter(fechaViaje__gte=today)
+        """
+        Filtra las programaciones de viaje por una fecha exacta pasada como parámetro.
+        Si no se pasa el parámetro, devuelve todas las programaciones.
+        """
+        fecha_param = self.request.query_params.get("fecha", None)
+
+        if fecha_param:
+            try:
+                # Intentar convertir el parámetro a un objeto de tipo date
+                fecha = datetime.strptime(fecha_param, "%Y-%m-%d").date()
+                # Filtrar por fecha exacta
+                return ProgramacionViaje.objects.filter(fechaViaje=fecha)
+            except ValueError:
+                raise ValidationError(
+                    {"fecha": "El formato de la fecha debe ser AAAA-MM-DD."}
+                )
+
+        # Si no se pasa el parámetro 'fecha', devolver todas las programaciones
+        return ProgramacionViaje.objects.all()
+    
+    
 
 
-class ProgramacionAsientoViewSet(viewsets.ViewSet):
-    @action(
-        detail=False,
-        methods=["get"],
-        url_path="disponibles/(?P<programacion_id>[^/.]+)",
-    )
-    def asientos_disponibles(self, request, programacion_id=None):
-        asientos = ProgramacionAsiento.objects.filter(
-            programacionViaje_id=programacion_id, estado="libre"
-        )
-        serializer = ProgramacionAsientoSerializer(asientos, many=True)
-        return Response(serializer.data)
-
-    @action(detail=False, methods=["post"], url_path="reservar")
-    def reservar_asientos(self, request):
-        serializer = ReservarAsientoSerializer(data=request.data)
-        if serializer.is_valid():
-            programacion_id = serializer.validated_data["programacion_viaje_id"]
-            asientos_ids = serializer.validated_data["asientos_ids"]
-
-            # Actualizar estado de los asientos
-            ProgramacionAsiento.objects.filter(
-                programacionViaje_id=programacion_id, asiento_id__in=asientos_ids
-            ).update(estado="reservado")
-
+class ProgramacionAsientoViewSet(ViewSet):
+    @action(detail=True, methods=["get"], url_path="asientos_disponibles")
+    def asientos_disponibles(self, request, pk=None):
+        # Obtener la programación del viaje
+        try:
+            programacion_viaje = ProgramacionViaje.objects.get(pk=pk)
+        except ProgramacionViaje.DoesNotExist:
             return Response(
-                {"message": "Asientos reservados exitosamente."},
-                status=status.HTTP_200_OK,
+                {"error": "Programación de viaje no encontrada"}, status=404
             )
 
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        # Filtrar asientos según el estado
+        libres = ProgramacionAsiento.objects.filter(
+            programacionViaje=programacion_viaje, estado="libre"
+        )
+        vendidos = ProgramacionAsiento.objects.filter(
+            programacionViaje=programacion_viaje, estado="vendido"
+        )
+
+        # Serializar los datos
+        serializer = AsientosDisponiblesSerializer(
+            {"libres": libres, "vendidos": vendidos}
+        )
+
+        return Response(serializer.data, status=200)
 
 
 class EmbarqueViewSet(viewsets.ModelViewSet):

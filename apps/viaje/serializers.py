@@ -14,16 +14,9 @@ class ProgramacionAsientoSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
-class EmbarqueSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Embarque
-        fields = "__all__"
-
-
-class ManifiestoSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Manifiesto
-        fields = "__all__"
+class AsientosDisponiblesSerializer(serializers.Serializer):
+    libres = ProgramacionAsientoSerializer(many=True)
+    vendidos = ProgramacionAsientoSerializer(many=True)
 
 
 class ReservarAsientoSerializer(serializers.Serializer):
@@ -39,7 +32,7 @@ class ReservarAsientoSerializer(serializers.Serializer):
         # Verificar si los asientos están disponibles
         asientos = ProgramacionAsiento.objects.filter(
             programacionViaje_id=programacion_id,
-            asiento_id__in=asientos_ids,
+            id__in=asientos_ids,
             estado="libre",
         )
         if len(asientos) != len(asientos_ids):
@@ -47,3 +40,15 @@ class ReservarAsientoSerializer(serializers.Serializer):
                 "Uno o más asientos no están disponibles."
             )
         return data
+
+
+class EmbarqueSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Embarque
+        fields = "__all__"
+
+
+class ManifiestoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Manifiesto
+        fields = "__all__"

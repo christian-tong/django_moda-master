@@ -1,6 +1,11 @@
-from django.urls import path
+from django.urls import path, include
 from django.contrib.auth.decorators import login_required
+from rest_framework.routers import DefaultRouter
 from .views import (
+    ProgramacionViajeViewSet,
+    ProgramacionAsientoViewSet,
+    EmbarqueViewSet,
+    ManifiestoViewSet,
     embarqueAdd,
     embarqueList,
     embarqueEdit,
@@ -15,16 +20,6 @@ from .views import (
     embarquePrint,
 )
 
-from django.urls import path, include
-from rest_framework.routers import DefaultRouter
-from .views import (
-    ProgramacionViajeViewSet,
-    ProgramacionAsientoViewSet,
-    EmbarqueViewSet,
-    ManifiestoViewSet,
-)
-
-
 app_name = "viaje"
 
 router = DefaultRouter()
@@ -32,9 +27,6 @@ router.register(
     "programaciones", ProgramacionViajeViewSet, basename="programacionviaje"
 )
 router.register("asientos", ProgramacionAsientoViewSet, basename="programacionasiento")
-router.register(
-    "programacion-asientos", ProgramacionAsientoViewSet, basename="programacion-asiento"
-)
 router.register("embarques", EmbarqueViewSet, basename="embarque")
 router.register("manifiestos", ManifiestoViewSet, basename="manifiesto")
 
