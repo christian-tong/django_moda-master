@@ -71,8 +71,6 @@ class ProgramacionViajeViewSet(viewsets.ModelViewSet):
 
         # Si no se pasa el parámetro 'fecha', devolver todas las programaciones
         return ProgramacionViaje.objects.all()
-    
-    
 
 
 class ProgramacionAsientoViewSet(ViewSet):
@@ -100,6 +98,40 @@ class ProgramacionAsientoViewSet(ViewSet):
         )
 
         return Response(serializer.data, status=200)
+
+    @action(detail=False, methods=["post"], url_path="vender_asientos")
+    def vender_asientos(self, request):
+        # Validar la entrada
+        serializer = ReservarAsientoSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        programacion_viaje_id = serializer.validated_data["programacion_viaje_id"]
+        asientos_ids = serializer.validated_data["asientos_ids"]
+
+        # Verificar que la programación de viaje existe
+        try:
+            programacion_viaje = ProgramacionViaje.objects.get(pk=programacion_viaje_id)
+        except ProgramacionViaje.DoesNotExist:
+            return Response(
+                {"error": "Programación de viaje no encontrada"}, status=404
+            )
+
+        # Actualizar los asientos a 'vendido'
+        asientos_actualizados = ProgramacionAsiento.objects.filter(
+            programacionViaje=programacion_viaje,
+            id__in=asientos_ids,
+            estado="libre",  # Asegúrate de que solo actualizas asientos libres
+        ).update(estado="vendido")
+
+        if asientos_actualizados == len(asientos_ids):
+            return Response({"message": "Asientos vendidos exitosamente."}, status=200)
+        else:
+            return Response(
+                {
+                    "error": "No se pudieron vender todos los asientos. Verifica los IDs o el estado de los asientos."
+                },
+                status=400,
+            )
 
 
 class EmbarqueViewSet(viewsets.ModelViewSet):
