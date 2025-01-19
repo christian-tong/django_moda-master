@@ -1,6 +1,8 @@
-from django.urls import path
+from django.urls import include, path
 from django.contrib.auth.decorators import login_required
 from .views import (
+    PersonaJuridicaAPIView,
+    PersonaNaturalAPIView,
     list,
     add,
     edit,
@@ -10,10 +12,25 @@ from .views import (
     PersonaListCreateAPIView,
     PersonaRetrieveUpdateDestroyAPIView,
 )
-
+from rest_framework.routers import DefaultRouter
+from .views import PersonaViewSet
 
 app_name = "persona"
+
+router = DefaultRouter()
+router.register(r"personas", PersonaViewSet)
+
+
 urlpatterns = [
+    path("api/", include(router.urls)),
+    path(
+        "api/persona-natural/", PersonaNaturalAPIView.as_view(), name="persona-natural"
+    ),
+    path(
+        "api/persona-juridica/",
+        PersonaJuridicaAPIView.as_view(),
+        name="persona-juridica",
+    ),
     path("list/", (list), name="list"),
     path("add/", login_required(add), name="add"),
     path("edit/<int:pk>", login_required(edit), name="edit"),
