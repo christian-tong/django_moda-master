@@ -99,15 +99,16 @@ class ProgramacionAsientoViewSet(ViewSet):
 
     @action(detail=False, methods=["post"], url_path="vender_asientos")
     def vender_asientos(self, request):
+        # Validar los datos de entrada
         serializer = ReservarAsientoSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
-        # Extraer datos del request
+        # Extraer los datos validados
         programacion_viaje_id = serializer.validated_data["programacion_viaje_id"]
         asientos_ids = serializer.validated_data["asientos_ids"]
         nro_documento = serializer.validated_data["nro_documento"]
 
-        # Verificar que la programación de viaje existe
+        # Verificar que la programación del viaje existe
         try:
             programacion_viaje = ProgramacionViaje.objects.get(pk=programacion_viaje_id)
         except ProgramacionViaje.DoesNotExist:
@@ -126,9 +127,11 @@ class ProgramacionAsientoViewSet(ViewSet):
                 status=404,
             )
 
-        # Verificar y actualizar los asientos
+        # Inicializar las listas para asientos actualizados y errores
         asientos_actualizados = []
         errores_asientos = []
+
+        # Procesar cada asiento solicitado
         for asiento_id in asientos_ids:
             try:
                 asiento = ProgramacionAsiento.objects.get(
@@ -138,18 +141,18 @@ class ProgramacionAsientoViewSet(ViewSet):
                 asiento.estado = "vendido"
                 asiento.save()
 
-                # Crear el registro en la tabla `Embarque`
+                # Crear el registro en la tabla Embarque con el número de asiento
                 Embarque.objects.create(
                     programacionViaje=programacion_viaje,
                     pasajero=cliente,
-                    numAsiento=asiento,
+                    numAsiento=asiento.asiento.numero,  # Aquí obtenemos el número de asiento
                     precio=asiento.precio,
                 )
                 asientos_actualizados.append(asiento_id)
             except ProgramacionAsiento.DoesNotExist:
                 errores_asientos.append(asiento_id)
 
-        # Generar respuesta según los resultados
+        # Generar la respuesta dependiendo de si hubo errores o no
         if errores_asientos:
             return Response(
                 {
@@ -159,6 +162,7 @@ class ProgramacionAsientoViewSet(ViewSet):
                 },
                 status=400,
             )
+
         return Response({"message": "Asientos vendidos exitosamente."}, status=200)
 
 
