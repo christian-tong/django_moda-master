@@ -40,7 +40,7 @@ class PersonaViewSet(viewsets.ModelViewSet):
     @action(detail=False, methods=["get"], url_path="buscar-por-dni")
     def buscar_por_dni(self, request):
         """
-        Consulta por DNI usando query params.
+        Consulta por DNI usando query params y devuelve el id de la persona.
         """
         dni = request.query_params.get("dni", None)
         if not dni:

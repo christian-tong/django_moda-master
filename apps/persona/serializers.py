@@ -23,18 +23,7 @@ class PersonaJuridicaSerializer(serializers.ModelSerializer):
 class PersonaSerializerAPI(serializers.ModelSerializer):
     class Meta:
         model = Persona
-        fields = [
-            "tipoDoc",
-            "numDoc",
-            "denominacion",
-            "direccion",
-            "fijo",
-            "movilUno",
-            "movilDos",
-            "correo",
-            "activo",
-            "ispersonal",
-        ]
+        fields = "__all__"  # Asegúrate de incluir 'id' si no usas "__all__"
 
 
 class PersonaNaturalSerializerAPI(serializers.ModelSerializer):
