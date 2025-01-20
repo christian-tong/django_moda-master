@@ -19,10 +19,6 @@ from .models import (
     Manifiesto,
     ProgramacionAsiento,
     ProgramacionViaje,
-    ProgramacionViaje,
-    ProgramacionAsiento,
-    Embarque,
-    Manifiesto,
 )
 from .forms import (
     EmbarqueForm,
@@ -39,13 +35,14 @@ from rest_framework.viewsets import ViewSet
 from .serializers import (
     AsientosDisponiblesSerializer,
     ProgramacionViajeSerializer,
-    ProgramacionAsientoSerializer,
     EmbarqueSerializer,
     ManifiestoSerializer,
     ReservarAsientoSerializer,
 )
 
 from rest_framework.exceptions import ValidationError
+
+from rest_framework.views import APIView
 
 
 class ProgramacionViajeViewSet(viewsets.ModelViewSet):
@@ -132,6 +129,49 @@ class ProgramacionAsientoViewSet(ViewSet):
                 },
                 status=400,
             )
+
+
+class ReservarAsientoView(APIView):
+    def post(self, request, *args, **kwargs):
+        serializer = ReservarAsientoSerializer(data=request.data)
+        if serializer.is_valid():
+            programacion_id = serializer.validated_data["programacion_viaje_id"]
+            asientos_ids = serializer.validated_data["asientos_ids"]
+            cliente = serializer.validated_data["cliente_id"]
+
+            # Verificar asientos disponibles antes de actualizar
+            asientos_disponibles = ProgramacionAsiento.objects.filter(
+                programacionViaje_id=programacion_id,
+                id__in=asientos_ids,
+                estado="libre",
+            )
+
+            if asientos_disponibles.count() != len(asientos_ids):
+                return Response(
+                    {"error": "Uno o más asientos no están disponibles."},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
+            # Actualizar el estado de los asientos a 'reservado'
+            ProgramacionAsiento.objects.filter(
+                programacionViaje_id=programacion_id, id__in=asientos_ids
+            ).update(estado="reservado")
+
+            # Crear registros de embarque para el cliente
+            for asiento in asientos_disponibles:
+                Embarque.objects.create(
+                    programacionViaje_id=programacion_id,
+                    pasajero_id=cliente,
+                    numAsiento=asiento.id,
+                    estado="reservado",
+                )
+
+            return Response(
+                {"message": "Asientos reservados con éxito."},
+                status=status.HTTP_200_OK,
+            )
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class EmbarqueViewSet(viewsets.ModelViewSet):

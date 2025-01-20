@@ -1,4 +1,7 @@
 from rest_framework import serializers
+
+from apps.persona.models import Persona
+from django.core.exceptions import ObjectDoesNotExist
 from .models import ProgramacionViaje, ProgramacionAsiento, Embarque, Manifiesto
 
 
@@ -24,21 +27,24 @@ class ReservarAsientoSerializer(serializers.Serializer):
     asientos_ids = serializers.ListField(
         child=serializers.IntegerField(), allow_empty=False
     )
+    cliente_id = serializers.IntegerField()
 
     def validate(self, data):
-        programacion_id = data.get("programacion_viaje_id")
+        # Verificar que los asientos están disponibles
+        programacion_viaje_id = data.get("programacion_viaje_id")
         asientos_ids = data.get("asientos_ids")
 
-        # Verificar si los asientos están disponibles
-        asientos = ProgramacionAsiento.objects.filter(
-            programacionViaje_id=programacion_id,
+        asientos_disponibles = ProgramacionAsiento.objects.filter(
+            programacionViaje_id=programacion_viaje_id,
             id__in=asientos_ids,
             estado="libre",
         )
-        if len(asientos) != len(asientos_ids):
+
+        if asientos_disponibles.count() != len(asientos_ids):
             raise serializers.ValidationError(
                 "Uno o más asientos no están disponibles."
             )
+
         return data
 
 

@@ -6,6 +6,7 @@ from .views import (
     ProgramacionAsientoViewSet,
     EmbarqueViewSet,
     ManifiestoViewSet,
+    ReservarAsientoView,
     embarqueAdd,
     embarqueList,
     embarqueEdit,
@@ -31,6 +32,7 @@ router.register("embarques", EmbarqueViewSet, basename="embarque")
 router.register("manifiestos", ManifiestoViewSet, basename="manifiesto")
 
 urlpatterns = [
+    path("reservar-asiento", ReservarAsientoView.as_view(), name="reservar-asiento"),
     path("embarque/add/", login_required(embarqueAdd), name="embarque-add"),
     path("embarque/list/", login_required(embarqueList), name="embarque-list"),
     path("embarque/edit/", login_required(embarqueEdit), name="embarque-edit"),
