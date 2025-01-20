@@ -106,8 +106,6 @@ class Manifiesto(models.Model):
     def __str__(self):
         return self.numDocumento
 
-
-
 class ManifiestoRutaFinal(models.Model):
     manifiesto = models.ForeignKey(Manifiesto, on_delete=models.CASCADE)
     agencia = models.ForeignKey(Agencia, on_delete=models.CASCADE)

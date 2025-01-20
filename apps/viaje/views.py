@@ -39,6 +39,7 @@ from .serializers import (
     ManifiestoSerializer,
     ReservarAsientoSerializer,
 )
+from apps.persona.models import Persona
 
 from rest_framework.exceptions import ValidationError
 
@@ -98,12 +99,13 @@ class ProgramacionAsientoViewSet(ViewSet):
 
     @action(detail=False, methods=["post"], url_path="vender_asientos")
     def vender_asientos(self, request):
-        # Validar la entrada
         serializer = ReservarAsientoSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
+        # Extraer datos del request
         programacion_viaje_id = serializer.validated_data["programacion_viaje_id"]
         asientos_ids = serializer.validated_data["asientos_ids"]
+        nro_documento = serializer.validated_data["nro_documento"]
 
         # Verificar que la programación de viaje existe
         try:
@@ -113,22 +115,51 @@ class ProgramacionAsientoViewSet(ViewSet):
                 {"error": "Programación de viaje no encontrada"}, status=404
             )
 
-        # Actualizar los asientos a 'vendido'
-        asientos_actualizados = ProgramacionAsiento.objects.filter(
-            programacionViaje=programacion_viaje,
-            id__in=asientos_ids,
-            estado="libre",  # Asegúrate de que solo actualizas asientos libres
-        ).update(estado="vendido")
-
-        if asientos_actualizados == len(asientos_ids):
-            return Response({"message": "Asientos vendidos exitosamente."}, status=200)
-        else:
+        # Buscar al cliente por número de documento
+        try:
+            cliente = Persona.objects.get(numDoc=nro_documento)
+        except Persona.DoesNotExist:
             return Response(
                 {
-                    "error": "No se pudieron vender todos los asientos. Verifica los IDs o el estado de los asientos."
+                    "error": "Cliente no encontrado con el número de documento proporcionado."
+                },
+                status=404,
+            )
+
+        # Verificar y actualizar los asientos
+        asientos_actualizados = []
+        errores_asientos = []
+        for asiento_id in asientos_ids:
+            try:
+                asiento = ProgramacionAsiento.objects.get(
+                    id=asiento_id, programacionViaje=programacion_viaje, estado="libre"
+                )
+                # Cambiar el estado del asiento a "vendido"
+                asiento.estado = "vendido"
+                asiento.save()
+
+                # Crear el registro en la tabla `Embarque`
+                Embarque.objects.create(
+                    programacionViaje=programacion_viaje,
+                    pasajero=cliente,
+                    numAsiento=asiento,
+                    precio=asiento.precio,
+                )
+                asientos_actualizados.append(asiento_id)
+            except ProgramacionAsiento.DoesNotExist:
+                errores_asientos.append(asiento_id)
+
+        # Generar respuesta según los resultados
+        if errores_asientos:
+            return Response(
+                {
+                    "message": "Algunos asientos no se pudieron vender.",
+                    "asientos_no_vendidos": errores_asientos,
+                    "asientos_vendidos": asientos_actualizados,
                 },
                 status=400,
             )
+        return Response({"message": "Asientos vendidos exitosamente."}, status=200)
 
 
 class ReservarAsientoView(APIView):

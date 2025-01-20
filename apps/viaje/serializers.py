@@ -27,7 +27,9 @@ class ReservarAsientoSerializer(serializers.Serializer):
     asientos_ids = serializers.ListField(
         child=serializers.IntegerField(), allow_empty=False
     )
-    cliente_id = serializers.IntegerField()
+    nro_documento = serializers.CharField(
+        max_length=20, required=True
+    )  # Campo adicional
 
     def validate(self, data):
         # Verificar que los asientos están disponibles
