@@ -4,14 +4,26 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('sistema', '0002_alter_menu_options'),
+        ("sistema", "0002_alter_menu_options"),
     ]
 
     operations = [
         migrations.AlterModelOptions(
-            name='menu',
-            options={'permissions': [('tesoreria_menu', 'Can view menu tesoreria'), ('viajes_menu', 'Can view menu Viajes'), ('envios_menu', 'Can view menu envios'), ('facturacion_menu', 'Can view menu Facturacion'), ('reportes_menu', 'Can view menu Reportes'), ('personas_menu', 'Can view menu Personas'), ('empresa_menu', 'Can view menu empresa'), ('sistema_menu', 'Can view menu Sistema')], 'verbose_name': 'Menu', 'verbose_name_plural': 'Menus'},
+            name="menu",
+            options={
+                "permissions": [
+                    ("tesoreria_menu", "Can view menu tesoreria"),
+                    ("viajes_menu", "Can view menu Viajes"),
+                    ("envios_menu", "Can view menu envios"),
+                    ("facturacion_menu", "Can view menu Facturacion"),
+                    ("reportes_menu", "Can view menu Reportes"),
+                    ("personas_menu", "Can view menu Personas"),
+                    ("empresa_menu", "Can view menu empresa"),
+                    ("sistema_menu", "Can view menu Sistema"),
+                ],
+                "verbose_name": "Menu",
+                "verbose_name_plural": "Menus",
+            },
         ),
     ]

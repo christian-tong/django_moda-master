@@ -4,15 +4,23 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('viaje', '0007_alter_programacionasiento_estado'),
+        ("viaje", "0007_alter_programacionasiento_estado"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='programacionasiento',
-            name='estado',
-            field=models.CharField(choices=[('libre', 'Libre'), ('vendido', 'Vendido'), ('reservado', 'Reservado'), ('cortesia', 'Cortesía')], default='libre', max_length=30),
+            model_name="programacionasiento",
+            name="estado",
+            field=models.CharField(
+                choices=[
+                    ("libre", "Libre"),
+                    ("vendido", "Vendido"),
+                    ("reservado", "Reservado"),
+                    ("cortesia", "Cortesía"),
+                ],
+                default="libre",
+                max_length=30,
+            ),
         ),
     ]

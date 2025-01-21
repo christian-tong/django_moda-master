@@ -5,43 +5,98 @@ import django.db.models.deletion
 
 
 class Migration(migrations.Migration):
-
     initial = True
 
     dependencies = [
-        ('empresa', '0001_initial'),
-        ('persona', '0001_initial'),
+        ("empresa", "0001_initial"),
+        ("persona", "0001_initial"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='Movimiento',
+            name="Movimiento",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('create', models.DateTimeField(auto_now_add=True)),
-                ('update', models.DateTimeField(auto_now=True)),
-                ('agencia', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='empresa.agencia')),
-                ('vendedor', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='persona.persona')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("create", models.DateTimeField(auto_now_add=True)),
+                ("update", models.DateTimeField(auto_now=True)),
+                (
+                    "agencia",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="empresa.agencia",
+                    ),
+                ),
+                (
+                    "vendedor",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="persona.persona",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Movimiento',
-                'verbose_name_plural': 'Movimientos',
+                "verbose_name": "Movimiento",
+                "verbose_name_plural": "Movimientos",
             },
         ),
         migrations.CreateModel(
-            name='DetalleMov',
+            name="DetalleMov",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('unidadMedida', models.CharField(choices=[('NIU', 'Unidad'), ('ZZ', 'Servicio')], default='ZZ', max_length=20)),
-                ('cantidad', models.DecimalField(decimal_places=2, default=1, max_digits=5, verbose_name='Cantidad')),
-                ('descripcion', models.TextField()),
-                ('valorUnitario', models.DecimalField(decimal_places=2, max_digits=8)),
-                ('subTotal', models.DecimalField(blank=True, decimal_places=2, max_digits=8, null=True)),
-                ('movimiento', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.PROTECT, to='venta.movimiento')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "unidadMedida",
+                    models.CharField(
+                        choices=[("NIU", "Unidad"), ("ZZ", "Servicio")],
+                        default="ZZ",
+                        max_length=20,
+                    ),
+                ),
+                (
+                    "cantidad",
+                    models.DecimalField(
+                        decimal_places=2,
+                        default=1,
+                        max_digits=5,
+                        verbose_name="Cantidad",
+                    ),
+                ),
+                ("descripcion", models.TextField()),
+                ("valorUnitario", models.DecimalField(decimal_places=2, max_digits=8)),
+                (
+                    "subTotal",
+                    models.DecimalField(
+                        blank=True, decimal_places=2, max_digits=8, null=True
+                    ),
+                ),
+                (
+                    "movimiento",
+                    models.ForeignKey(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.PROTECT,
+                        to="venta.movimiento",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'DetalleMov',
-                'verbose_name_plural': 'DetalleMovs',
+                "verbose_name": "DetalleMov",
+                "verbose_name_plural": "DetalleMovs",
             },
         ),
     ]

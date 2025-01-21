@@ -1,7 +1,5 @@
 from rest_framework import serializers
 
-from apps.persona.models import Persona
-from django.core.exceptions import ObjectDoesNotExist
 from .models import ProgramacionViaje, ProgramacionAsiento, Embarque, Manifiesto
 
 

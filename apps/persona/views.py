@@ -1,4 +1,4 @@
-from datetime import datetime, date
+from datetime import datetime
 import json
 
 from django.conf import settings
@@ -20,8 +20,6 @@ from .serializers import (
     PersonaJuridicaSerializerAPI,
     PersonaNaturalSerializerAPI,
     PersonaSerializer,
-    PersonaNaturalSerializer,
-    PersonaJuridicaSerializer,
     PersonaSerializerAPI,
 )
 from rest_framework import viewsets
@@ -151,7 +149,6 @@ def list(request):
 
     if search:
         try:
-
             data = Persona.objects.filter(
                 Q(denominacion__icontains=search) | Q(numDoc__icontains=search)
             ).distinct()
@@ -243,7 +240,6 @@ def edit(request, pk):
                 per = form.save(commit=False)
 
             if person.tipoDoc.codigo != "6":
-
                 form_natural = PersonaNaturalForm(
                     request.POST, request.FILES, instance=person.personanatural
                 )
@@ -304,10 +300,9 @@ def buscarApiDoc(request):
     if request.method == "POST":
         datos = json.loads(request.body)
         if datos["tipodoc"] == "DNI":
-
             response = requests.get(f"{url_dni}{datos['numdoc']}").json()
             if not response["success"]:
-                url_dni_op2 = f'https://apps.mineco.gob.pe/ventanilla/api/mefconsultapersona/{datos["numdoc"]}/01/'
+                url_dni_op2 = f"https://apps.mineco.gob.pe/ventanilla/api/mefconsultapersona/{datos['numdoc']}/01/"
                 response = requests.get(url_dni_op2).json()
                 response = response["objeto"]
                 if not response:

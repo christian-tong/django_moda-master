@@ -18,7 +18,6 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
-from apps.sistema.views import custom_permission_denied_view
 
 # Swagger
 from drf_yasg import openapi

@@ -6,86 +6,261 @@ import django.db.models.deletion
 
 
 class Migration(migrations.Migration):
-
     initial = True
 
     dependencies = [
-        ('empresa', '0001_initial'),
-        ('persona', '0001_initial'),
-        ('venta', '0001_initial'),
+        ("empresa", "0001_initial"),
+        ("persona", "0001_initial"),
+        ("venta", "0001_initial"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='Encomienda',
+            name="Encomienda",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('numDocumento', models.CharField(blank=True, max_length=8, null=True)),
-                ('esContraEntrega', models.BooleanField(default=False, verbose_name='¿Contra entrega?')),
-                ('aDomicilio', models.BooleanField(default=False, verbose_name='¿A domicilio?')),
-                ('domicilio', models.CharField(blank=True, max_length=200, null=True, verbose_name='Direccion del domicilio')),
-                ('seguridadClave', models.CharField(max_length=4)),
-                ('observacion', models.TextField(blank=True, null=True)),
-                ('estado', models.CharField(blank=True, choices=[('agenciaOrigen', 'Agencia de origen'), ('enCamino', 'Enviado en camino'), ('agenciaDestino', 'Listo para Recoger'), ('recepcionado', 'Entrega Exitosa')], max_length=20, null=True)),
-                ('precio', models.DecimalField(blank=True, decimal_places=2, default=0, max_digits=7, null=True)),
-                ('numeroContacto', models.CharField(blank=True, max_length=50, null=True, verbose_name='Telefono')),
-                ('agenciaDestino', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, related_name='destino_agencia', to='empresa.agencia')),
-                ('agenciaOrigen', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='empresa.agencia')),
-                ('consignado', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, related_name='consignado_persona', to='persona.persona')),
-                ('remite', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, related_name='remite_persona', to='persona.persona')),
-                ('venta', models.OneToOneField(blank=True, null=True, on_delete=django.db.models.deletion.PROTECT, to='venta.movimiento')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("numDocumento", models.CharField(blank=True, max_length=8, null=True)),
+                (
+                    "esContraEntrega",
+                    models.BooleanField(default=False, verbose_name="¿Contra entrega?"),
+                ),
+                (
+                    "aDomicilio",
+                    models.BooleanField(default=False, verbose_name="¿A domicilio?"),
+                ),
+                (
+                    "domicilio",
+                    models.CharField(
+                        blank=True,
+                        max_length=200,
+                        null=True,
+                        verbose_name="Direccion del domicilio",
+                    ),
+                ),
+                ("seguridadClave", models.CharField(max_length=4)),
+                ("observacion", models.TextField(blank=True, null=True)),
+                (
+                    "estado",
+                    models.CharField(
+                        blank=True,
+                        choices=[
+                            ("agenciaOrigen", "Agencia de origen"),
+                            ("enCamino", "Enviado en camino"),
+                            ("agenciaDestino", "Listo para Recoger"),
+                            ("recepcionado", "Entrega Exitosa"),
+                        ],
+                        max_length=20,
+                        null=True,
+                    ),
+                ),
+                (
+                    "precio",
+                    models.DecimalField(
+                        blank=True, decimal_places=2, default=0, max_digits=7, null=True
+                    ),
+                ),
+                (
+                    "numeroContacto",
+                    models.CharField(
+                        blank=True, max_length=50, null=True, verbose_name="Telefono"
+                    ),
+                ),
+                (
+                    "agenciaDestino",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.PROTECT,
+                        related_name="destino_agencia",
+                        to="empresa.agencia",
+                    ),
+                ),
+                (
+                    "agenciaOrigen",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.PROTECT,
+                        to="empresa.agencia",
+                    ),
+                ),
+                (
+                    "consignado",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.PROTECT,
+                        related_name="consignado_persona",
+                        to="persona.persona",
+                    ),
+                ),
+                (
+                    "remite",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.PROTECT,
+                        related_name="remite_persona",
+                        to="persona.persona",
+                    ),
+                ),
+                (
+                    "venta",
+                    models.OneToOneField(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.PROTECT,
+                        to="venta.movimiento",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Encomienda',
-                'verbose_name_plural': 'Encomiendas',
+                "verbose_name": "Encomienda",
+                "verbose_name_plural": "Encomiendas",
             },
         ),
         migrations.CreateModel(
-            name='Liquidacion',
+            name="Liquidacion",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('numDocumento', models.IntegerField(blank=True, null=True)),
-                ('fecha', models.DateTimeField(auto_now=True)),
-                ('observacion', models.TextField(blank=True, null=True)),
-                ('finalizado', models.BooleanField(default=False)),
-                ('agenciaDestino', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, related_name='agencia_destino', to='empresa.agencia')),
-                ('agenciaOrigen', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='empresa.agencia')),
-                ('conductor', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='empresa.conductor')),
-                ('encomienda', models.ManyToManyField(to='envio.Encomienda')),
-                ('usuario', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.PROTECT, to='persona.persona')),
-                ('vehiculo', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='empresa.vehiculo')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("numDocumento", models.IntegerField(blank=True, null=True)),
+                ("fecha", models.DateTimeField(auto_now=True)),
+                ("observacion", models.TextField(blank=True, null=True)),
+                ("finalizado", models.BooleanField(default=False)),
+                (
+                    "agenciaDestino",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.PROTECT,
+                        related_name="agencia_destino",
+                        to="empresa.agencia",
+                    ),
+                ),
+                (
+                    "agenciaOrigen",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.PROTECT,
+                        to="empresa.agencia",
+                    ),
+                ),
+                (
+                    "conductor",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.PROTECT,
+                        to="empresa.conductor",
+                    ),
+                ),
+                ("encomienda", models.ManyToManyField(to="envio.Encomienda")),
+                (
+                    "usuario",
+                    models.ForeignKey(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.PROTECT,
+                        to="persona.persona",
+                    ),
+                ),
+                (
+                    "vehiculo",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.PROTECT,
+                        to="empresa.vehiculo",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Liquidacion',
-                'verbose_name_plural': 'Liquidacions',
+                "verbose_name": "Liquidacion",
+                "verbose_name_plural": "Liquidacions",
             },
         ),
         migrations.CreateModel(
-            name='liquidacionRecepcion',
+            name="liquidacionRecepcion",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('fecha', models.DateTimeField(auto_now=True)),
-                ('observacion', models.TextField()),
-                ('liquidacion', models.OneToOneField(blank=True, null=True, on_delete=django.db.models.deletion.PROTECT, to='envio.liquidacion')),
-                ('usuario', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.PROTECT, to='persona.persona')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("fecha", models.DateTimeField(auto_now=True)),
+                ("observacion", models.TextField()),
+                (
+                    "liquidacion",
+                    models.OneToOneField(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.PROTECT,
+                        to="envio.liquidacion",
+                    ),
+                ),
+                (
+                    "usuario",
+                    models.ForeignKey(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.PROTECT,
+                        to="persona.persona",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'liquidacionRecepcion',
-                'verbose_name_plural': 'liquidacionRecepcions',
+                "verbose_name": "liquidacionRecepcion",
+                "verbose_name_plural": "liquidacionRecepcions",
             },
         ),
         migrations.CreateModel(
-            name='ClienteRecepcion',
+            name="ClienteRecepcion",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('fecha', models.DateTimeField(auto_now=True)),
-                ('evidencia', models.ImageField(blank=True, null=True, upload_to=apps.envio.models.rutaNombreImagen)),
-                ('encomienda', models.OneToOneField(blank=True, null=True, on_delete=django.db.models.deletion.PROTECT, to='envio.encomienda')),
-                ('usuario', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.PROTECT, to='persona.persona')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("fecha", models.DateTimeField(auto_now=True)),
+                (
+                    "evidencia",
+                    models.ImageField(
+                        blank=True,
+                        null=True,
+                        upload_to=apps.envio.models.rutaNombreImagen,
+                    ),
+                ),
+                (
+                    "encomienda",
+                    models.OneToOneField(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.PROTECT,
+                        to="envio.encomienda",
+                    ),
+                ),
+                (
+                    "usuario",
+                    models.ForeignKey(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.PROTECT,
+                        to="persona.persona",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'ClienteRecepcion',
-                'verbose_name_plural': 'ClienteRecepcions',
+                "verbose_name": "ClienteRecepcion",
+                "verbose_name_plural": "ClienteRecepcions",
             },
         ),
     ]

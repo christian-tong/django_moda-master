@@ -1,8 +1,8 @@
-from urllib import request
 from django.db import models
 from apps.catalogoSunat.models import TipoDocumento
 from apps.persona.models import Persona
 from apps.venta.models import Movimiento
+
 """
 class DocumentoOse(models.Model):
     pass
@@ -183,27 +183,36 @@ class FacturaBoletaItem(models.Model):
     def __str__(self):
 """
 
-#documento
+
+# documento
 class FaturaBoleta(models.Model):
-    ventaMovimiento = models.OneToOneField(Movimiento, on_delete=models.PROTECT,blank=True,null=True)
+    ventaMovimiento = models.OneToOneField(
+        Movimiento, on_delete=models.PROTECT, blank=True, null=True
+    )
     tipoDocumento = models.ForeignKey(TipoDocumento, on_delete=models.PROTECT)
-    serie = models.CharField(max_length=4,blank=True,null=True)
-    numero = models.IntegerField(blank=True,null=True)
+    serie = models.CharField(max_length=4, blank=True, null=True)
+    numero = models.IntegerField(blank=True, null=True)
     cliente = models.ForeignKey(Persona, on_delete=models.PROTECT)
-    usuario = models.ForeignKey(Persona, on_delete=models.PROTECT,related_name='usuario_factura', blank=True,null=True)
-    monto = models.DecimalField(max_digits=8,decimal_places=2 ,default=0,blank=True,null=True)
+    usuario = models.ForeignKey(
+        Persona,
+        on_delete=models.PROTECT,
+        related_name="usuario_factura",
+        blank=True,
+        null=True,
+    )
+    monto = models.DecimalField(
+        max_digits=8, decimal_places=2, default=0, blank=True, null=True
+    )
     fechaFact = models.DateField(auto_now=True)
-    estaFacturado = models.BooleanField(blank=True,null=True)
-    iscanje = models.BooleanField(blank=True,null=False)
-    enlace = models.URLField(blank=True,null=False)
-    cadenaqr = models.CharField(max_length=255, blank=True,null=False)
+    estaFacturado = models.BooleanField(blank=True, null=True)
+    iscanje = models.BooleanField(blank=True, null=False)
+    enlace = models.URLField(blank=True, null=False)
+    cadenaqr = models.CharField(max_length=255, blank=True, null=False)
     hora = models.TimeField(auto_now=True)
-    
 
     class Meta:
-        verbose_name = 'FaturaBoleta'
-        verbose_name_plural = 'FaturaBoletas'
+        verbose_name = "FaturaBoleta"
+        verbose_name_plural = "FaturaBoletas"
 
     def __str__(self):
         return str(self.id)
-    

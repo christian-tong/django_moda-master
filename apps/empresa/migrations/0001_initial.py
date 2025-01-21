@@ -5,108 +5,256 @@ import django.db.models.deletion
 
 
 class Migration(migrations.Migration):
-
     initial = True
 
     dependencies = [
-        ('persona', '0001_initial'),
-        ('catalogoSunat', '0001_initial'),
+        ("persona", "0001_initial"),
+        ("catalogoSunat", "0001_initial"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='Agencia',
+            name="Agencia",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('nombre', models.CharField(blank=True, max_length=150, null=True)),
-                ('direccion', models.CharField(blank=True, max_length=255, null=True)),
-                ('fijo', models.CharField(blank=True, max_length=9, null=True)),
-                ('movilUno', models.CharField(blank=True, max_length=9, null=True, verbose_name='Celular')),
-                ('movilDos', models.CharField(blank=True, max_length=9, null=True)),
-                ('correo', models.EmailField(blank=True, max_length=255, null=True)),
-                ('tipo', models.CharField(blank=True, choices=[('PRINCIPAL', 'PRINCIPAL'), ('SUCURSAL', 'SUCURSAL')], max_length=10, null=True)),
-                ('foto', models.ImageField(blank=True, null=True, upload_to='media/agencia')),
-                ('activo', models.BooleanField(default=True)),
-                ('codigoSerieDocumento', models.CharField(blank=True, max_length=3, null=True)),
-                ('isruta', models.BooleanField(default=False)),
-                ('empresa', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='empresa_agencia', to='persona.persona')),
-                ('responsable', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='persona.persona')),
-                ('ubigeo', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='catalogoSunat.ubigeo')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("nombre", models.CharField(blank=True, max_length=150, null=True)),
+                ("direccion", models.CharField(blank=True, max_length=255, null=True)),
+                ("fijo", models.CharField(blank=True, max_length=9, null=True)),
+                (
+                    "movilUno",
+                    models.CharField(
+                        blank=True, max_length=9, null=True, verbose_name="Celular"
+                    ),
+                ),
+                ("movilDos", models.CharField(blank=True, max_length=9, null=True)),
+                ("correo", models.EmailField(blank=True, max_length=255, null=True)),
+                (
+                    "tipo",
+                    models.CharField(
+                        blank=True,
+                        choices=[("PRINCIPAL", "PRINCIPAL"), ("SUCURSAL", "SUCURSAL")],
+                        max_length=10,
+                        null=True,
+                    ),
+                ),
+                (
+                    "foto",
+                    models.ImageField(blank=True, null=True, upload_to="media/agencia"),
+                ),
+                ("activo", models.BooleanField(default=True)),
+                (
+                    "codigoSerieDocumento",
+                    models.CharField(blank=True, max_length=3, null=True),
+                ),
+                ("isruta", models.BooleanField(default=False)),
+                (
+                    "empresa",
+                    models.ForeignKey(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="empresa_agencia",
+                        to="persona.persona",
+                    ),
+                ),
+                (
+                    "responsable",
+                    models.ForeignKey(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="persona.persona",
+                    ),
+                ),
+                (
+                    "ubigeo",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="catalogoSunat.ubigeo",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Agencia',
-                'verbose_name_plural': 'Agencia',
+                "verbose_name": "Agencia",
+                "verbose_name_plural": "Agencia",
             },
         ),
         migrations.CreateModel(
-            name='Vehiculo',
+            name="Vehiculo",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('placa', models.CharField(max_length=10)),
-                ('categoria', models.CharField(blank=True, max_length=50, null=True)),
-                ('marca', models.CharField(max_length=50)),
-                ('modelo', models.CharField(max_length=50)),
-                ('color', models.CharField(max_length=50)),
-                ('numSerie', models.CharField(blank=True, max_length=50, null=True)),
-                ('numMotor', models.CharField(blank=True, max_length=50, null=True)),
-                ('carroceria', models.CharField(blank=True, max_length=50, null=True)),
-                ('combustible', models.CharField(blank=True, max_length=100, null=True)),
-                ('numAsientos', models.IntegerField(blank=True, null=True)),
-                ('numPasajeros', models.IntegerField(blank=True, null=True)),
-                ('propio', models.BooleanField(default=False)),
-                ('numfilas', models.SmallIntegerField(blank=True, default=1, null=True)),
-                ('numColumnas', models.SmallIntegerField(blank=True, default=1, null=True)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("placa", models.CharField(max_length=10)),
+                ("categoria", models.CharField(blank=True, max_length=50, null=True)),
+                ("marca", models.CharField(max_length=50)),
+                ("modelo", models.CharField(max_length=50)),
+                ("color", models.CharField(max_length=50)),
+                ("numSerie", models.CharField(blank=True, max_length=50, null=True)),
+                ("numMotor", models.CharField(blank=True, max_length=50, null=True)),
+                ("carroceria", models.CharField(blank=True, max_length=50, null=True)),
+                (
+                    "combustible",
+                    models.CharField(blank=True, max_length=100, null=True),
+                ),
+                ("numAsientos", models.IntegerField(blank=True, null=True)),
+                ("numPasajeros", models.IntegerField(blank=True, null=True)),
+                ("propio", models.BooleanField(default=False)),
+                (
+                    "numfilas",
+                    models.SmallIntegerField(blank=True, default=1, null=True),
+                ),
+                (
+                    "numColumnas",
+                    models.SmallIntegerField(blank=True, default=1, null=True),
+                ),
             ],
             options={
-                'verbose_name': 'Vehiculo',
-                'verbose_name_plural': 'Vehiculos',
+                "verbose_name": "Vehiculo",
+                "verbose_name_plural": "Vehiculos",
             },
         ),
         migrations.CreateModel(
-            name='Conductor',
+            name="Conductor",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('numLicencia', models.CharField(max_length=12, verbose_name='Nro de licencia')),
-                ('clase', models.CharField(max_length=1)),
-                ('categoria', models.CharField(max_length=5)),
-                ('fechaExpedicion', models.DateField(blank=True, null=True, verbose_name='Fecha de expedición')),
-                ('fechaRevalidacion', models.DateField(blank=True, null=True, verbose_name='Fecha de revalidación')),
-                ('activo', models.BooleanField(default=True)),
-                ('chofer', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='persona.persona')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "numLicencia",
+                    models.CharField(max_length=12, verbose_name="Nro de licencia"),
+                ),
+                ("clase", models.CharField(max_length=1)),
+                ("categoria", models.CharField(max_length=5)),
+                (
+                    "fechaExpedicion",
+                    models.DateField(
+                        blank=True, null=True, verbose_name="Fecha de expedición"
+                    ),
+                ),
+                (
+                    "fechaRevalidacion",
+                    models.DateField(
+                        blank=True, null=True, verbose_name="Fecha de revalidación"
+                    ),
+                ),
+                ("activo", models.BooleanField(default=True)),
+                (
+                    "chofer",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="persona.persona",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Conductor',
-                'verbose_name_plural': 'Conductors',
+                "verbose_name": "Conductor",
+                "verbose_name_plural": "Conductors",
             },
         ),
         migrations.CreateModel(
-            name='Asiento',
+            name="Asiento",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('codigoMatrix', models.SmallIntegerField(default=1)),
-                ('numero', models.CharField(blank=True, max_length=2, null=True, verbose_name='Numero de asiento')),
-                ('saltofila', models.BooleanField(default=False)),
-                ('estado', models.CharField(blank=True, choices=[('libre', 'Libre'), ('cortesia', 'Cortesía'), ('pasadiso', 'Pasadiso')], default='libre', max_length=20, null=True)),
-                ('vehiculo', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='empresa.vehiculo')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("codigoMatrix", models.SmallIntegerField(default=1)),
+                (
+                    "numero",
+                    models.CharField(
+                        blank=True,
+                        max_length=2,
+                        null=True,
+                        verbose_name="Numero de asiento",
+                    ),
+                ),
+                ("saltofila", models.BooleanField(default=False)),
+                (
+                    "estado",
+                    models.CharField(
+                        blank=True,
+                        choices=[
+                            ("libre", "Libre"),
+                            ("cortesia", "Cortesía"),
+                            ("pasadiso", "Pasadiso"),
+                        ],
+                        default="libre",
+                        max_length=20,
+                        null=True,
+                    ),
+                ),
+                (
+                    "vehiculo",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="empresa.vehiculo",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Asiento',
-                'verbose_name_plural': 'Asientos',
+                "verbose_name": "Asiento",
+                "verbose_name_plural": "Asientos",
             },
         ),
         migrations.CreateModel(
-            name='AgenciaDocumento',
+            name="AgenciaDocumento",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('serie', models.CharField(max_length=4)),
-                ('correlativo', models.IntegerField()),
-                ('activo', models.BooleanField(default=True)),
-                ('agencia', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='empresa.agencia')),
-                ('documento', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='catalogoSunat.tipodocumento')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("serie", models.CharField(max_length=4)),
+                ("correlativo", models.IntegerField()),
+                ("activo", models.BooleanField(default=True)),
+                (
+                    "agencia",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.PROTECT,
+                        to="empresa.agencia",
+                    ),
+                ),
+                (
+                    "documento",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.PROTECT,
+                        to="catalogoSunat.tipodocumento",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'AgenciaDocumento',
-                'verbose_name_plural': 'AgenciaDocumentos',
+                "verbose_name": "AgenciaDocumento",
+                "verbose_name_plural": "AgenciaDocumentos",
             },
         ),
     ]

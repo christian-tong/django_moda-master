@@ -5,142 +5,391 @@ import django.db.models.deletion
 
 
 class Migration(migrations.Migration):
-
     initial = True
 
     dependencies = [
-        ('empresa', '0001_initial'),
-        ('persona', '0001_initial'),
-        ('venta', '0001_initial'),
+        ("empresa", "0001_initial"),
+        ("persona", "0001_initial"),
+        ("venta", "0001_initial"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='Embarque',
+            name="Embarque",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('numDocumento', models.CharField(blank=True, max_length=8, null=True)),
-                ('hora_abordo', models.TimeField(default='12:00')),
-                ('observacion', models.TextField(blank=True, null=True, verbose_name='Observaciones')),
-                ('numAsiento', models.CharField(max_length=2)),
-                ('precio', models.DecimalField(decimal_places=2, default=0, max_digits=7)),
-                ('enSala', models.BooleanField(default=False, verbose_name='El pasajero esta en sala?')),
-                ('telefono', models.CharField(blank=True, max_length=50, null=True)),
-                ('escambio', models.BooleanField(default=False)),
-                ('create', models.DateTimeField(auto_now_add=True)),
-                ('update', models.DateTimeField(auto_now=True)),
-                ('lugar_abordo', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.PROTECT, to='empresa.agencia', verbose_name='Embarque')),
-                ('lugar_bajada', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.PROTECT, related_name='embarque_bajada', to='empresa.agencia', verbose_name='Desembarque')),
-                ('pasajero', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='persona.persona')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("numDocumento", models.CharField(blank=True, max_length=8, null=True)),
+                ("hora_abordo", models.TimeField(default="12:00")),
+                (
+                    "observacion",
+                    models.TextField(
+                        blank=True, null=True, verbose_name="Observaciones"
+                    ),
+                ),
+                ("numAsiento", models.CharField(max_length=2)),
+                (
+                    "precio",
+                    models.DecimalField(decimal_places=2, default=0, max_digits=7),
+                ),
+                (
+                    "enSala",
+                    models.BooleanField(
+                        default=False, verbose_name="El pasajero esta en sala?"
+                    ),
+                ),
+                ("telefono", models.CharField(blank=True, max_length=50, null=True)),
+                ("escambio", models.BooleanField(default=False)),
+                ("create", models.DateTimeField(auto_now_add=True)),
+                ("update", models.DateTimeField(auto_now=True)),
+                (
+                    "lugar_abordo",
+                    models.ForeignKey(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.PROTECT,
+                        to="empresa.agencia",
+                        verbose_name="Embarque",
+                    ),
+                ),
+                (
+                    "lugar_bajada",
+                    models.ForeignKey(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.PROTECT,
+                        related_name="embarque_bajada",
+                        to="empresa.agencia",
+                        verbose_name="Desembarque",
+                    ),
+                ),
+                (
+                    "pasajero",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.PROTECT,
+                        to="persona.persona",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Embarque',
-                'verbose_name_plural': 'Embarques',
+                "verbose_name": "Embarque",
+                "verbose_name_plural": "Embarques",
             },
         ),
         migrations.CreateModel(
-            name='Manifiesto',
+            name="Manifiesto",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('numDocumento', models.CharField(blank=True, max_length=8, null=True)),
-                ('direccion', models.CharField(blank=True, max_length=150, null=True)),
-                ('fechaViaje', models.DateField(blank=True, null=True)),
-                ('modalidaServicio', models.CharField(blank=True, default='Regular', max_length=30, null=True)),
-                ('seGenero', models.BooleanField(default=False)),
-                ('create', models.DateTimeField(auto_now_add=True, null=True)),
-                ('update', models.DateTimeField(auto_now=True, null=True)),
-                ('copiloto', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.PROTECT, related_name='copiloto_manifiesto', to='empresa.conductor')),
-                ('embarque', models.ManyToManyField(blank=True, to='viaje.Embarque')),
-                ('piloto', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.PROTECT, to='empresa.conductor')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("numDocumento", models.CharField(blank=True, max_length=8, null=True)),
+                ("direccion", models.CharField(blank=True, max_length=150, null=True)),
+                ("fechaViaje", models.DateField(blank=True, null=True)),
+                (
+                    "modalidaServicio",
+                    models.CharField(
+                        blank=True, default="Regular", max_length=30, null=True
+                    ),
+                ),
+                ("seGenero", models.BooleanField(default=False)),
+                ("create", models.DateTimeField(auto_now_add=True, null=True)),
+                ("update", models.DateTimeField(auto_now=True, null=True)),
+                (
+                    "copiloto",
+                    models.ForeignKey(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.PROTECT,
+                        related_name="copiloto_manifiesto",
+                        to="empresa.conductor",
+                    ),
+                ),
+                ("embarque", models.ManyToManyField(blank=True, to="viaje.Embarque")),
+                (
+                    "piloto",
+                    models.ForeignKey(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.PROTECT,
+                        to="empresa.conductor",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Manifiesto',
-                'verbose_name_plural': 'Manifiestos',
+                "verbose_name": "Manifiesto",
+                "verbose_name_plural": "Manifiestos",
             },
         ),
         migrations.CreateModel(
-            name='ProgramacionViaje',
+            name="ProgramacionViaje",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('nombreViaje', models.CharField(blank=True, max_length=100, null=True)),
-                ('fechaViaje', models.DateField()),
-                ('horaViaje', models.TimeField(default='12:00')),
-                ('precio', models.DecimalField(blank=True, decimal_places=2, max_digits=8, null=True)),
-                ('activo', models.BooleanField(default=True)),
-                ('ayudante', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.PROTECT, to='persona.persona')),
-                ('copiloto', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.PROTECT, related_name='copiloto_viaje', to='empresa.conductor')),
-                ('piloto', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.PROTECT, to='empresa.conductor')),
-                ('rutaDestino', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, related_name='destino_viaje', to='empresa.agencia')),
-                ('rutaOrigen', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='empresa.agencia')),
-                ('terramosa', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.PROTECT, related_name='terramosa_viaje', to='persona.persona')),
-                ('vehiculo', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='empresa.vehiculo')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "nombreViaje",
+                    models.CharField(blank=True, max_length=100, null=True),
+                ),
+                ("fechaViaje", models.DateField()),
+                ("horaViaje", models.TimeField(default="12:00")),
+                (
+                    "precio",
+                    models.DecimalField(
+                        blank=True, decimal_places=2, max_digits=8, null=True
+                    ),
+                ),
+                ("activo", models.BooleanField(default=True)),
+                (
+                    "ayudante",
+                    models.ForeignKey(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.PROTECT,
+                        to="persona.persona",
+                    ),
+                ),
+                (
+                    "copiloto",
+                    models.ForeignKey(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.PROTECT,
+                        related_name="copiloto_viaje",
+                        to="empresa.conductor",
+                    ),
+                ),
+                (
+                    "piloto",
+                    models.ForeignKey(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.PROTECT,
+                        to="empresa.conductor",
+                    ),
+                ),
+                (
+                    "rutaDestino",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.PROTECT,
+                        related_name="destino_viaje",
+                        to="empresa.agencia",
+                    ),
+                ),
+                (
+                    "rutaOrigen",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.PROTECT,
+                        to="empresa.agencia",
+                    ),
+                ),
+                (
+                    "terramosa",
+                    models.ForeignKey(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.PROTECT,
+                        related_name="terramosa_viaje",
+                        to="persona.persona",
+                    ),
+                ),
+                (
+                    "vehiculo",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.PROTECT,
+                        to="empresa.vehiculo",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'ProgramacionViaje',
-                'verbose_name_plural': 'ProgramacionViajes',
+                "verbose_name": "ProgramacionViaje",
+                "verbose_name_plural": "ProgramacionViajes",
             },
         ),
         migrations.CreateModel(
-            name='ProgramacionAsiento',
+            name="ProgramacionAsiento",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('estado', models.CharField(choices=[('libre', 'Libre'), ('vendido', 'Vendido'), ('cortesia', 'Cortesía'), ('reservado', 'Reservado')], default='libre', max_length=30)),
-                ('precio', models.DecimalField(blank=True, decimal_places=2, max_digits=7, null=True)),
-                ('asiento', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.PROTECT, to='empresa.asiento')),
-                ('programacionViaje', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.PROTECT, to='viaje.programacionviaje')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "estado",
+                    models.CharField(
+                        choices=[
+                            ("libre", "Libre"),
+                            ("vendido", "Vendido"),
+                            ("cortesia", "Cortesía"),
+                            ("reservado", "Reservado"),
+                        ],
+                        default="libre",
+                        max_length=30,
+                    ),
+                ),
+                (
+                    "precio",
+                    models.DecimalField(
+                        blank=True, decimal_places=2, max_digits=7, null=True
+                    ),
+                ),
+                (
+                    "asiento",
+                    models.ForeignKey(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.PROTECT,
+                        to="empresa.asiento",
+                    ),
+                ),
+                (
+                    "programacionViaje",
+                    models.ForeignKey(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.PROTECT,
+                        to="viaje.programacionviaje",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'ProgramacionAsiento',
-                'verbose_name_plural': 'ProgramacionAsientos',
+                "verbose_name": "ProgramacionAsiento",
+                "verbose_name_plural": "ProgramacionAsientos",
             },
         ),
         migrations.CreateModel(
-            name='ManifiestoRutaFinal',
+            name="ManifiestoRutaFinal",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('orden', models.SmallIntegerField(blank=True, null=True)),
-                ('agencia', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='empresa.agencia')),
-                ('manifiesto', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='viaje.manifiesto')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("orden", models.SmallIntegerField(blank=True, null=True)),
+                (
+                    "agencia",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="empresa.agencia",
+                    ),
+                ),
+                (
+                    "manifiesto",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="viaje.manifiesto",
+                    ),
+                ),
             ],
         ),
         migrations.AddField(
-            model_name='manifiesto',
-            name='printRutaFinal',
-            field=models.ManyToManyField(blank=True, null=True, through='viaje.ManifiestoRutaFinal', to='empresa.Agencia', verbose_name='Destinos[*** Si va a guardar nuevos destinos, deseleccione todo y vuelva a seleccionar]'),
+            model_name="manifiesto",
+            name="printRutaFinal",
+            field=models.ManyToManyField(
+                blank=True,
+                null=True,
+                through="viaje.ManifiestoRutaFinal",
+                to="empresa.Agencia",
+                verbose_name="Destinos[*** Si va a guardar nuevos destinos, deseleccione todo y vuelva a seleccionar]",
+            ),
         ),
         migrations.AddField(
-            model_name='manifiesto',
-            name='printRutaOrigen',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.PROTECT, related_name='manifiesto_printrutaorigin', to='empresa.agencia', verbose_name='De'),
+            model_name="manifiesto",
+            name="printRutaOrigen",
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.PROTECT,
+                related_name="manifiesto_printrutaorigin",
+                to="empresa.agencia",
+                verbose_name="De",
+            ),
         ),
         migrations.AddField(
-            model_name='manifiesto',
-            name='programacionViaje',
-            field=models.OneToOneField(blank=True, null=True, on_delete=django.db.models.deletion.PROTECT, to='viaje.programacionviaje'),
+            model_name="manifiesto",
+            name="programacionViaje",
+            field=models.OneToOneField(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.PROTECT,
+                to="viaje.programacionviaje",
+            ),
         ),
         migrations.AddField(
-            model_name='manifiesto',
-            name='usuario',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.PROTECT, to='persona.persona'),
+            model_name="manifiesto",
+            name="usuario",
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.PROTECT,
+                to="persona.persona",
+            ),
         ),
         migrations.AddField(
-            model_name='manifiesto',
-            name='vehiculo',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.PROTECT, to='empresa.vehiculo'),
+            model_name="manifiesto",
+            name="vehiculo",
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.PROTECT,
+                to="empresa.vehiculo",
+            ),
         ),
         migrations.AddField(
-            model_name='embarque',
-            name='programacionViaje',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.PROTECT, to='viaje.programacionviaje'),
+            model_name="embarque",
+            name="programacionViaje",
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.PROTECT,
+                to="viaje.programacionviaje",
+            ),
         ),
         migrations.AddField(
-            model_name='embarque',
-            name='usuario',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.PROTECT, related_name='embarque_usuario', to='persona.persona'),
+            model_name="embarque",
+            name="usuario",
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.PROTECT,
+                related_name="embarque_usuario",
+                to="persona.persona",
+            ),
         ),
         migrations.AddField(
-            model_name='embarque',
-            name='venta',
-            field=models.OneToOneField(blank=True, null=True, on_delete=django.db.models.deletion.PROTECT, to='venta.movimiento'),
+            model_name="embarque",
+            name="venta",
+            field=models.OneToOneField(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.PROTECT,
+                to="venta.movimiento",
+            ),
         ),
     ]

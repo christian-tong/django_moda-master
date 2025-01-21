@@ -5,32 +5,34 @@ register = template.Library()
 
 def nonep(value):
     if value == None:
-        value='-'
+        value = "-"
     return value
 
-register.filter("nonep",nonep)
+
+register.filter("nonep", nonep)
+
 
 @register.filter()
 def estado(value):
     if value == True:
-        value='Activo'
+        value = "Activo"
     else:
-        value='Desactivado'
+        value = "Desactivado"
     return value
+
 
 @register.filter()
 def estadosino(value):
     if value == True:
-        value='Si'
+        value = "Si"
     else:
-        value='No'
+        value = "No"
     return value
 
 
 @register.filter()
 def numberhtml(value):
     value = str(value)
-    value.replace(',','.')
+    value.replace(",", ".")
 
     return value
-

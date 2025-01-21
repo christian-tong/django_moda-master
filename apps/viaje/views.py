@@ -1,6 +1,5 @@
 import math
-from time import time
-from datetime import datetime, date
+from datetime import datetime
 from django.conf import settings
 from django.urls import reverse
 from django.http import HttpResponse, JsonResponse
@@ -11,9 +10,7 @@ from urllib.parse import urlencode
 from django.shortcuts import redirect, render, get_object_or_404
 from django.contrib import messages
 from django.core.paginator import Paginator
-from django.core.serializers import serialize
 from apps.venta.models import Movimiento, DetalleMov
-from apps.empresa.models import AgenciaDocumento, Asiento
 from .models import (
     Embarque,
     Manifiesto,
@@ -296,7 +293,7 @@ def embarqueAdd(request):
             # Detalle venta
             detalle = DetalleMov(
                 movimiento=venta,
-                descripcion=f'SERVICIO DE TRANSPORTE EN LA RUTA ({request.POST["lugar_abordo"]} - {request.POST["lugar_bajada"]})',
+                descripcion=f"SERVICIO DE TRANSPORTE EN LA RUTA ({request.POST['lugar_abordo']} - {request.POST['lugar_bajada']})",
                 valorUnitario=request.POST["precio"],
                 subTotal=request.POST["precio"],
             )
@@ -513,7 +510,7 @@ def programaList(request):
                 activo=form.cleaned_data["activo"],
             ).order_by("-fechaViaje")
 
-            add_ruta_get = f"""&rutaOrigen={form.cleaned_data['rutaOrigen'].id}&rutaDestino={form.cleaned_data['rutaDestino'].id}&fechaViaje={form.cleaned_data['fechaViaje']}&activo={form.cleaned_data['activo']}"""
+            add_ruta_get = f"""&rutaOrigen={form.cleaned_data["rutaOrigen"].id}&rutaDestino={form.cleaned_data["rutaDestino"].id}&fechaViaje={form.cleaned_data["fechaViaje"]}&activo={form.cleaned_data["activo"]}"""
 
             if not entity:
                 messages.info(request, "No hay viaje para la fecha buscada!!")
@@ -531,7 +528,7 @@ def programaList(request):
             activo=request.GET.get("activo"),
         ).order_by("-fechaViaje")
 
-        add_ruta_get = f"""&rutaOrigen={request.GET.get('rutaOrigen')}&rutaDestino={request.GET.get('rutaDestino')}&fechaViaje={request.GET.get('fechaViaje')}&activo={request.GET.get('activo')}"""
+        add_ruta_get = f"""&rutaOrigen={request.GET.get("rutaOrigen")}&rutaDestino={request.GET.get("rutaDestino")}&fechaViaje={request.GET.get("fechaViaje")}&activo={request.GET.get("activo")}"""
 
     # paginacion
 

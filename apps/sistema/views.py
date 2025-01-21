@@ -1,6 +1,5 @@
 import datetime
 from django.shortcuts import redirect, render
-from django.contrib.auth.models import Permission
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.http import JsonResponse
@@ -76,7 +75,6 @@ def accountLogin(request):
 
 
 def accountLoggout(request):
-
     logout(request)
     del request.session
 
