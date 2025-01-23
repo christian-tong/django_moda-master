@@ -48,24 +48,33 @@ class ProgramacionViajeViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         """
-        Filtra las programaciones de viaje por una fecha exacta pasada como parámetro.
-        Si no se pasa el parámetro, devuelve todas las programaciones.
+        Filtra las programaciones de viaje por fecha o por id pasado como parámetro.
+        Si no se pasa ningún parámetro, devuelve todas las programaciones.
         """
+        queryset = ProgramacionViaje.objects.all()
         fecha_param = self.request.query_params.get("fecha", None)
+        id_param = self.request.query_params.get("id", None)
+
+        if id_param:
+            try:
+                # Filtrar por id
+                return queryset.filter(id=id_param)
+            except ValueError:
+                raise ValidationError({"id": "El id debe ser un número válido."})
 
         if fecha_param:
             try:
                 # Intentar convertir el parámetro a un objeto de tipo date
                 fecha = datetime.strptime(fecha_param, "%Y-%m-%d").date()
                 # Filtrar por fecha exacta
-                return ProgramacionViaje.objects.filter(fechaViaje=fecha)
+                return queryset.filter(fechaViaje=fecha)
             except ValueError:
                 raise ValidationError(
                     {"fecha": "El formato de la fecha debe ser AAAA-MM-DD."}
                 )
 
-        # Si no se pasa el parámetro 'fecha', devolver todas las programaciones
-        return ProgramacionViaje.objects.all()
+        # Si no se pasa ningún parámetro, devolver todas las programaciones
+        return queryset
 
 
 class ProgramacionAsientoViewSet(ViewSet):
