@@ -169,7 +169,7 @@ class ProgramacionAsientoViewSet(ViewSet):
                 status=400,
             )
 
-        return Response({"message": "Asientos vendidos exitosamente."}, status=200)
+        return Response({"message": "Asiento/s comprados exitosamente."}, status=200)
 
 
 class ReservarAsientoView(APIView):
