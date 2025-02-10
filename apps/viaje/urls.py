@@ -1,12 +1,7 @@
+# viaje/urls.py
 from django.urls import path, include
 from django.contrib.auth.decorators import login_required
-from rest_framework.routers import DefaultRouter
 from .views import (
-    ProgramacionViajeViewSet,
-    ProgramacionAsientoViewSet,
-    EmbarqueViewSet,
-    ManifiestoViewSet,
-    ReservarAsientoView,
     embarqueAdd,
     embarqueList,
     embarqueEdit,
@@ -23,16 +18,10 @@ from .views import (
 
 app_name = "viaje"
 
-router = DefaultRouter()
-router.register(
-    "programaciones", ProgramacionViajeViewSet, basename="programacionviaje"
-)
-router.register("asientos", ProgramacionAsientoViewSet, basename="programacionasiento")
-router.register("embarques", EmbarqueViewSet, basename="embarque")
-router.register("manifiestos", ManifiestoViewSet, basename="manifiesto")
-
 urlpatterns = [
-    path("reservar-asiento", ReservarAsientoView.as_view(), name="reservar-asiento"),
+    # Incluye las URLs de API desde el archivo separado
+    path("api/", include("apps.viaje.API.urls", namespace="api")),
+    # Rutas no relacionadas con la API
     path("embarque/add/", login_required(embarqueAdd), name="embarque-add"),
     path("embarque/list/", login_required(embarqueList), name="embarque-list"),
     path("embarque/edit/", login_required(embarqueEdit), name="embarque-edit"),
@@ -53,5 +42,4 @@ urlpatterns = [
     ),
     path("manifiesto/edit/", login_required(manifiestoEdit), name="manifiesto-edit"),
     path("manifiesto/print/", login_required(manifiestoPrint), name="manifiesto-print"),
-    path("api/", include(router.urls)),
 ]
