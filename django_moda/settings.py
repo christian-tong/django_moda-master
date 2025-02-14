@@ -30,18 +30,23 @@ ALLOWED_HOSTS = [
     "modatours.com.pe",
     "christian-tong.github.io/moda-tours-client-v2",
     "djangomoda-master-production.up.railway.app",
+    "*",
 ]
 
-CSRF_TRUSTED_ORIGINS = ['http://*','https://djangomoda-master-production.up.railway.app']
+CSRF_TRUSTED_ORIGINS = [
+    "http://*",
+    "https://djangomoda-master-production.up.railway.app",
+]
 
 ORS_ORIGIN_ALLOW_ALL = True
 CORS_ALLOW_CREDENTIALS = True
 CORS_ORIGIN_WHITELIST = (
     "http://127.0.0.1:8000",
     "https://modatours.colesms.com",
-    "http://localhost:3000",
-    "http://localhost:3001",
+    "http://localhost:3000/*",
+    "http://localhost:3001/*",
     "https://christian-tong.github.io/moda-tours-client-v2",
+    "*",
 )
 
 
