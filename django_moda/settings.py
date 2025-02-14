@@ -28,7 +28,8 @@ ALLOWED_HOSTS = [
     "127.0.0.1",
     "localhost",
     "modatours.com.pe",
-    "christian-tong.github.io/moda-tours-client-v2/",
+    "christian-tong.github.io/moda-tours-client-v2",
+    "djangomoda-master-production.up.railway.app",
 ]
 
 ORS_ORIGIN_ALLOW_ALL = True
