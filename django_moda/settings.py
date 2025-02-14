@@ -32,6 +32,8 @@ ALLOWED_HOSTS = [
     "djangomoda-master-production.up.railway.app",
 ]
 
+CSRF_TRUSTED_ORIGINS = ['http://*','djangomoda-master-production.up.railway.app']
+
 ORS_ORIGIN_ALLOW_ALL = True
 CORS_ALLOW_CREDENTIALS = True
 CORS_ORIGIN_WHITELIST = (
