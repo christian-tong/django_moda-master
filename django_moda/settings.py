@@ -41,6 +41,7 @@ CORS_ORIGIN_WHITELIST = (
     "https://modatours.colesms.com",
     "http://localhost:3000",
     "http://localhost:3001",
+    "https://christian-tong.github.io/moda-tours-client-v2",
 )
 
 
