@@ -23,11 +23,11 @@
     "contabo":{
         "default": {
             "ENGINE": "django.db.backends.mysql",
-            "NAME": "db_modatours",
+            "NAME": "railway",
             "USER": "root",
-            "PASSWORD": "",
-            "HOST": "localhost",
-            "PORT": "3306"
+            "PASSWORD": "PoQGtrDcpIaHmEsvhJHPqZmSPRLTNPei",
+            "HOST": "viaduct.proxy.rlwy.net",
+            "PORT": "48241"
         }
     },
     "SECRET_KEY" :"django-insecure-j!2)#j@@$tevji62uicsg)r%_pb!@7lk_06f*%j4e=5+ov0bc#"

@@ -1,6 +1,9 @@
 import os
 import json
 from pathlib import Path
+import pymysql
+
+pymysql.install_as_MySQLdb()
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -25,6 +28,7 @@ ALLOWED_HOSTS = [
     "127.0.0.1",
     "localhost",
     "modatours.com.pe",
+    "christian-tong.github.io/moda-tours-client-v2/",
 ]
 
 ORS_ORIGIN_ALLOW_ALL = True
@@ -109,7 +113,8 @@ WSGI_APPLICATION = "django_moda.wsgi.application"
         'NAME': 'db.sqlite',
     }
 }"""
-DATABASES = datajson["contabo"]
+DATABASES = datajson.get("contabo", {})
+
 
 # DATABASES = DATABASES_local if servir_bd else  DATABASES_produccion
 # Password validation
