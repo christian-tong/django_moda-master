@@ -30,6 +30,7 @@ ALLOWED_HOSTS = [
     "modatours.com.pe",
     "christian-tong.github.io/moda-tours-client-v2",
     "djangomoda-master-production.up.railway.app",
+    "moda-tours-client-73mk8cbqn-christian-axell-tong-cruzs-projects.vercel.app"
     "*",
 ]
 
@@ -46,6 +47,7 @@ CORS_ORIGIN_WHITELIST = (
     "http://localhost:3000/*",
     "http://localhost:3001/*",
     "https://christian-tong.github.io/moda-tours-client-v2",
+    "https://moda-tours-client-73mk8cbqn-christian-axell-tong-cruzs-projects.vercel.app"
     "*",
 )
 
