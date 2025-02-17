@@ -48,6 +48,7 @@ CORS_ALLOWED_ORIGINS = [
     "https://moda-tours-client-48964laig-christian-axell-tong-cruzs-projects.vercel.app/"
     "https://modatours.com.pe",
     "https://djangomoda-master-production.up.railway.app",
+    "https://moda-tours-client.vercel.app",
 ]
 
 
