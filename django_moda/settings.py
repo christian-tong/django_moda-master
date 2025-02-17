@@ -3,6 +3,7 @@ import json
 from pathlib import Path
 import pymysql
 
+
 pymysql.install_as_MySQLdb()
 
 
@@ -43,7 +44,7 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
     "http://localhost:3001",
     "https://christian-tong.github.io",
-    "https://moda-tours-client-73mk8cbqn-christian-axell-tong-cruzs-projects.vercel.app",
+    r"^https://moda-tours-client-[a-z0-9]+-christian-axell-tong-cruzs-projects\.vercel\.app$",
     "https://modatours.com.pe",
     "https://djangomoda-master-production.up.railway.app",
 ]
