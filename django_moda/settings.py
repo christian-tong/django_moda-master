@@ -34,6 +34,8 @@ ALLOWED_HOSTS = [
     "*",
 ]
 
+SECURE_SSL_REDIRECT = True
+
 CSRF_TRUSTED_ORIGINS = [
     "http://*",
     "https://djangomoda-master-production.up.railway.app",
@@ -47,6 +49,10 @@ CORS_ALLOWED_ORIGINS = [
     r"^https://moda-tours-client-[a-z0-9]+-christian-axell-tong-cruzs-projects\.vercel\.app$",
     "https://modatours.com.pe",
     "https://djangomoda-master-production.up.railway.app",
+]
+
+CORS_ALLOWED_ORIGIN_REGEXES = [
+    r"^https://moda-tours-client-[a-z0-9]+-christian-axell-tong-cruzs-projects\.vercel\.app$",
 ]
 
 CORS_ALLOW_CREDENTIALS = True  # Permitir credenciales (cookies, tokens, etc.)
