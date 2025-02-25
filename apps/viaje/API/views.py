@@ -77,10 +77,21 @@ class ProgramacionAsientoViewSet(ViewSet):
         vendidos = ProgramacionAsiento.objects.filter(
             programacionViaje=programacion_viaje, estado="vendido"
         )
+        pasadisos = ProgramacionAsiento.objects.filter(
+            programacionViaje=programacion_viaje, estado="pasadiso"
+        )
+        cortesias = ProgramacionAsiento.objects.filter(
+            programacionViaje=programacion_viaje, estado="cortesia"
+        )
 
         # Serializar los datos
         serializer = AsientosDisponiblesSerializer(
-            {"libres": libres, "vendidos": vendidos}
+            {
+                "libres": libres,
+                "vendidos": vendidos,
+                "pasadisos": pasadisos,
+                "cortesias": cortesias,
+            }
         )
 
         return Response(serializer.data, status=200)
