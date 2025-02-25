@@ -18,6 +18,8 @@ class ProgramacionAsientoSerializer(serializers.ModelSerializer):
 class AsientosDisponiblesSerializer(serializers.Serializer):
     libres = ProgramacionAsientoSerializer(many=True)
     vendidos = ProgramacionAsientoSerializer(many=True)
+    pasadisos = ProgramacionAsientoSerializer(many=True)
+    cortesias = ProgramacionAsientoSerializer(many=True)
 
 
 class ReservarAsientoSerializer(serializers.Serializer):
