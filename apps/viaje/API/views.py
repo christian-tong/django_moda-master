@@ -145,7 +145,6 @@ class ProgramacionAsientoViewSet(ViewSet):
                     programacionViaje=programacion_viaje,
                     pasajero=cliente,
                     numAsiento=asiento.asiento.numero,  # Aquí obtenemos el número de asiento
-                    precio=asiento.precio,
                 )
                 asientos_actualizados.append(asiento_id)
             except ProgramacionAsiento.DoesNotExist:
