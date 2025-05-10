@@ -25,6 +25,7 @@ ALLOWED_HOSTS = [
     "127.0.0.1",
     "localhost",
     "modatours.com.pe",
+    "cliente-notificaciones-production.up.railway.app",
 ]
 
 ORS_ORIGIN_ALLOW_ALL = True
@@ -32,9 +33,13 @@ CORS_ALLOW_CREDENTIALS = True
 CORS_ORIGIN_WHITELIST = (
     "http://127.0.0.1:8000",
     "https://modatours.colesms.com",
+    "http://127.0.0.1:3000",
+    "http://127.0.0.1:3001",
+    "http://127.0.0.1:5173",
     "http://localhost:3000",
     "http://localhost:3001",
     "http://localhost:5173",
+    "https://cliente-notificaciones-production.up.railway.app",
 )
 
 
