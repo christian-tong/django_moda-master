@@ -26,11 +26,11 @@ SECRET_KEY = datajson["SECRET_KEY"]
 DEBUG = True
 
 ALLOWED_HOSTS = [
-    "127.0.0.1",
-    "localhost",
     "modatours.com.pe",
     "christian-tong.github.io/moda-tours-client-v2",
     "djangomoda-master-production.up.railway.app",
+    "cliente-notificaciones-production.up.railway.app",
+    "modatours.agency",
     "*",
 ]
 
@@ -42,13 +42,11 @@ CSRF_TRUSTED_ORIGINS = [
 ORS_ORIGIN_ALLOW_ALL = True
 
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3000",
-    "http://localhost:3001",
     "https://christian-tong.github.io",
-    "https://moda-tours-client-48964laig-christian-axell-tong-cruzs-projects.vercel.app/"
+    "https://cliente-notificaciones-production.up.railway.app",
     "https://modatours.com.pe",
-    "https://djangomoda-master-production.up.railway.app",
-    "https://moda-tours-client.vercel.app",
+    "https://modatours.colesms.com",
+    "https://www.modatours.agency"
 ]
 
 
