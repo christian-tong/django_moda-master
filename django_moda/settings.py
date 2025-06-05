@@ -1,10 +1,7 @@
 import os
 import json
 from pathlib import Path
-import pymysql
 
-# Usar PyMySQL como reemplazo de MySQLdb
-pymysql.install_as_MySQLdb()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -25,32 +22,27 @@ SECRET_KEY = datajson["SECRET_KEY"]
 DEBUG = True
 
 ALLOWED_HOSTS = [
+    "127.0.0.1",
+    "localhost",
     "modatours.com.pe",
-    "christian-tong.github.io/moda-tours-client-v2",
-    "djangomoda-master-production.up.railway.app",
     "cliente-notificaciones-production.up.railway.app",
-    "modatours.agency",
-    "*",
-]
-
-CSRF_TRUSTED_ORIGINS = [
-    "http://*",
-    "https://djangomoda-master-production.up.railway.app",
+    "modatours.agency"
 ]
 
 ORS_ORIGIN_ALLOW_ALL = True
-
-CORS_ALLOWED_ORIGINS = [
-    "https://christian-tong.github.io",
-    "https://cliente-notificaciones-production.up.railway.app",
-    "https://modatours.com.pe",
+CORS_ALLOW_CREDENTIALS = True
+CORS_ORIGIN_WHITELIST = (
+    "http://127.0.0.1:8000",
     "https://modatours.colesms.com",
-    "https://www.modatours.agency",
-]
-
-CORS_ALLOW_CREDENTIALS = True  # Permitir credenciales (cookies, tokens, etc.)
-CORS_ALLOW_METHODS = ["GET", "POST", "PUT", "DELETE", "OPTIONS"]  # Métodos permitidos
-CORS_ALLOW_HEADERS = ["*"]  # Permitir todos los encabezados
+    "http://127.0.0.1:3000",
+    "http://127.0.0.1:3001",
+    "http://127.0.0.1:5173",
+    "http://localhost:3000",
+    "http://localhost:3001",
+    "http://localhost:5173",
+    "https://cliente-notificaciones-production.up.railway.app",
+    "https://www.modatours.agency"
+)
 
 
 # Application definition
@@ -119,8 +111,7 @@ WSGI_APPLICATION = "django_moda.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
-DATABASES = datajson.get("contabo", {})
-
+DATABASES = datajson["contabo"]
 
 # DATABASES = DATABASES_local if servir_bd else  DATABASES_produccion
 # Password validation
@@ -181,7 +172,7 @@ AUTH_USER_MODEL = "sistema.Usuario"
 
 MESSAGE_STORAGE = "django.contrib.messages.storage.cookie.CookieStorage"
 
-SESSION_COOKIE_AGE = 28800  # sesión expira cada 8 horas
+SESSION_COOKIE_AGE = 28800  # sesion expira cada 8 horas
 
 LOGIN_URL = "/account/login"
 
