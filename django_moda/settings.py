@@ -31,12 +31,16 @@ ALLOWED_HOSTS = [
     "modatours.com.pe",
     "christian-tong.github.io/moda-tours-client-v2",
     "djangomoda-master-production.up.railway.app",
+    "cliente-notificaciones-production.up.railway.app",
+    "modatours.agency",
     "*",
 ]
 
 CSRF_TRUSTED_ORIGINS = [
     "http://*",
     "https://djangomoda-master-production.up.railway.app",
+    "https://cliente-notificaciones-production.up.railway.app",
+    "https://www.modatours.agency"
 ]
 
 ORS_ORIGIN_ALLOW_ALL = True
@@ -49,6 +53,8 @@ CORS_ALLOWED_ORIGINS = [
     "https://modatours.com.pe",
     "https://djangomoda-master-production.up.railway.app",
     "https://moda-tours-client.vercel.app",
+    "https://cliente-notificaciones-production.up.railway.app",
+    "https://www.modatours.agency"
 ]
 
 
