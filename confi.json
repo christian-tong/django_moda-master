@@ -1,5 +1,5 @@
 {
-    "local" : {
+    "local": {
         "default": {
             "ENGINE": "django.db.backends.mysql",
             "NAME": "modatours",
@@ -9,18 +9,17 @@
             "PORT": "3306"
         }
     },    
-    "namecheap":{
+    "namecheap": {
         "default": {
-        "ENGINE": "django.db.backends.mysql",
-        "NAME": "odonacmt_moda",
-        "USER": "odonacmt_admin",
-        "PASSWORD": "RUgP,6u@Y33e",
-        "HOST": "localhost",
-        "PORT": "3306"
+            "ENGINE": "django.db.backends.mysql",
+            "NAME": "odonacmt_moda",
+            "USER": "odonacmt_admin",
+            "PASSWORD": "RUgP,6u@Y33e",
+            "HOST": "localhost",
+            "PORT": "3306"
         }
     },
-
-    "contabo":{
+    "contabo": {
         "default": {
             "ENGINE": "django.db.backends.mysql",
             "NAME": "railway",
@@ -30,5 +29,5 @@
             "PORT": "48241"
         }
     },
-    "SECRET_KEY" :"django-insecure-j!2)#j@@$tevji62uicsg)r%_pb!@7lk_06f*%j4e=5+ov0bc#"
+    "SECRET_KEY": "django-insecure-j!2)#j@@$tevji62uicsg)r%_pb!@7lk_06f*%j4e=5+ov0bc#"
 }

@@ -3,9 +3,8 @@ import json
 from pathlib import Path
 import pymysql
 
-
+# Usar PyMySQL como reemplazo de MySQLdb
 pymysql.install_as_MySQLdb()
-
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -46,9 +45,8 @@ CORS_ALLOWED_ORIGINS = [
     "https://cliente-notificaciones-production.up.railway.app",
     "https://modatours.com.pe",
     "https://modatours.colesms.com",
-    "https://www.modatours.agency"
+    "https://www.modatours.agency",
 ]
-
 
 CORS_ALLOW_CREDENTIALS = True  # Permitir credenciales (cookies, tokens, etc.)
 CORS_ALLOW_METHODS = ["GET", "POST", "PUT", "DELETE", "OPTIONS"]  # Métodos permitidos
@@ -121,12 +119,6 @@ WSGI_APPLICATION = "django_moda.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
-# """DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': 'db.sqlite',
-#     }
-# }"""
 DATABASES = datajson.get("contabo", {})
 
 
@@ -189,7 +181,7 @@ AUTH_USER_MODEL = "sistema.Usuario"
 
 MESSAGE_STORAGE = "django.contrib.messages.storage.cookie.CookieStorage"
 
-SESSION_COOKIE_AGE = 28800  # sesion expira cada 8 horas
+SESSION_COOKIE_AGE = 28800  # sesión expira cada 8 horas
 
 LOGIN_URL = "/account/login"
 
