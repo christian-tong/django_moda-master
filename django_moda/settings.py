@@ -24,9 +24,10 @@ DEBUG = True
 ALLOWED_HOSTS = [
     "127.0.0.1",
     "localhost",
+    "192.168.0.102",
     "modatours.com.pe",
     "cliente-notificaciones-production.up.railway.app",
-    "modatours.agency"
+    "modatours.agency",
 ]
 
 ORS_ORIGIN_ALLOW_ALL = True
@@ -34,9 +35,24 @@ CORS_ALLOW_CREDENTIALS = True
 CORS_ORIGIN_WHITELIST = (
     "https://modatours.colesms.com",
     "https://cliente-notificaciones-production.up.railway.app",
-    "https://www.modatours.agency"
+    "https://www.modatours.agency",
+    "http://localhost:3000",
+    "http://localhost:5173",
+    "http://192.168.0.102:3000",
 )
 
+# Cookies
+SESSION_COOKIE_NAME = "sessionid"
+SESSION_COOKIE_DOMAIN = None  # 👈 Necesario para que funcione en localhost
+SESSION_COOKIE_SAMESITE = "Lax"  # 👈 mejor que "None" en local
+SESSION_COOKIE_SECURE = False  # 👈 True solo en producción HTTPS
+
+CSRF_COOKIE_NAME = "csrftoken"
+CSRF_COOKIE_DOMAIN = None
+CSRF_COOKIE_SAMESITE = "Lax"
+CSRF_COOKIE_SECURE = False  # 👈 True solo en producción HTTPS
+
+APPEND_SLASH = True
 
 # Application definition
 IMPORT_EXPORT_USE_TRANSACTIONS = True
@@ -53,6 +69,8 @@ INSTALLED_APPS = [
     "materializecssform",
     "import_export",
     "apps.sistema",
+    "apps.sistema.api.apps.SistemaApiConfig",
+    "apps.empresa.api.apps.EmpresaApiConfig",
     "apps.catalogoSunat",
     "apps.persona",
     "apps.empresa",

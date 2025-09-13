@@ -25,8 +25,8 @@
             "ENGINE": "django.db.backends.mysql",
             "NAME": "db_modatours",
             "USER": "root",
-            "PASSWORD": "",
-            "HOST": "localhost",
+            "PASSWORD": "rootpass123",
+            "HOST": "127.0.0.1",
             "PORT": "3306"
         }
     },

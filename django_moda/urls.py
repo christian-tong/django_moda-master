@@ -1,17 +1,10 @@
 """django_moda URL Configuration
 
-The `urlpatterns` list routes URLs to views. For more information please see:
-    https://docs.djangoproject.com/en/3.2/topics/http/urls/
-Examples:
-Function views
-    1. Add an import:  from my_app import views
-    2. Add a URL to urlpatterns:  path('', views.home, name='home')
-Class-based views
-    1. Add an import:  from other_app.views import Home
-    2. Add a URL to urlpatterns:  path('', Home.as_view(), name='home')
-Including another URLconf
-    1. Import the include() function: from django.urls import include, path
-    2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
+Este archivo organiza todas las rutas principales del proyecto.
+Separadas en:
+- Rutas tradicionales (HTML templates con Django).
+- Rutas API REST v1 (ya existentes).
+- Rutas API REST v2 (nueva versión, empezando con sistema).
 """
 
 from django.contrib import admin
@@ -23,9 +16,10 @@ from django.conf.urls.static import static
 from drf_yasg import openapi
 from drf_yasg.views import get_schema_view as swagger_get_schema_view
 
-
+# Vista personalizada para errores
 handler403 = "apps.sistema.views.custom_permission_denied_view"
 
+# Configuración de Swagger/OpenAPI
 schema_view = swagger_get_schema_view(
     openapi.Info(
         title="Moda Tours API",
@@ -36,32 +30,41 @@ schema_view = swagger_get_schema_view(
 )
 
 urlpatterns = [
+    # ----------------------------
+    # Django Admin
+    # ----------------------------
     path("admin/", admin.site.urls),
+    # ----------------------------
+    # SISTEMA ORIGINAL (HTML templates)
+    # ----------------------------
     path("persona/", include("apps.persona.urls", namespace="persona")),
     path("envio/", include("apps.envio.urls", namespace="envio")),
     path("viaje/", include("apps.viaje.urls", namespace="viaje")),
     path("tesoreria/", include("apps.caja.urls", namespace="caja")),
-    path("", include("apps.web.urls", namespace="web")),
+    path("", include("apps.web.urls", namespace="web")),  # Página pública principal
     path("sistema/", include("apps.sistema.urls", namespace="sistema")),
     path("facturacion/", include("apps.facturacion.urls", namespace="facturacion")),
     path(
         "catalogosunat/", include("apps.catalogoSunat.urls", namespace="catalogosunat")
     ),
     path("empresa/", include("apps.empresa.urls", namespace="empresa")),
+    # ----------------------------
+    # API REST v1 (existente, no tocar)
+    # ----------------------------
     path(
         "api/v1/",
         include(
             [
+                # Documentación Swagger para v1
                 path(
                     "swagger/schema/",
                     schema_view.with_ui("swagger", cache_timeout=0),
-                    name="swagger-schema",
+                    name="swagger-schema-v1",
                 ),
                 path("persona/", include("apps.persona.urls", namespace="persona")),
                 path("envio/", include("apps.envio.urls", namespace="envio")),
                 path("viaje/", include("apps.viaje.urls", namespace="viaje")),
                 path("tesoreria/", include("apps.caja.urls", namespace="caja")),
-                path("", include("apps.web.urls", namespace="web")),
                 path("sistema/", include("apps.sistema.urls", namespace="sistema")),
                 path(
                     "facturacion/",
@@ -75,8 +78,41 @@ urlpatterns = [
             ]
         ),
     ),
+    # ----------------------------
+    # API REST v2 (nuevo, JSON puro para Next.js y Postman)
+    path(
+        "api/v2/",
+        include(
+            [
+                # Swagger específico para v2
+                path(
+                    "swagger/schema/",
+                    schema_view.with_ui("swagger", cache_timeout=0),
+                    name="swagger-schema-v2",
+                ),
+                # 🔥 Nuevas APIs v2
+                path(
+                    "sistema/",
+                    include(
+                        ("apps.sistema.api.urls", "api-sistema"),
+                        namespace="api-sistema",
+                    ),
+                ),
+                path(
+                    "empresa/",
+                    include(
+                        ("apps.empresa.api.urls", "api-empresa"),
+                        namespace="api-empresa",
+                    ),
+                ),
+            ]
+        ),
+    ),
 ]
 
+# ----------------------------
+# Archivos estáticos y media en modo DEBUG
+# ----------------------------
 if settings.DEBUG:
     urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

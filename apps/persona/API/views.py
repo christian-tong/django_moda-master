@@ -1,6 +1,8 @@
 from ..models import Persona, PersonaJuridica, PersonaNatural
+from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
+from django.db.models import Q
 from rest_framework import generics
 from .serializers import (
     PersonaJuridicaSerializerAPI,
@@ -11,6 +13,36 @@ from .serializers import (
 from rest_framework import viewsets
 from rest_framework.decorators import action
 from rest_framework.views import APIView
+
+
+@api_view(["GET"])
+def persona_autocomplete(request):
+    term = request.query_params.get("term", None)
+    filtro = request.query_params.get("filtro", None)
+
+    if not term:
+        return Response(
+            {"error": "El parámetro 'term' es requerido."},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+
+    query = Q(denominacion__icontains=term) | Q(numDoc__icontains=term)
+    if filtro == "personal":
+        query &= Q(ispersonal=True)
+
+    personas = Persona.objects.filter(query).distinct()[:10]
+    data = [
+        {
+            "id": p.id,
+            "numDoc": p.numDoc,
+            "denominacion": p.denominacion,
+            "text": p.denominacion,
+            "tipoDoc": p.tipoDoc.toJSON(),
+        }
+        for p in personas
+    ]
+
+    return Response(data, status=status.HTTP_200_OK)
 
 
 class PersonaListCreateAPIView(generics.ListCreateAPIView):

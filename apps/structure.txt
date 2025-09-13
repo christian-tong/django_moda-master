@@ -1,0 +1,716 @@
+Listado de rutas de carpetas
+El número de serie del volumen es 0A55-6B00
+D:.
+¦   structure.txt
+¦   __init__.py
+¦   __init__.pyc
+¦   
++---caja
+¦   ¦   admin.py
+¦   ¦   apps.py
+¦   ¦   forms.py
+¦   ¦   models.py
+¦   ¦   tests.py
+¦   ¦   urls.py
+¦   ¦   views.py
+¦   ¦   __init__.py
+¦   ¦   
+¦   +---migrations
+¦   ¦   ¦   0001_initial.py
+¦   ¦   ¦   0002_auto_20241009_1624.py
+¦   ¦   ¦   __init__.py
+¦   ¦   ¦   
+¦   ¦   +---__pycache__
+¦   ¦           0001_initial.cpython-37.pyc
+¦   ¦           0001_initial.cpython-38.pyc
+¦   ¦           0001_initial.cpython-39.pyc
+¦   ¦           0002_auto_20220311_1258.cpython-37.pyc
+¦   ¦           0002_auto_20241009_1624.cpython-38.pyc
+¦   ¦           0002_auto_20241009_1624.cpython-39.pyc
+¦   ¦           0002_remove_caja_correlativo.cpython-37.pyc
+¦   ¦           0003_auto_20220109_2156.cpython-37.pyc
+¦   ¦           0004_auto_20220109_2157.cpython-37.pyc
+¦   ¦           0005_alter_movimientocaja_movfecha.cpython-37.pyc
+¦   ¦           0006_alter_movimientocaja_movfecha.cpython-37.pyc
+¦   ¦           0007_auto_20220110_0105.cpython-37.pyc
+¦   ¦           0008_auto_20220114_1345.cpython-37.pyc
+¦   ¦           0009_alter_movimientocaja_tipomov.cpython-37.pyc
+¦   ¦           0010_auto_20220114_1423.cpython-37.pyc
+¦   ¦           0011_alter_movimientocaja_movfecha.cpython-37.pyc
+¦   ¦           __init__.cpython-37.pyc
+¦   ¦           __init__.cpython-38.pyc
+¦   ¦           __init__.cpython-39.pyc
+¦   ¦           
+¦   +---views
+¦   ¦   ¦   caja.py
+¦   ¦   ¦   movimiento.py
+¦   ¦   ¦   __init__.py
+¦   ¦   ¦   
+¦   ¦   +---__pycache__
+¦   ¦           caja.cpython-38.pyc
+¦   ¦           caja.cpython-39.pyc
+¦   ¦           movimiento.cpython-38.pyc
+¦   ¦           movimiento.cpython-39.pyc
+¦   ¦           __init__.cpython-38.pyc
+¦   ¦           __init__.cpython-39.pyc
+¦   ¦           
+¦   +---__pycache__
+¦           admin.cpython-37.pyc
+¦           admin.cpython-38.pyc
+¦           admin.cpython-39.pyc
+¦           apps.cpython-37.pyc
+¦           apps.cpython-38.pyc
+¦           apps.cpython-39.pyc
+¦           forms.cpython-37.pyc
+¦           forms.cpython-38.pyc
+¦           forms.cpython-39.pyc
+¦           models.cpython-37.pyc
+¦           models.cpython-38.pyc
+¦           models.cpython-39.pyc
+¦           urls.cpython-37.pyc
+¦           urls.cpython-38.pyc
+¦           urls.cpython-39.pyc
+¦           views.cpython-37.pyc
+¦           views.cpython-38.pyc
+¦           __init__.cpython-37.pyc
+¦           __init__.cpython-38.pyc
+¦           __init__.cpython-39.pyc
+¦           
++---catalogoSunat
+¦   ¦   admin.py
+¦   ¦   apps.py
+¦   ¦   models.py
+¦   ¦   resource.py
+¦   ¦   tests.py
+¦   ¦   urls.py
+¦   ¦   views.py
+¦   ¦   __init__.py
+¦   ¦   
+¦   +---migrations
+¦   ¦   ¦   0001_initial.py
+¦   ¦   ¦   __init__.py
+¦   ¦   ¦   
+¦   ¦   +---__pycache__
+¦   ¦           0001_initial.cpython-37.pyc
+¦   ¦           0001_initial.cpython-38.pyc
+¦   ¦           0001_initial.cpython-39.pyc
+¦   ¦           0002_auto_20211228_1651.cpython-37.pyc
+¦   ¦           0002_auto_20220102_0938.cpython-37.pyc
+¦   ¦           0002_auto_20220309_0846.cpython-37.pyc
+¦   ¦           0003_tipodocumentoidentidad.cpython-37.pyc
+¦   ¦           __init__.cpython-37.pyc
+¦   ¦           __init__.cpython-38.pyc
+¦   ¦           __init__.cpython-39.pyc
+¦   ¦           
+¦   +---__pycache__
+¦           admin.cpython-37.pyc
+¦           admin.cpython-38.pyc
+¦           admin.cpython-39.pyc
+¦           apps.cpython-37.pyc
+¦           apps.cpython-38.pyc
+¦           apps.cpython-39.pyc
+¦           models.cpython-37.pyc
+¦           models.cpython-38.pyc
+¦           models.cpython-39.pyc
+¦           resource.cpython-37.pyc
+¦           resource.cpython-38.pyc
+¦           resource.cpython-39.pyc
+¦           urls.cpython-37.pyc
+¦           urls.cpython-38.pyc
+¦           urls.cpython-39.pyc
+¦           views.cpython-37.pyc
+¦           views.cpython-38.pyc
+¦           views.cpython-39.pyc
+¦           __init__.cpython-37.pyc
+¦           __init__.cpython-38.pyc
+¦           __init__.cpython-39.pyc
+¦           
++---empresa
+¦   ¦   admin.py
+¦   ¦   apps.py
+¦   ¦   forms.py
+¦   ¦   models.py
+¦   ¦   tests.py
+¦   ¦   urls.py
+¦   ¦   views.py
+¦   ¦   __init__.py
+¦   ¦   
+¦   +---migrations
+¦   ¦   ¦   0001_initial.py
+¦   ¦   ¦   0002_alter_asiento_estado.py
+¦   ¦   ¦   0003_alter_asiento_estado.py
+¦   ¦   ¦   0004_alter_asiento_estado.py
+¦   ¦   ¦   0005_alter_asiento_estado.py
+¦   ¦   ¦   0006_alter_asiento_estado.py
+¦   ¦   ¦   0007_alter_asiento_estado.py
+¦   ¦   ¦   0008_alter_asiento_estado.py
+¦   ¦   ¦   __init__.py
+¦   ¦   ¦   
+¦   ¦   +---__pycache__
+¦   ¦           0001_initial.cpython-37.pyc
+¦   ¦           0001_initial.cpython-38.pyc
+¦   ¦           0001_initial.cpython-39.pyc
+¦   ¦           0002_alter_agenciadocumento_correlativo.cpython-37.pyc
+¦   ¦           0002_alter_agencia_foto.cpython-37.pyc
+¦   ¦           0002_alter_asiento_estado.cpython-37.pyc
+¦   ¦           0002_alter_asiento_estado.cpython-38.pyc
+¦   ¦           0002_alter_asiento_estado.cpython-39.pyc
+¦   ¦           0003_alter_asiento_estado.cpython-37.pyc
+¦   ¦           0003_alter_asiento_estado.cpython-38.pyc
+¦   ¦           0003_alter_asiento_estado.cpython-39.pyc
+¦   ¦           0003_auto_20220104_2252.cpython-37.pyc
+¦   ¦           0004_alter_asiento_estado.cpython-37.pyc
+¦   ¦           0004_alter_asiento_estado.cpython-38.pyc
+¦   ¦           0004_alter_asiento_estado.cpython-39.pyc
+¦   ¦           0004_auto_20220108_0130.cpython-37.pyc
+¦   ¦           0005_alter_asiento_codigomatrix.cpython-37.pyc
+¦   ¦           0005_alter_asiento_estado.cpython-37.pyc
+¦   ¦           0005_alter_asiento_estado.cpython-38.pyc
+¦   ¦           0005_alter_asiento_estado.cpython-39.pyc
+¦   ¦           0006_alter_asiento_estado.cpython-37.pyc
+¦   ¦           0006_alter_asiento_estado.cpython-38.pyc
+¦   ¦           0006_alter_asiento_estado.cpython-39.pyc
+¦   ¦           0006_auto_20220108_0132.cpython-37.pyc
+¦   ¦           0007_alter_asiento_estado.cpython-37.pyc
+¦   ¦           0007_alter_asiento_estado.cpython-38.pyc
+¦   ¦           0007_alter_asiento_estado.cpython-39.pyc
+¦   ¦           0007_asiento_saltofila.cpython-37.pyc
+¦   ¦           0008_agencia_codigoseriedocumento.cpython-37.pyc
+¦   ¦           0008_alter_asiento_estado.cpython-37.pyc
+¦   ¦           0008_alter_asiento_estado.cpython-38.pyc
+¦   ¦           0008_alter_asiento_estado.cpython-39.pyc
+¦   ¦           0009_agencia_nombre.cpython-37.pyc
+¦   ¦           0009_alter_asiento_estado.cpython-37.pyc
+¦   ¦           0010_asiento_estadoincial.cpython-37.pyc
+¦   ¦           0010_auto_20220318_1220.cpython-37.pyc
+¦   ¦           0011_auto_20220123_2219.cpython-37.pyc
+¦   ¦           0011_auto_20220318_1234.cpython-37.pyc
+¦   ¦           0012_alter_asiento_estado.cpython-37.pyc
+¦   ¦           0013_alter_asiento_estado.cpython-37.pyc
+¦   ¦           0014_alter_asiento_estado.cpython-37.pyc
+¦   ¦           0015_alter_asiento_estado.cpython-37.pyc
+¦   ¦           0016_alter_asiento_estado.cpython-37.pyc
+¦   ¦           0016_auto_20220201_1706.cpython-37.pyc
+¦   ¦           0017_alter_asiento_estado.cpython-37.pyc
+¦   ¦           0018_alter_asiento_estado.cpython-37.pyc
+¦   ¦           0019_alter_asiento_estado.cpython-37.pyc
+¦   ¦           0020_alter_asiento_estado.cpython-37.pyc
+¦   ¦           0021_alter_asiento_estado.cpython-37.pyc
+¦   ¦           0022_alter_asiento_estado.cpython-37.pyc
+¦   ¦           0023_alter_asiento_estado.cpython-37.pyc
+¦   ¦           0024_alter_asiento_estado.cpython-37.pyc
+¦   ¦           0025_alter_asiento_estado.cpython-37.pyc
+¦   ¦           0026_alter_asiento_estado.cpython-37.pyc
+¦   ¦           0027_alter_asiento_estado.cpython-37.pyc
+¦   ¦           0028_alter_asiento_estado.cpython-37.pyc
+¦   ¦           0029_alter_asiento_estado.cpython-37.pyc
+¦   ¦           0030_alter_asiento_estado.cpython-37.pyc
+¦   ¦           0031_alter_asiento_estado.cpython-37.pyc
+¦   ¦           0031_auto_20220309_1222.cpython-37.pyc
+¦   ¦           0032_delete_ruta.cpython-37.pyc
+¦   ¦           0033_ruta.cpython-37.pyc
+¦   ¦           0034_alter_asiento_estado.cpython-37.pyc
+¦   ¦           0035_alter_asiento_estado.cpython-37.pyc
+¦   ¦           0036_alter_asiento_estado.cpython-37.pyc
+¦   ¦           __init__.cpython-37.pyc
+¦   ¦           __init__.cpython-38.pyc
+¦   ¦           __init__.cpython-39.pyc
+¦   ¦           
+¦   +---__pycache__
+¦           admin.cpython-37.pyc
+¦           admin.cpython-38.pyc
+¦           admin.cpython-39.pyc
+¦           apps.cpython-37.pyc
+¦           apps.cpython-38.pyc
+¦           apps.cpython-39.pyc
+¦           forms.cpython-37.pyc
+¦           forms.cpython-38.pyc
+¦           forms.cpython-39.pyc
+¦           models.cpython-37.pyc
+¦           models.cpython-38.pyc
+¦           models.cpython-39.pyc
+¦           urls.cpython-37.pyc
+¦           urls.cpython-38.pyc
+¦           urls.cpython-39.pyc
+¦           views.cpython-37.pyc
+¦           views.cpython-38.pyc
+¦           views.cpython-39.pyc
+¦           __init__.cpython-37.pyc
+¦           __init__.cpython-38.pyc
+¦           __init__.cpython-39.pyc
+¦           
++---envio
+¦   ¦   admin.py
+¦   ¦   apps.py
+¦   ¦   forms.py
+¦   ¦   models.py
+¦   ¦   tests.py
+¦   ¦   urls.py
+¦   ¦   views.py
+¦   ¦   __init__.py
+¦   ¦   
+¦   +---migrations
+¦   ¦   ¦   0001_initial.py
+¦   ¦   ¦   __init__.py
+¦   ¦   ¦   
+¦   ¦   +---__pycache__
+¦   ¦           0001_initial.cpython-37.pyc
+¦   ¦           0001_initial.cpython-38.pyc
+¦   ¦           0001_initial.cpython-39.pyc
+¦   ¦           0002_encomienda_numerocontacto.cpython-37.pyc
+¦   ¦           0003_alter_clienterecepcion_encomienda.cpython-37.pyc
+¦   ¦           __init__.cpython-37.pyc
+¦   ¦           __init__.cpython-38.pyc
+¦   ¦           __init__.cpython-39.pyc
+¦   ¦           
+¦   +---__pycache__
+¦           admin.cpython-37.pyc
+¦           admin.cpython-38.pyc
+¦           admin.cpython-39.pyc
+¦           apps.cpython-37.pyc
+¦           apps.cpython-38.pyc
+¦           apps.cpython-39.pyc
+¦           forms.cpython-37.pyc
+¦           forms.cpython-38.pyc
+¦           forms.cpython-39.pyc
+¦           models.cpython-37.pyc
+¦           models.cpython-38.pyc
+¦           models.cpython-39.pyc
+¦           urls.cpython-37.pyc
+¦           urls.cpython-38.pyc
+¦           urls.cpython-39.pyc
+¦           views.cpython-37.pyc
+¦           views.cpython-38.pyc
+¦           views.cpython-39.pyc
+¦           __init__.cpython-37.pyc
+¦           __init__.cpython-38.pyc
+¦           __init__.cpython-39.pyc
+¦           
++---facturacion
+¦   ¦   admin.py
+¦   ¦   apps.py
+¦   ¦   forms.py
+¦   ¦   models.py
+¦   ¦   tests.py
+¦   ¦   urls.py
+¦   ¦   views.py
+¦   ¦   __init__.py
+¦   ¦   __init__.pyc
+¦   ¦   
+¦   +---migrations
+¦   ¦   ¦   0001_initial.py
+¦   ¦   ¦   0002_faturaboleta_hora.py
+¦   ¦   ¦   __init__.py
+¦   ¦   ¦   
+¦   ¦   +---__pycache__
+¦   ¦           0001_initial.cpython-37.pyc
+¦   ¦           0001_initial.cpython-38.pyc
+¦   ¦           0001_initial.cpython-39.pyc
+¦   ¦           0002_auto_20220114_1345.cpython-37.pyc
+¦   ¦           0002_faturaboleta_hora.cpython-38.pyc
+¦   ¦           0002_faturaboleta_hora.cpython-39.pyc
+¦   ¦           0002_faturaboleta_usuario.cpython-37.pyc
+¦   ¦           0003_auto_20220114_1408.cpython-37.pyc
+¦   ¦           0003_faturaboleta_cadenaqr.cpython-37.pyc
+¦   ¦           0004_alter_faturaboleta_fechafact.cpython-37.pyc
+¦   ¦           0004_alter_faturaboleta_monto.cpython-37.pyc
+¦   ¦           0005_alter_faturaboleta_fechafact.cpython-37.pyc
+¦   ¦           0006_alter_faturaboleta_fechafact.cpython-37.pyc
+¦   ¦           0006_alter_faturaboleta_ventamovimiento.cpython-37.pyc
+¦   ¦           0007_alter_faturaboleta_ventamovimiento.cpython-37.pyc
+¦   ¦           0008_alter_faturaboleta_ventamovimiento.cpython-37.pyc
+¦   ¦           0009_faturaboleta_iscanje.cpython-37.pyc
+¦   ¦           0010_faturaboleta_enlace.cpython-37.pyc
+¦   ¦           __init__.cpython-37.pyc
+¦   ¦           __init__.cpython-38.pyc
+¦   ¦           __init__.cpython-39.pyc
+¦   ¦           
+¦   +---__pycache__
+¦           admin.cpython-37.pyc
+¦           admin.cpython-38.pyc
+¦           admin.cpython-39.pyc
+¦           apps.cpython-37.pyc
+¦           apps.cpython-38.pyc
+¦           apps.cpython-39.pyc
+¦           forms.cpython-37.pyc
+¦           forms.cpython-38.pyc
+¦           forms.cpython-39.pyc
+¦           models.cpython-37.pyc
+¦           models.cpython-38.pyc
+¦           models.cpython-39.pyc
+¦           urls.cpython-37.pyc
+¦           urls.cpython-38.pyc
+¦           urls.cpython-39.pyc
+¦           views.cpython-37.pyc
+¦           views.cpython-38.pyc
+¦           views.cpython-39.pyc
+¦           __init__.cpython-37.pyc
+¦           __init__.cpython-38.pyc
+¦           __init__.cpython-39.pyc
+¦           
++---persona
+¦   ¦   admin.py
+¦   ¦   apps.py
+¦   ¦   forms.py
+¦   ¦   models.py
+¦   ¦   models.py.save
+¦   ¦   serializers.py
+¦   ¦   tests.py
+¦   ¦   urls.py
+¦   ¦   views.py
+¦   ¦   __init__.py
+¦   ¦   
+¦   +---API
+¦   ¦   ¦   serializers.py
+¦   ¦   ¦   urls.py
+¦   ¦   ¦   views.py
+¦   ¦   ¦   __init__.py
+¦   ¦   ¦   
+¦   ¦   +---__pycache__
+¦   ¦           serializers.cpython-39.pyc
+¦   ¦           urls.cpython-39.pyc
+¦   ¦           views.cpython-39.pyc
+¦   ¦           __init__.cpython-39.pyc
+¦   ¦           
+¦   +---migrations
+¦   ¦   ¦   0001_initial.py
+¦   ¦   ¦   0002_persona_ispersonal.py
+¦   ¦   ¦   __init__.py
+¦   ¦   ¦   
+¦   ¦   +---__pycache__
+¦   ¦           0001_initial.cpython-37.pyc
+¦   ¦           0001_initial.cpython-38.pyc
+¦   ¦           0001_initial.cpython-39.pyc
+¦   ¦           0002_alter_persona_tipodoc.cpython-37.pyc
+¦   ¦           0002_auto_20211228_1926.cpython-37.pyc
+¦   ¦           0002_auto_20220102_0938.cpython-37.pyc
+¦   ¦           0002_personanatural_ordenhappy.cpython-37.pyc
+¦   ¦           0002_persona_ispersonal.cpython-38.pyc
+¦   ¦           0002_persona_ispersonal.cpython-39.pyc
+¦   ¦           0002_persona_ubigueo.cpython-37.pyc
+¦   ¦           0003_auto_20220102_1543.cpython-37.pyc
+¦   ¦           0003_auto_20220221_1207.cpython-37.pyc
+¦   ¦           0004_alter_persona_denominacion.cpython-37.pyc
+¦   ¦           0004_persona_activo.cpython-37.pyc
+¦   ¦           0005_auto_20220223_2038.cpython-37.pyc
+¦   ¦           0006_auto_20220223_2232.cpython-37.pyc
+¦   ¦           0007_alter_persona_numdoc.cpython-37.pyc
+¦   ¦           0008_auto_20220226_2309.cpython-37.pyc
+¦   ¦           __init__.cpython-37.pyc
+¦   ¦           __init__.cpython-38.pyc
+¦   ¦           __init__.cpython-39.pyc
+¦   ¦           
+¦   +---__pycache__
+¦           admin.cpython-37.pyc
+¦           admin.cpython-38.pyc
+¦           admin.cpython-39.pyc
+¦           apps.cpython-37.pyc
+¦           apps.cpython-38.pyc
+¦           apps.cpython-39.pyc
+¦           forms.cpython-37.pyc
+¦           forms.cpython-38.pyc
+¦           forms.cpython-39.pyc
+¦           models.cpython-37.pyc
+¦           models.cpython-38.pyc
+¦           models.cpython-39.pyc
+¦           serializers.cpython-39.pyc
+¦           urls.cpython-37.pyc
+¦           urls.cpython-38.pyc
+¦           urls.cpython-39.pyc
+¦           views.cpython-37.pyc
+¦           views.cpython-38.pyc
+¦           views.cpython-39.pyc
+¦           __init__.cpython-37.pyc
+¦           __init__.cpython-38.pyc
+¦           __init__.cpython-39.pyc
+¦           
++---reporte
+¦   ¦   admin.py
+¦   ¦   apps.py
+¦   ¦   models.py
+¦   ¦   tests.py
+¦   ¦   views.py
+¦   ¦   __init__.py
+¦   ¦   
+¦   +---migrations
+¦           __init__.py
+¦           
++---sistema
+¦   ¦   admin.py
+¦   ¦   apps.py
+¦   ¦   forms.py
+¦   ¦   models.py
+¦   ¦   tests.py
+¦   ¦   urls.py
+¦   ¦   views.py
+¦   ¦   __init__.py
+¦   ¦   
+¦   +---API
+¦   ¦       serializers.py
+¦   ¦       urls.py
+¦   ¦       views.py
+¦   ¦       
+¦   +---migrations
+¦   ¦   ¦   0001_initial.py
+¦   ¦   ¦   0002_alter_menu_options.py
+¦   ¦   ¦   0003_alter_menu_options.py
+¦   ¦   ¦   __init__.py
+¦   ¦   ¦   
+¦   ¦   +---__pycache__
+¦   ¦           0001_initial.cpython-37.pyc
+¦   ¦           0001_initial.cpython-38.pyc
+¦   ¦           0001_initial.cpython-39.pyc
+¦   ¦           0002_alter_menu_options.cpython-38.pyc
+¦   ¦           0002_alter_menu_options.cpython-39.pyc
+¦   ¦           0002_alter_usuario_agencia.cpython-37.pyc
+¦   ¦           0003_alter_menu_options.cpython-38.pyc
+¦   ¦           0003_alter_menu_options.cpython-39.pyc
+¦   ¦           0003_auto_20220116_1102.cpython-37.pyc
+¦   ¦           0004_alter_menu_icono.cpython-37.pyc
+¦   ¦           0005_alter_menu_url.cpython-37.pyc
+¦   ¦           0006_menu_orden.cpython-37.pyc
+¦   ¦           0007_menu_activo.cpython-37.pyc
+¦   ¦           0008_alter_menu_activo.cpython-37.pyc
+¦   ¦           __init__.cpython-37.pyc
+¦   ¦           __init__.cpython-38.pyc
+¦   ¦           __init__.cpython-39.pyc
+¦   ¦           
+¦   +---__pycache__
+¦           admin.cpython-37.pyc
+¦           admin.cpython-38.pyc
+¦           admin.cpython-39.pyc
+¦           apps.cpython-37.pyc
+¦           apps.cpython-38.pyc
+¦           apps.cpython-39.pyc
+¦           forms.cpython-37.pyc
+¦           forms.cpython-38.pyc
+¦           forms.cpython-39.pyc
+¦           models.cpython-37.pyc
+¦           models.cpython-38.pyc
+¦           models.cpython-39.pyc
+¦           urls.cpython-37.pyc
+¦           urls.cpython-38.pyc
+¦           urls.cpython-39.pyc
+¦           views.cpython-37.pyc
+¦           views.cpython-38.pyc
+¦           views.cpython-39.pyc
+¦           __init__.cpython-37.pyc
+¦           __init__.cpython-38.pyc
+¦           __init__.cpython-39.pyc
+¦           
++---venta
+¦   ¦   admin.py
+¦   ¦   apps.py
+¦   ¦   forms.py
+¦   ¦   models.py
+¦   ¦   models.pyc
+¦   ¦   tests.py
+¦   ¦   views.py
+¦   ¦   __init__.py
+¦   ¦   __init__.pyc
+¦   ¦   
+¦   +---migrations
+¦   ¦   ¦   0001_initial.py
+¦   ¦   ¦   __init__.py
+¦   ¦   ¦   
+¦   ¦   +---__pycache__
+¦   ¦           0001_initial.cpython-37.pyc
+¦   ¦           0001_initial.cpython-38.pyc
+¦   ¦           0001_initial.cpython-39.pyc
+¦   ¦           0002_auto_20211231_0156.cpython-37.pyc
+¦   ¦           0002_auto_20220103_1820.cpython-37.pyc
+¦   ¦           0002_auto_20220104_1221.cpython-37.pyc
+¦   ¦           0003_auto_20220104_1421.cpython-37.pyc
+¦   ¦           0004_auto_20220104_1548.cpython-37.pyc
+¦   ¦           0005_auto_20220114_1345.cpython-37.pyc
+¦   ¦           0006_alter_detallemov_unidadmedida.cpython-37.pyc
+¦   ¦           __init__.cpython-37.pyc
+¦   ¦           __init__.cpython-38.pyc
+¦   ¦           __init__.cpython-39.pyc
+¦   ¦           
+¦   +---__pycache__
+¦           admin.cpython-37.pyc
+¦           admin.cpython-38.pyc
+¦           admin.cpython-39.pyc
+¦           apps.cpython-37.pyc
+¦           apps.cpython-38.pyc
+¦           apps.cpython-39.pyc
+¦           forms.cpython-37.pyc
+¦           forms.cpython-38.pyc
+¦           forms.cpython-39.pyc
+¦           models.cpython-37.pyc
+¦           models.cpython-38.pyc
+¦           models.cpython-39.pyc
+¦           __init__.cpython-37.pyc
+¦           __init__.cpython-38.pyc
+¦           __init__.cpython-39.pyc
+¦           
++---viaje
+¦   ¦   admin.py
+¦   ¦   apps.py
+¦   ¦   forms.py
+¦   ¦   models.py
+¦   ¦   serializers.py
+¦   ¦   tests.py
+¦   ¦   urls.py
+¦   ¦   views.py
+¦   ¦   __init__.py
+¦   ¦   
+¦   +---API
+¦   ¦   ¦   serializers.py
+¦   ¦   ¦   urls.py
+¦   ¦   ¦   views.py
+¦   ¦   ¦   __init__.py
+¦   ¦   ¦   
+¦   ¦   +---__pycache__
+¦   ¦           serializers.cpython-39.pyc
+¦   ¦           urls.cpython-39.pyc
+¦   ¦           views.cpython-39.pyc
+¦   ¦           __init__.cpython-39.pyc
+¦   ¦           
+¦   +---migrations
+¦   ¦   ¦   0001_initial.py
+¦   ¦   ¦   0002_alter_programacionasiento_estado.py
+¦   ¦   ¦   0003_alter_programacionasiento_estado.py
+¦   ¦   ¦   0004_alter_programacionasiento_estado.py
+¦   ¦   ¦   0005_alter_programacionasiento_estado.py
+¦   ¦   ¦   0006_alter_programacionasiento_estado.py
+¦   ¦   ¦   0007_alter_programacionasiento_estado.py
+¦   ¦   ¦   0008_alter_programacionasiento_estado.py
+¦   ¦   ¦   0009_alter_programacionasiento_estado.py
+¦   ¦   ¦   0010_alter_programacionasiento_estado.py
+¦   ¦   ¦   __init__.py
+¦   ¦   ¦   
+¦   ¦   +---__pycache__
+¦   ¦           0001_initial.cpython-37.pyc
+¦   ¦           0001_initial.cpython-38.pyc
+¦   ¦           0001_initial.cpython-39.pyc
+¦   ¦           0002_alter_programacionasiento_estado.cpython-37.pyc
+¦   ¦           0002_alter_programacionasiento_estado.cpython-38.pyc
+¦   ¦           0002_alter_programacionasiento_estado.cpython-39.pyc
+¦   ¦           0003_alter_programacionasiento_estado.cpython-37.pyc
+¦   ¦           0003_alter_programacionasiento_estado.cpython-38.pyc
+¦   ¦           0003_alter_programacionasiento_estado.cpython-39.pyc
+¦   ¦           0004_alter_programacionasiento_estado.cpython-37.pyc
+¦   ¦           0004_alter_programacionasiento_estado.cpython-38.pyc
+¦   ¦           0004_alter_programacionasiento_estado.cpython-39.pyc
+¦   ¦           0005_alter_programacionasiento_estado.cpython-37.pyc
+¦   ¦           0005_alter_programacionasiento_estado.cpython-38.pyc
+¦   ¦           0005_alter_programacionasiento_estado.cpython-39.pyc
+¦   ¦           0005_auto_20220313_1300.cpython-37.pyc
+¦   ¦           0006_alter_programacionasiento_estado.cpython-38.pyc
+¦   ¦           0006_alter_programacionasiento_estado.cpython-39.pyc
+¦   ¦           0006_auto_20220128_1534.cpython-37.pyc
+¦   ¦           0006_auto_20220313_1621.cpython-37.pyc
+¦   ¦           0007_alter_programacionasiento_estado.cpython-37.pyc
+¦   ¦           0007_alter_programacionasiento_estado.cpython-38.pyc
+¦   ¦           0007_alter_programacionasiento_estado.cpython-39.pyc
+¦   ¦           0007_auto_20220128_1651.cpython-37.pyc
+¦   ¦           0008_alter_programacionasiento_estado.cpython-38.pyc
+¦   ¦           0008_alter_programacionasiento_estado.cpython-39.pyc
+¦   ¦           0008_auto_20220128_1712.cpython-37.pyc
+¦   ¦           0008_auto_20220316_1108.cpython-37.pyc
+¦   ¦           0009_alter_programacionasiento_estado.cpython-38.pyc
+¦   ¦           0009_alter_programacionasiento_estado.cpython-39.pyc
+¦   ¦           0009_auto_20220128_1716.cpython-37.pyc
+¦   ¦           0009_auto_20220316_2204.cpython-37.pyc
+¦   ¦           0010_alter_programacionasiento_estado.cpython-38.pyc
+¦   ¦           0010_alter_programacionasiento_estado.cpython-39.pyc
+¦   ¦           0010_auto_20220201_1706.cpython-37.pyc
+¦   ¦           0010_auto_20220317_0039.cpython-37.pyc
+¦   ¦           0011_alter_programacionasiento_estado.cpython-37.pyc
+¦   ¦           0012_alter_programacionasiento_estado.cpython-37.pyc
+¦   ¦           0013_alter_programacionasiento_estado.cpython-37.pyc
+¦   ¦           0013_auto_20220321_1645.cpython-37.pyc
+¦   ¦           0014_alter_programacionasiento_estado.cpython-37.pyc
+¦   ¦           0014_auto_20220322_1753.cpython-37.pyc
+¦   ¦           0015_alter_programacionasiento_estado.cpython-37.pyc
+¦   ¦           0016_alter_programacionasiento_estado.cpython-37.pyc
+¦   ¦           0016_auto_20220408_0742.cpython-37.pyc
+¦   ¦           0017_alter_programacionasiento_estado.cpython-37.pyc
+¦   ¦           0018_alter_programacionasiento_estado.cpython-37.pyc
+¦   ¦           0019_alter_programacionasiento_estado.cpython-37.pyc
+¦   ¦           0019_auto_20220412_1159.cpython-37.pyc
+¦   ¦           0019_auto_20220412_1200.cpython-37.pyc
+¦   ¦           0019_auto_20220412_1204.cpython-37.pyc
+¦   ¦           0020_alter_programacionasiento_estado.cpython-37.pyc
+¦   ¦           0020_auto_20220412_0929.cpython-37.pyc
+¦   ¦           0020_auto_20220412_1142.cpython-37.pyc
+¦   ¦           0020_auto_20220412_1158.cpython-37.pyc
+¦   ¦           0020_auto_20220412_1203.cpython-37.pyc
+¦   ¦           0020_auto_20220412_1205.cpython-37.pyc
+¦   ¦           0021_alter_programacionasiento_estado.cpython-37.pyc
+¦   ¦           0021_auto_20220412_0932.cpython-37.pyc
+¦   ¦           0021_auto_20220412_1152.cpython-37.pyc
+¦   ¦           0021_auto_20220412_1208.cpython-37.pyc
+¦   ¦           0022_alter_programacionasiento_estado.cpython-37.pyc
+¦   ¦           0022_auto_20220412_1153.cpython-37.pyc
+¦   ¦           0022_auto_20220413_2152.cpython-37.pyc
+¦   ¦           0023_alter_programacionasiento_estado.cpython-37.pyc
+¦   ¦           0023_auto_20220412_1154.cpython-37.pyc
+¦   ¦           0024_alter_programacionasiento_estado.cpython-37.pyc
+¦   ¦           0025_alter_programacionasiento_estado.cpython-37.pyc
+¦   ¦           0026_alter_programacionasiento_estado.cpython-37.pyc
+¦   ¦           0027_alter_programacionasiento_estado.cpython-37.pyc
+¦   ¦           0028_auto_20220309_1222.cpython-37.pyc
+¦   ¦           0029_alter_programacionasiento_estado.cpython-37.pyc
+¦   ¦           0030_alter_programacionasiento_estado.cpython-37.pyc
+¦   ¦           0031_alter_programacionasiento_estado.cpython-37.pyc
+¦   ¦           0032_alter_programacionasiento_estado.cpython-37.pyc
+¦   ¦           0033_alter_programacionasiento_estado.cpython-37.pyc
+¦   ¦           __init__.cpython-37.pyc
+¦   ¦           __init__.cpython-38.pyc
+¦   ¦           __init__.cpython-39.pyc
+¦   ¦           
+¦   +---__pycache__
+¦           admin.cpython-37.pyc
+¦           admin.cpython-38.pyc
+¦           admin.cpython-39.pyc
+¦           apps.cpython-37.pyc
+¦           apps.cpython-38.pyc
+¦           apps.cpython-39.pyc
+¦           forms.cpython-37.pyc
+¦           forms.cpython-38.pyc
+¦           forms.cpython-39.pyc
+¦           models.cpython-37.pyc
+¦           models.cpython-38.pyc
+¦           models.cpython-39.pyc
+¦           serializers.cpython-39.pyc
+¦           urls.cpython-37.pyc
+¦           urls.cpython-38.pyc
+¦           urls.cpython-39.pyc
+¦           views.cpython-37.pyc
+¦           views.cpython-38.pyc
+¦           views.cpython-39.pyc
+¦           __init__.cpython-37.pyc
+¦           __init__.cpython-38.pyc
+¦           __init__.cpython-39.pyc
+¦           
++---web
+¦   ¦   admin.py
+¦   ¦   apps.py
+¦   ¦   models.py
+¦   ¦   tests.py
+¦   ¦   urls.py
+¦   ¦   views.py
+¦   ¦   __init__.py
+¦   ¦   
+¦   +---migrations
+¦   ¦       __init__.py
+¦   ¦       
+¦   +---__pycache__
+¦           urls.cpython-37.pyc
+¦           urls.cpython-38.pyc
+¦           urls.cpython-39.pyc
+¦           views.cpython-37.pyc
+¦           views.cpython-38.pyc
+¦           views.cpython-39.pyc
+¦           __init__.cpython-37.pyc
+¦           __init__.cpython-38.pyc
+¦           __init__.cpython-39.pyc
+¦           
++---__pycache__
+        __init__.cpython-37.pyc
+        __init__.cpython-38.pyc
+        __init__.cpython-39.pyc
+        

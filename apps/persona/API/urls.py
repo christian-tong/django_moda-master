@@ -7,6 +7,7 @@ from .views import (
     PersonaViewSet,
     PersonaListCreateAPIView,
     PersonaRetrieveUpdateDestroyAPIView,
+    persona_autocomplete,
 )
 
 app_name = "api"
@@ -26,6 +27,7 @@ urlpatterns = [
         PersonaRetrieveUpdateDestroyAPIView.as_view(),
         name="persona-detail",
     ),
+    path("personas/autocomplete/", persona_autocomplete, name="persona-autocomplete"),
 ]
 
 # Agregamos las rutas del router
