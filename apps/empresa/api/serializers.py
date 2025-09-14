@@ -175,3 +175,74 @@ class AgenciaDocumentoSerializer(serializers.ModelSerializer):
 
 
 # endregion
+
+
+# region VehiculoSerializers
+class VehiculoListSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Vehiculo
+        fields = [
+            "id",
+            "placa",
+            "categoria",
+            "marca",
+            "modelo",
+            "color",
+            "numSerie",
+            "numMotor",
+            "carroceria",
+            "combustible",
+            "numAsientos",
+            "numPasajeros",
+            "propio",
+            "numfilas",
+            "numColumnas",
+        ]
+
+
+class VehiculoDetailSerializer(VehiculoListSerializer):
+    pass
+
+
+class VehiculoWriteSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Vehiculo
+        fields = "__all__"
+
+
+# endregion
+
+
+# region AsientoSerializers
+class AsientoListSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Asiento
+        fields = [
+            "id",
+            "vehiculo",
+            "codigoMatrix",
+            "numero",
+            "saltofila",
+            "estado",
+        ]
+
+
+class AsientoDetailSerializer(AsientoListSerializer):
+    vehiculo = VehiculoListSerializer(read_only=True)
+
+
+class AsientoWriteSerializer(serializers.ModelSerializer):
+    vehiculo = serializers.PrimaryKeyRelatedField(queryset=Vehiculo.objects.all())
+
+    class Meta:
+        model = Asiento
+        fields = [
+            "vehiculo",
+            "codigoMatrix",
+            "numero",
+            "saltofila",
+            "estado",
+        ]
+
+
+# endregion

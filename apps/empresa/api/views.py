@@ -6,6 +6,21 @@ from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import action
 from django.urls import reverse_lazy
+from collections import defaultdict
+
+from apps.empresa.models import Asiento
+from .serializers import (
+    AsientoListSerializer,
+    AsientoDetailSerializer,
+    AsientoWriteSerializer,
+)
+
+from apps.empresa.models import Vehiculo
+from .serializers import (
+    VehiculoListSerializer,
+    VehiculoDetailSerializer,
+    VehiculoWriteSerializer,
+)
 
 from apps.empresa.models import Conductor, Agencia
 from .serializers import (
@@ -225,6 +240,173 @@ class AgenciaViewSet(viewsets.ModelViewSet):
                     "success_url": reverse_lazy("empresa:agencia-list"),
                 }
             )
+        return fail(errors=serializer.errors)
+
+
+# endregion
+
+
+class VehiculoViewSet(viewsets.ModelViewSet):
+    """
+    /// <summary>
+    /// CRUD de Vehículos, con búsqueda por placa o marca.
+    /// </summary>
+    """
+
+    queryset = Vehiculo.objects.all()
+    permission_classes = [IsAuthenticated]
+    pagination_class = StandardResultsSetPagination
+
+    def get_serializer_class(self):
+        if self.action == "list":
+            return VehiculoListSerializer
+        elif self.action == "retrieve":
+            return VehiculoDetailSerializer
+        return VehiculoWriteSerializer
+
+    def list(self, request, *args, **kwargs):
+        qs = self.get_queryset()
+        q = request.GET.get("q")
+        if q:
+            qs = qs.filter(Q(placa__icontains=q) | Q(marca__icontains=q)).distinct()
+        page = self.paginate_queryset(qs)
+        serializer = self.get_serializer(page, many=True)
+        return self.get_paginated_response({"entity": serializer.data})
+
+    def create(self, request, *args, **kwargs):
+        serializer = VehiculoWriteSerializer(data=request.data)
+        if serializer.is_valid():
+            vehiculo = serializer.save()
+            out_ser = VehiculoDetailSerializer(vehiculo)
+            return ok(out_ser.data, status_code=status.HTTP_201_CREATED)
+        return fail(errors=serializer.errors)
+
+    def update(self, request, *args, **kwargs):
+        instance = self.get_object()
+        serializer = VehiculoWriteSerializer(instance, data=request.data, partial=False)
+        if serializer.is_valid():
+            vehiculo = serializer.save()
+            out_ser = VehiculoDetailSerializer(vehiculo)
+            return ok(out_ser.data)
+        return fail(errors=serializer.errors)
+
+    def partial_update(self, request, *args, **kwargs):
+        instance = self.get_object()
+        serializer = VehiculoWriteSerializer(instance, data=request.data, partial=True)
+        if serializer.is_valid():
+            vehiculo = serializer.save()
+            out_ser = VehiculoDetailSerializer(vehiculo)
+            return ok(out_ser.data)
+        return fail(errors=serializer.errors)
+
+    @action(detail=True, methods=["get"], url_path="asientos")
+    def asientos(self, request, pk=None):
+        vehiculo = self.get_object()
+        asientos = Asiento.objects.filter(vehiculo=vehiculo).order_by("codigoMatrix")
+        serializer = AsientoListSerializer(asientos, many=True)
+        return ok(serializer.data)
+
+    @action(detail=True, methods=["get"], url_path="matriz")
+    def matriz(self, request, pk=None):
+        """
+        Devuelve los asientos de un vehículo en formato de matriz (filas/columnas).
+        Útil para el front (Next.js) al renderizar la grilla.
+        """
+        vehiculo = self.get_object()
+        asientos = Asiento.objects.filter(vehiculo=vehiculo).order_by("codigoMatrix")
+
+        filas = defaultdict(list)
+        for asiento in asientos:
+            fila = asiento.codigoMatrix // 10  # ej: 11 -> fila 1, 21 -> fila 2
+            col = asiento.codigoMatrix % 10  # ej: 11 -> col 1, 14 -> col 4
+            filas[fila].append(
+                {
+                    "id": asiento.id,
+                    "codigoMatrix": asiento.codigoMatrix,
+                    "numero": asiento.numero,
+                    "saltofila": asiento.saltofila,
+                    "estado": asiento.estado,
+                    "vehiculo_id": asiento.vehiculo_id,
+                    "fila": fila,
+                    "columna": col,
+                }
+            )
+
+        # ordenar columnas en cada fila
+        matriz = []
+        for f in sorted(filas.keys()):
+            fila_ordenada = sorted(filas[f], key=lambda x: x["columna"])
+            matriz.append(fila_ordenada)
+
+        return ok(
+            {
+                "vehiculo": {
+                    "id": vehiculo.id,
+                    "placa": vehiculo.placa,
+                    "marca": vehiculo.marca,
+                    "modelo": vehiculo.modelo,
+                    "numfilas": vehiculo.numfilas,
+                    "numColumnas": vehiculo.numColumnas,
+                },
+                "matriz": matriz,
+            }
+        )
+
+
+# region Asiento ViewSet
+class AsientoViewSet(viewsets.ModelViewSet):
+    """
+    /// <summary>
+    /// CRUD de Asientos por Vehículo.
+    /// Permite listar, crear, actualizar y eliminar asientos.
+    /// </summary>
+    """
+
+    queryset = Asiento.objects.all().select_related("vehiculo")
+    permission_classes = [IsAuthenticated]
+    pagination_class = StandardResultsSetPagination
+
+    def get_serializer_class(self):
+        if self.action == "list":
+            return AsientoListSerializer
+        elif self.action == "retrieve":
+            return AsientoDetailSerializer
+        return AsientoWriteSerializer
+
+    def list(self, request, *args, **kwargs):
+        qs = self.get_queryset()
+        vehiculo_id = request.GET.get("vehiculo_id")
+        if vehiculo_id:
+            qs = qs.filter(vehiculo_id=vehiculo_id).order_by("codigoMatrix")
+
+        page = self.paginate_queryset(qs)
+        serializer = self.get_serializer(page, many=True)
+        return self.get_paginated_response({"entity": serializer.data})
+
+    def create(self, request, *args, **kwargs):
+        serializer = AsientoWriteSerializer(data=request.data)
+        if serializer.is_valid():
+            asiento = serializer.save()
+            out_ser = AsientoDetailSerializer(asiento)
+            return ok(out_ser.data, status_code=status.HTTP_201_CREATED)
+        return fail(errors=serializer.errors)
+
+    def update(self, request, *args, **kwargs):
+        instance = self.get_object()
+        serializer = AsientoWriteSerializer(instance, data=request.data, partial=False)
+        if serializer.is_valid():
+            asiento = serializer.save()
+            out_ser = AsientoDetailSerializer(asiento)
+            return ok(out_ser.data)
+        return fail(errors=serializer.errors)
+
+    def partial_update(self, request, *args, **kwargs):
+        instance = self.get_object()
+        serializer = AsientoWriteSerializer(instance, data=request.data, partial=True)
+        if serializer.is_valid():
+            asiento = serializer.save()
+            out_ser = AsientoDetailSerializer(asiento)
+            return ok(out_ser.data)
         return fail(errors=serializer.errors)
 
 
