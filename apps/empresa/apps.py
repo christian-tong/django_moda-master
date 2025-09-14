@@ -1,3 +1,5 @@
+# BACKEND apps/empresa/apps.py
+
 from django.apps import AppConfig
 
 

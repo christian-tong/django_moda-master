@@ -1,3 +1,5 @@
+#BACKEND apps/persona/admin.py
+
 from django.contrib import admin
 from apps.persona.models import Persona, PersonaJuridica, PersonaNatural
 

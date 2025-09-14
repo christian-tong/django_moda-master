@@ -1,4 +1,5 @@
-# persona/urls.py
+#BACKEND apps/persona/urls.py
+
 from django.urls import include, path
 from django.contrib.auth.decorators import login_required
 from .views import list, add, edit, autocomplite, updateOrdenHappy

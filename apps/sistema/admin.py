@@ -1,3 +1,5 @@
+# apps/sistema/admin.py
+
 from django.contrib import admin
 
 from apps.sistema.models import Usuario, Menu

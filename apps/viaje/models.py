@@ -1,3 +1,5 @@
+#BACKEND apps/viaje/models.py
+
 from django.db import models
 from django.forms import model_to_dict
 from apps.venta.models import Movimiento

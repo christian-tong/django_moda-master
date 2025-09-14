@@ -6,7 +6,7 @@ from django.db.models import Sum
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status, permissions
-
+from rest_framework.permissions import AllowAny
 from apps.caja.models import MovimientoCaja
 from apps.persona.models import Persona
 from apps.persona.views import listHappy
@@ -59,6 +59,8 @@ class AccountLoginView(APIView):
     POST: Inicia sesión con usuario y contraseña.
     Devuelve info del usuario y la ruta de redirección.
     """
+
+    permission_classes = [AllowAny]  # 👈 aquí lo hacemos público
 
     def post(self, request):
         form = UsuarioLoginForm(request.data)
@@ -116,6 +118,7 @@ class AccountLoginView(APIView):
             {"success": False, "errors": form.errors},
             status=status.HTTP_400_BAD_REQUEST,
         )
+
 
 class AccountLogoutView(APIView):
     """

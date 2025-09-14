@@ -1,217 +1,200 @@
+# apps/viaje/API/views.py
+"""
+ViewSets DRF para la app de viaje.
+Migran la lógica de las vistas Django clásicas a APIs RESTful.
+Incluyen helpers ok()/fail() para respuestas uniformes.
+"""
+
 from datetime import datetime
+from django.db.models import Q
+from rest_framework import status, viewsets
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import action
 from rest_framework.response import Response
-from rest_framework import status, viewsets
 
-from ..models import (
-    Embarque,
-    Manifiesto,
-    ProgramacionAsiento,
-    ProgramacionViaje,
-)
-
-from rest_framework.viewsets import ViewSet
+from ..models import ProgramacionViaje, ProgramacionAsiento, Embarque, Manifiesto
 from .serializers import (
-    AsientosDisponiblesSerializer,
-    ProgramacionViajeSerializer,
-    EmbarqueSerializer,
-    ManifiestoSerializer,
-    ReservarAsientoSerializer,
+    ProgramacionViajeListSerializer,
+    ProgramacionViajeDetailSerializer,
+    ProgramacionViajeWriteSerializer,
+    ProgramacionAsientoSerializer,
+    ProgramacionAsientoWriteSerializer,
+    EmbarqueListSerializer,
+    EmbarqueDetailSerializer,
+    EmbarqueWriteSerializer,
+    ManifiestoListSerializer,
+    ManifiestoDetailSerializer,
+    ManifiestoWriteSerializer,
 )
-from apps.persona.models import Persona
 
-from rest_framework.exceptions import ValidationError
-
-from rest_framework.views import APIView
+# Helpers reutilizados de empresa
+from apps.empresa.api.views import StandardResultsSetPagination, ok, fail
 
 
+# -----------------------------
+# ProgramacionViaje
+# -----------------------------
 class ProgramacionViajeViewSet(viewsets.ModelViewSet):
-    serializer_class = ProgramacionViajeSerializer
+    """
+    CRUD de Programación de Viajes.
+    - Al crear: se generan automáticamente asientos y manifiesto.
+    """
 
-    def get_queryset(self):
-        """
-        Filtra las programaciones de viaje por fecha o por id pasado como parámetro.
-        Si no se pasa ningún parámetro, devuelve todas las programaciones.
-        """
-        queryset = ProgramacionViaje.objects.all()
-        fecha_param = self.request.query_params.get("fecha", None)
-        id_param = self.request.query_params.get("id", None)
+    queryset = ProgramacionViaje.objects.all().select_related(
+        "vehiculo", "rutaOrigen", "rutaDestino"
+    )
+    permission_classes = [IsAuthenticated]
+    pagination_class = StandardResultsSetPagination
 
-        if id_param:
+    def get_serializer_class(self):
+        if self.action == "list":
+            return ProgramacionViajeListSerializer
+        elif self.action == "retrieve":
+            return ProgramacionViajeDetailSerializer
+        return ProgramacionViajeWriteSerializer
+
+    def list(self, request, *args, **kwargs):
+        qs = self.get_queryset()
+        fecha = request.GET.get("fecha")
+        origen = request.GET.get("origen")
+        destino = request.GET.get("destino")
+
+        if fecha:
             try:
-                # Filtrar por id
-                return queryset.filter(id=id_param)
+                fecha = datetime.strptime(fecha, "%Y-%m-%d").date()
+                qs = qs.filter(fechaViaje=fecha)
             except ValueError:
-                raise ValidationError({"id": "El id debe ser un número válido."})
+                return fail(message="Formato de fecha inválido, use AAAA-MM-DD")
 
-        if fecha_param:
-            try:
-                # Intentar convertir el parámetro a un objeto de tipo date
-                fecha = datetime.strptime(fecha_param, "%Y-%m-%d").date()
-                # Filtrar por fecha exacta
-                return queryset.filter(fechaViaje=fecha)
-            except ValueError:
-                raise ValidationError(
-                    {"fecha": "El formato de la fecha debe ser AAAA-MM-DD."}
-                )
+        if origen:
+            qs = qs.filter(rutaOrigen_id=origen)
+        if destino:
+            qs = qs.filter(rutaDestino_id=destino)
 
-        # Si no se pasa ningún parámetro, devolver todas las programaciones
-        return queryset
+        page = self.paginate_queryset(qs.order_by("-fechaViaje"))
+        serializer = self.get_serializer(page, many=True)
+        return self.get_paginated_response({"entity": serializer.data})
 
-
-class ProgramacionAsientoViewSet(ViewSet):
-    @action(detail=True, methods=["get"], url_path="asientos_disponibles")
-    def asientos_disponibles(self, request, pk=None):
-        # Obtener la programación del viaje
-        try:
-            programacion_viaje = ProgramacionViaje.objects.get(pk=pk)
-        except ProgramacionViaje.DoesNotExist:
-            return Response(
-                {"error": "Programación de viaje no encontrada"}, status=404
-            )
-
-        # Filtrar asientos según el estado
-        libres = ProgramacionAsiento.objects.filter(
-            programacionViaje=programacion_viaje, estado="libre"
-        )
-        vendidos = ProgramacionAsiento.objects.filter(
-            programacionViaje=programacion_viaje, estado="vendido"
-        )
-        pasadisos = ProgramacionAsiento.objects.filter(
-            programacionViaje=programacion_viaje, estado="pasadiso"
-        )
-        cortesias = ProgramacionAsiento.objects.filter(
-            programacionViaje=programacion_viaje, estado="cortesia"
-        )
-
-        # Serializar los datos
-        serializer = AsientosDisponiblesSerializer(
-            {
-                "libres": libres,
-                "vendidos": vendidos,
-                "pasadisos": pasadisos,
-                "cortesias": cortesias,
-            }
-        )
-
-        return Response(serializer.data, status=200)
-
-    @action(detail=False, methods=["post"], url_path="vender_asientos")
-    def vender_asientos(self, request):
-        # Validar los datos de entrada
-        serializer = ReservarAsientoSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-
-        # Extraer los datos validados
-        programacion_viaje_id = serializer.validated_data["programacion_viaje_id"]
-        asientos_ids = serializer.validated_data["asientos_ids"]
-        nro_documento = serializer.validated_data["nro_documento"]
-
-        # Verificar que la programación del viaje existe
-        try:
-            programacion_viaje = ProgramacionViaje.objects.get(pk=programacion_viaje_id)
-        except ProgramacionViaje.DoesNotExist:
-            return Response(
-                {"error": "Programación de viaje no encontrada"}, status=404
-            )
-
-        # Buscar al cliente por número de documento
-        try:
-            cliente = Persona.objects.get(numDoc=nro_documento)
-        except Persona.DoesNotExist:
-            return Response(
-                {
-                    "error": "Cliente no encontrado con el número de documento proporcionado."
-                },
-                status=404,
-            )
-
-        # Inicializar las listas para asientos actualizados y errores
-        asientos_actualizados = []
-        errores_asientos = []
-
-        # Procesar cada asiento solicitado
-        for asiento_id in asientos_ids:
-            try:
-                asiento = ProgramacionAsiento.objects.get(
-                    id=asiento_id, programacionViaje=programacion_viaje, estado="libre"
-                )
-                # Cambiar el estado del asiento a "vendido"
-                asiento.estado = "vendido"
-                asiento.save()
-
-                # Crear el registro en la tabla Embarque con el número de asiento
-                Embarque.objects.create(
-                    programacionViaje=programacion_viaje,
-                    pasajero=cliente,
-                    numAsiento=asiento.asiento.numero,  # Aquí obtenemos el número de asiento
-                )
-                asientos_actualizados.append(asiento_id)
-            except ProgramacionAsiento.DoesNotExist:
-                errores_asientos.append(asiento_id)
-
-        # Generar la respuesta dependiendo de si hubo errores o no
-        if errores_asientos:
-            return Response(
-                {
-                    "message": "Algunos asientos no se pudieron vender.",
-                    "asientos_no_vendidos": errores_asientos,
-                    "asientos_vendidos": asientos_actualizados,
-                },
-                status=400,
-            )
-
-        return Response({"message": "Asiento/s comprados exitosamente."}, status=200)
-
-
-class ReservarAsientoView(APIView):
-    def post(self, request, *args, **kwargs):
-        serializer = ReservarAsientoSerializer(data=request.data)
+    def create(self, request, *args, **kwargs):
+        serializer = ProgramacionViajeWriteSerializer(data=request.data)
         if serializer.is_valid():
-            programacion_id = serializer.validated_data["programacion_viaje_id"]
-            asientos_ids = serializer.validated_data["asientos_ids"]
-            cliente = serializer.validated_data["cliente_id"]
+            prog = serializer.save()
+            # 🔥 lógica extra: crear asientos para el vehículo
+            for asiento in prog.vehiculo.asiento_set.all():
+                ProgramacionAsiento.objects.create(
+                    programacionViaje=prog,
+                    asiento=asiento,
+                    estado=asiento.estado,
+                    precio=prog.precio,
+                )
+            # 🔥 lógica extra: crear manifiesto vacío
+            Manifiesto.objects.create(
+                numDocumento=f"MA{prog.id:05d}",
+                programacionViaje=prog,
+                vehiculo=prog.vehiculo,
+                piloto=prog.piloto,
+                copiloto=prog.copiloto,
+                fechaViaje=prog.fechaViaje,
+            )
+            return ok(
+                ProgramacionViajeDetailSerializer(prog).data, status.HTTP_201_CREATED
+            )
+        return fail(errors=serializer.errors)
 
-            # Verificar asientos disponibles antes de actualizar
-            asientos_disponibles = ProgramacionAsiento.objects.filter(
-                programacionViaje_id=programacion_id,
-                id__in=asientos_ids,
-                estado="libre",
+
+# -----------------------------
+# ProgramacionAsiento
+# -----------------------------
+class ProgramacionAsientoViewSet(viewsets.ModelViewSet):
+    queryset = ProgramacionAsiento.objects.all().select_related(
+        "programacionViaje", "asiento"
+    )
+    permission_classes = [IsAuthenticated]
+    pagination_class = StandardResultsSetPagination
+
+    def get_serializer_class(self):
+        if self.action in ["list", "retrieve"]:
+            return ProgramacionAsientoSerializer
+        return ProgramacionAsientoWriteSerializer
+
+    def list(self, request, *args, **kwargs):
+        qs = self.get_queryset()
+        prog_id = request.GET.get("programacion_id")
+        if prog_id:
+            qs = qs.filter(programacionViaje_id=prog_id)
+        page = self.paginate_queryset(qs)
+        serializer = self.get_serializer(page, many=True)
+        return self.get_paginated_response({"entity": serializer.data})
+
+    @action(detail=True, methods=["get"], url_path="matriz")
+    def matriz(self, request, pk=None):
+        """
+        Devuelve los asientos en formato de matriz (filas x columnas).
+        """
+        programacion = self.get_object()
+        asientos = ProgramacionAsiento.objects.filter(
+            programacionViaje=programacion
+        ).order_by("asiento__codigoMatrix")
+
+        filas = {}
+        for a in asientos:
+            fila = a.asiento.codigoMatrix // 10
+            col = a.asiento.codigoMatrix % 10
+            filas.setdefault(fila, []).append(
+                {
+                    "id": a.id,
+                    "numero": a.asiento.numero,
+                    "estado": a.estado,
+                    "precio": a.precio,
+                    "columna": col,
+                }
             )
 
-            if asientos_disponibles.count() != len(asientos_ids):
-                return Response(
-                    {"error": "Uno o más asientos no están disponibles."},
-                    status=status.HTTP_400_BAD_REQUEST,
-                )
-
-            # Actualizar el estado de los asientos a 'reservado'
-            ProgramacionAsiento.objects.filter(
-                programacionViaje_id=programacion_id, id__in=asientos_ids
-            ).update(estado="reservado")
-
-            # Crear registros de embarque para el cliente
-            for asiento in asientos_disponibles:
-                Embarque.objects.create(
-                    programacionViaje_id=programacion_id,
-                    pasajero_id=cliente,
-                    numAsiento=asiento.id,
-                    estado="reservado",
-                )
-
-            return Response(
-                {"message": "Asientos reservados con éxito."},
-                status=status.HTTP_200_OK,
-            )
-
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        matriz = [
+            sorted(filas[f], key=lambda x: x["columna"]) for f in sorted(filas.keys())
+        ]
+        return ok({"programacion": programacion.id, "matriz": matriz})
 
 
+# -----------------------------
+# Embarque
+# -----------------------------
 class EmbarqueViewSet(viewsets.ModelViewSet):
-    queryset = Embarque.objects.all()
-    serializer_class = EmbarqueSerializer
+    queryset = Embarque.objects.all().select_related("programacionViaje", "pasajero")
+    permission_classes = [IsAuthenticated]
+    pagination_class = StandardResultsSetPagination
+
+    def get_serializer_class(self):
+        if self.action == "list":
+            return EmbarqueListSerializer
+        elif self.action == "retrieve":
+            return EmbarqueDetailSerializer
+        return EmbarqueWriteSerializer
+
+    def list(self, request, *args, **kwargs):
+        qs = self.get_queryset()
+        q = request.GET.get("q")
+        if q:
+            qs = qs.filter(
+                Q(pasajero__denominacion__icontains=q)
+                | Q(pasajero__numDoc__icontains=q)
+            )
+        page = self.paginate_queryset(qs)
+        serializer = self.get_serializer(page, many=True)
+        return self.get_paginated_response({"entity": serializer.data})
 
 
+# -----------------------------
+# Manifiesto
+# -----------------------------
 class ManifiestoViewSet(viewsets.ModelViewSet):
-    queryset = Manifiesto.objects.all()
-    serializer_class = ManifiestoSerializer
+    queryset = Manifiesto.objects.all().select_related("programacionViaje", "vehiculo")
+    permission_classes = [IsAuthenticated]
+    pagination_class = StandardResultsSetPagination
+
+    def get_serializer_class(self):
+        if self.action == "list":
+            return ManifiestoListSerializer
+        elif self.action == "retrieve":
+            return ManifiestoDetailSerializer
+        return ManifiestoWriteSerializer

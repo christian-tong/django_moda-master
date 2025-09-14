@@ -1,28 +1,26 @@
-# viaje/API/urls.py
-from django.urls import path
+# apps/viaje/API/urls.py
+"""
+Rutas DRF para la app de viaje.
+Exponen programaciones, asientos, embarques y manifiestos.
+"""
+
+from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 from .views import (
     ProgramacionViajeViewSet,
     ProgramacionAsientoViewSet,
     EmbarqueViewSet,
     ManifiestoViewSet,
-    ReservarAsientoView,
 )
 
-app_name = "api"
+app_name = "api-viaje"
 
-router = DefaultRouter()
-router.register(
-    "programaciones", ProgramacionViajeViewSet, basename="programacionviaje"
-)
-router.register("asientos", ProgramacionAsientoViewSet, basename="programacionasiento")
+router = DefaultRouter(trailing_slash="/?")
+router.register("programaciones", ProgramacionViajeViewSet, basename="programacion")
+router.register("asientos", ProgramacionAsientoViewSet, basename="asiento")
 router.register("embarques", EmbarqueViewSet, basename="embarque")
 router.register("manifiestos", ManifiestoViewSet, basename="manifiesto")
 
 urlpatterns = [
-    # Rutas generales de la API
-    path("reservar-asiento/", ReservarAsientoView.as_view(), name="reservar-asiento"),
+    path("", include(router.urls)),
 ]
-
-# Agregamos las rutas del router
-urlpatterns += router.urls

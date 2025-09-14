@@ -1,34 +1,23 @@
-# persona/API/urls.py
-from django.urls import path
+# BACKEND apps/persona/API/urls.py
+"""
+Rutas DRF para la app de persona.
+Exponen CRUD de Persona, PersonaNatural y PersonaJuridica.
+"""
+from django.urls import path, include
 from rest_framework.routers import DefaultRouter
-from .views import (
-    PersonaJuridicaAPIView,
-    PersonaNaturalAPIView,
-    PersonaViewSet,
-    PersonaListCreateAPIView,
-    PersonaRetrieveUpdateDestroyAPIView,
-    persona_autocomplete,
+from .views import PersonaViewSet, PersonaNaturalViewSet, PersonaJuridicaViewSet
+
+app_name = "api-persona"
+
+router = DefaultRouter(trailing_slash="/?")
+router.register(r"personas", PersonaViewSet, basename="persona")
+router.register(
+    r"personas-naturales", PersonaNaturalViewSet, basename="persona-natural"
+)
+router.register(
+    r"personas-juridicas", PersonaJuridicaViewSet, basename="persona-juridica"
 )
 
-app_name = "api"
-
-router = DefaultRouter()
-router.register(r"personas", PersonaViewSet)
-
 urlpatterns = [
-    # Rutas generales de la API
-    path("persona-natural/", PersonaNaturalAPIView.as_view(), name="persona-natural"),
-    path(
-        "persona-juridica/", PersonaJuridicaAPIView.as_view(), name="persona-juridica"
-    ),
-    path("personas/", PersonaListCreateAPIView.as_view(), name="persona-list-create"),
-    path(
-        "personas/<int:pk>/",
-        PersonaRetrieveUpdateDestroyAPIView.as_view(),
-        name="persona-detail",
-    ),
-    path("personas/autocomplete/", persona_autocomplete, name="persona-autocomplete"),
+    path("", include(router.urls)),
 ]
-
-# Agregamos las rutas del router
-urlpatterns += router.urls

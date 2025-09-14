@@ -1,3 +1,5 @@
+## apps/sistema/models.py
+
 from django.db import models
 from django.contrib.auth.models import AbstractUser, Permission
 from apps.persona.models import Persona
