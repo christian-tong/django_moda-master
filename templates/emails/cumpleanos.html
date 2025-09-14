@@ -1,0 +1,53 @@
+<html>
+  <body style="font-family: Arial, sans-serif; color: #333; background-color: #fff8f0; text-align: center; padding: 20px;">
+
+    <!-- Cabecera con GIF de globos -->
+    <div style="margin-bottom: 20px;">
+      <img src="{{ globos_url }}" alt="Globos de cumpleaños" style="max-width: 100%; height: auto; border-radius: 10px;">
+    </div>
+
+    <!-- Título principal -->
+    <h2 style="color:#d32f2f; font-size: 28px;">🎂 ¡Feliz cumpleaños, {{ nombre }}!</h2>
+
+    <!-- Dedicatoria -->
+    <div style="margin:20px auto; max-width:600px; text-align:justify; font-size:16px; line-height:1.6;">
+      <p>🎉 Hoy celebramos la vida de alguien muy especial: <b>{{ nombre }}</b>.</p>
+      <p>
+        🥳 En <b>Moda Tours</b> queremos acompañarte en este día único con un mensaje lleno de alegría, gratitud y mucha energía positiva.  
+        Cada vez que confías en nosotros para tus viajes, nos regalas la oportunidad de seguir compartiendo momentos inolvidables contigo.
+      </p>
+      <p>
+        🚍 Que este cumpleaños esté lleno de abrazos, sonrisas y recuerdos que duren toda la vida.  
+        Recuerda que cada día es una nueva aventura, y queremos seguir siendo parte de tus caminos,  
+        acompañándote kilómetro a kilómetro con el encanto de viajar.
+      </p>
+      <p>
+        🎁 Gracias por confiar en <b>Moda Tours</b>. ¡Deseamos que este nuevo año esté repleto de éxitos, salud y felicidad!
+      </p>
+    </div>
+
+    <!-- Promo opcional -->
+    {% if promo %}
+      <div style="margin-top:20px; padding:15px; border:2px dashed #f57c00; background-color:#fff3e0;">
+        <h4 style="margin:0;">🎁 Sorpresa especial para ti:</h4>
+        <p style="font-size:16px;">{{ promo }}</p>
+      </div>
+    {% endif %}
+
+    <!-- Firma -->
+    <div style="margin-top:40px; font-size:15px; color:#444;">
+      <p><b>El equipo de Moda Tours</b> 🚍✨<br>
+      📞 +51 993 185 098</p>
+      <p style="font-size:13px; color:#777;">
+        ✉️ Este correo es informativo, por favor no responder.<br>
+        Para consultas, comunícate directamente con nuestro equipo.
+      </p>
+    </div>
+
+    <!-- Logo en pie de página -->
+    <div style="margin-top:20px;">
+      <img src="{{ logo_url }}" alt="Moda Tours" style="max-width: 200px;">
+    </div>
+
+  </body>
+</html>
