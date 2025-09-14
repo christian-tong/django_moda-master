@@ -1,3 +1,5 @@
+# BACKEND django_moda/settings.py
+
 import os
 import json
 from pathlib import Path
@@ -79,6 +81,8 @@ INSTALLED_APPS = [
     "apps.envio",
     "apps.caja",
     "apps.facturacion",
+    "apps.notificaciones",
+    "apps.notificaciones.api",
     "corsheaders",
 ]
 
@@ -94,6 +98,18 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = "django_moda.urls"
+
+# REST Framework Config
+REST_FRAMEWORK = {
+    "DEFAULT_AUTHENTICATION_CLASSES": [
+        "django_moda.utils.authentication.CsrfExemptSessionAuthentication",
+    ],
+    "DEFAULT_PERMISSION_CLASSES": [
+        "rest_framework.permissions.IsAuthenticated",
+    ],
+    "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
+    "PAGE_SIZE": 20,
+}
 
 TEMPLATES = [
     {
@@ -194,3 +210,13 @@ SESSION_COOKIE_AGE = 28800  # sesion expira cada 8 horas
 LOGIN_URL = "/account/login"
 
 NUM_PAGINATE = 20
+
+# EMAIL
+
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+EMAIL_HOST = "smtp.gmail.com"
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = "christian.tongcruz96@gmail.com"
+EMAIL_HOST_PASSWORD = "xtjk dahw gudz veax"
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER

@@ -1,3 +1,5 @@
+# BACKEND django_moda/urls.py
+
 """django_moda URL Configuration
 
 Este archivo organiza todas las rutas principales del proyecto.
@@ -80,6 +82,8 @@ urlpatterns = [
     ),
     # ----------------------------
     # API REST v2 (nuevo, JSON puro para Next.js y Postman)
+    # ----------------------------
+    # API REST v2 (nuevo, JSON puro para Next.js y Postman)
     path(
         "api/v2/",
         include(
@@ -103,6 +107,20 @@ urlpatterns = [
                     include(
                         ("apps.empresa.api.urls", "api-empresa"),
                         namespace="api-empresa",
+                    ),
+                ),
+                path(
+                    "personas/",
+                    include(
+                        ("apps.persona.API.urls", "api-persona"),
+                        namespace="api-persona",
+                    ),
+                ),
+                path(
+                    "notificaciones/",
+                    include(
+                        ("apps.notificaciones.api.urls", "api-notificaciones"),
+                        namespace="api-notificaciones",
                     ),
                 ),
             ]
