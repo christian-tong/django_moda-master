@@ -1,4 +1,4 @@
-#BACKEND apps/persona/models.py
+# BACKEND apps/persona/models.py
 
 import os
 from datetime import datetime, date
@@ -14,13 +14,17 @@ class Persona(models.Model):
         on_delete=models.PROTECT,
     )
     numDoc = models.CharField(
-        verbose_name="Numero Documento", unique=True, max_length=11
+        verbose_name="Numero Documento",
+        unique=True,
+        max_length=11,
+        db_index=True,  # ⚡ índice para acelerar búsquedas
     )
     denominacion = models.CharField(
         verbose_name="Razón Social/Nombre y Apellidos",
         max_length=150,
         blank=True,
         null=True,
+        db_index=True,  # ⚡ índice también aquí
     )
     direccion = models.CharField(
         verbose_name="Dirección", max_length=255, blank=True, null=True

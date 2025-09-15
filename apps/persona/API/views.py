@@ -1,4 +1,5 @@
 # BACKEND apps/persona/API/views.py
+
 """
 ViewSets DRF para la app de persona.
 Compatibles con el frontend actual, extendidos con:
@@ -9,12 +10,11 @@ Compatibles con el frontend actual, extendidos con:
 
 from datetime import date
 import requests
-
+from django.db.models import Q
 from rest_framework import status, viewsets
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
-from django.db.models import Q
 
 from ..models import Persona, PersonaNatural, PersonaJuridica
 from .serializers import (
@@ -35,10 +35,10 @@ from apps.empresa.api.views import StandardResultsSetPagination, ok, fail
 class PersonaViewSet(viewsets.ModelViewSet):
     """
     CRUD de Personas con filtros y búsquedas adicionales.
-    - list: búsqueda por nombre o numDoc
-    - autocomplete: para selects (term + filtro opcional)
+    - list: búsqueda por denominación o numDoc (?q=...)
+    - autocomplete: búsqueda rápida (?term=...)
     - buscar-por-dni: endpoint rápido para validar DNI
-    - buscar-api-doc: consulta en servicios externos (DNI/RUC)
+    - buscar-api-doc: consulta en servicios externos (RENIEC / SUNAT)
     - cumpleanos-por-mes: obtiene cumpleaños de personas naturales en un mes
     """
 
@@ -55,15 +55,26 @@ class PersonaViewSet(viewsets.ModelViewSet):
 
     def list(self, request, *args, **kwargs):
         """
-        Listado con filtro opcional por denominación o número de documento.
+        Listado de personas.
+        - Si ?q=... → busca por denominación o numDoc y devuelve TODOS los resultados (sin paginación).
+        - Si no hay q → devuelve paginado normal.
         """
         qs = self.get_queryset()
         q = request.GET.get("q")
+
         if q:
+            # Filtro estilo SQL LIKE en denominación o numDoc
             qs = qs.filter(
                 Q(denominacion__icontains=q) | Q(numDoc__icontains=q)
             ).distinct()
 
+            # 🚨 No usamos paginate_queryset, devolvemos todo
+            serializer = self.get_serializer(qs, many=True)
+            return Response(
+                {"count": len(serializer.data), "results": {"entity": serializer.data}}
+            )
+
+        # Caso sin búsqueda → paginado normal
         page = self.paginate_queryset(qs)
         serializer = self.get_serializer(page, many=True)
         return self.get_paginated_response({"entity": serializer.data})
@@ -72,6 +83,8 @@ class PersonaViewSet(viewsets.ModelViewSet):
     def autocomplete(self, request):
         """
         Autocomplete para selects (mínimo 2 caracteres).
+        Busca por denominación o número de documento.
+        Ejemplo: /persona/api/personas/autocomplete/?term=carbajal
         """
         term = request.GET.get("term")
         filtro = request.GET.get("filtro")
@@ -90,7 +103,7 @@ class PersonaViewSet(viewsets.ModelViewSet):
     def buscar_por_dni(self, request):
         """
         Consulta por DNI en la base local.
-        Ejemplo: /api/v2/personas/buscar-por-dni/?dni=12345678
+        Ejemplo: /persona/api/personas/buscar-por-dni/?dni=12345678
         """
         dni = request.GET.get("dni")
         if not dni:
@@ -161,7 +174,7 @@ class PersonaViewSet(viewsets.ModelViewSet):
         """
         Devuelve lista de cumpleaños por mes.
         Query param requerido: ?mes=1..12
-        Ejemplo: /api/v2/personas/cumpleanos-por-mes/?mes=3
+        Ejemplo: /persona/api/personas/cumpleanos-por-mes/?mes=3
         """
         try:
             mes = int(request.GET.get("mes"))
