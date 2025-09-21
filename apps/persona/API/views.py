@@ -16,6 +16,10 @@ from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
+from apps.notificaciones.models import RegistroCumpleanos  # 👈 importa modelo
+from django.utils.timezone import now
+
+
 from ..models import Persona, PersonaNatural, PersonaJuridica
 from .serializers import (
     PersonaListSerializer,
@@ -172,9 +176,9 @@ class PersonaViewSet(viewsets.ModelViewSet):
     @action(detail=False, methods=["get"], url_path="cumpleanos-por-mes")
     def cumpleanos_por_mes(self, request):
         """
-        Devuelve lista de cumpleaños por mes.
+        Devuelve lista de cumpleaños por mes, con estado si ya se envió correo en el año actual.
         Query param requerido: ?mes=1..12
-        Ejemplo: /persona/api/personas/cumpleanos-por-mes/?mes=3
+        Ejemplo: /persona/api/personas/cumpleanos-por-mes/?mes=9
         """
         try:
             mes = int(request.GET.get("mes"))
@@ -187,20 +191,31 @@ class PersonaViewSet(viewsets.ModelViewSet):
             "persona"
         )
 
+        current_year = now().year  # 👈 año actual
         data = []
         for p in personas:
             if not p.fechaNac:
                 continue
+
             edad = date.today().year - p.fechaNac.year
+
+            # 👇 Verificamos si ya se envió en el año actual
+            ya_enviado = RegistroCumpleanos.objects.filter(
+                persona=p, fecha_envio__year=current_year
+            ).exists()
+
             data.append(
                 {
-                    "id": p.id,
+                    "id": p.id,  # id del PersonaNatural
+                    "persona_id": p.persona.id,  # id de la tabla Persona
                     "nombre_completo": f"{p.nombres} {p.apellidoP} {p.apellidoM}",
                     "fecha_nacimiento": p.fechaNac.isoformat(),
                     "dia": p.fechaNac.day,
                     "mes": p.fechaNac.month,
                     "edad": edad,
                     "celular": p.persona.movilUno or p.persona.movilDos,
+                    "correo": p.persona.correo,
+                    "ya_enviado": ya_enviado,  # 👈 nuevo campo (anual)
                 }
             )
 
