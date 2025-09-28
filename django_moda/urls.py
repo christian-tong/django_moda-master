@@ -101,6 +101,13 @@ urlpatterns = [
                     ),
                 ),
                 path(
+                    "catalogosunat/",
+                    include(
+                        ("apps.catalogoSunat.api.urls", "api-catalogosunat"),
+                        namespace="api-catalogosunat",
+                    ),
+                ),
+                path(
                     "empresa/",
                     include(
                         ("apps.empresa.api.urls", "api-empresa"),

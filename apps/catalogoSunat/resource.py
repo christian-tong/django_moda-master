@@ -1,3 +1,5 @@
+#BACKEND - apps\catalogoSunat\resource.py
+
 from import_export import resources
 from .models import Ubigeo
 

@@ -27,9 +27,15 @@ class PersonaSimpleSerializer(serializers.ModelSerializer):
 
 # region UbigeoSimpleSerializer
 class UbigeoSimpleSerializer(serializers.ModelSerializer):
+    nombre = serializers.SerializerMethodField()
+
     class Meta:
         model = Ubigeo
         fields = ["id", "codigo", "nombre"]
+
+    def get_nombre(self, obj):
+        # 👇 concatenamos un string amigable
+        return f"{obj.distrito} - {obj.provincia} - {obj.departamento}"
 
 
 # endregion
@@ -113,6 +119,9 @@ class ConductorWriteSerializer(serializers.ModelSerializer):
 
 
 # region AgenciaSerializers
+# region AgenciaSerializers
+
+
 class AgenciaListSerializer(serializers.ModelSerializer):
     ubigeo = UbigeoSimpleSerializer(read_only=True)
     responsable = PersonaSimpleSerializer(read_only=True)
@@ -135,11 +144,16 @@ class AgenciaListSerializer(serializers.ModelSerializer):
             "activo",
             "codigoSerieDocumento",
             "isruta",
+            "foto",  # 👈 agregado aquí también (si quieres en listado)
         ]
 
 
 class AgenciaDetailSerializer(AgenciaListSerializer):
     foto = serializers.ImageField(read_only=True)
+
+    class Meta(AgenciaListSerializer.Meta):
+        fields = AgenciaListSerializer.Meta.fields + ["foto"]
+        # 👆 así heredas los fields del List y añades 'foto'
 
 
 class AgenciaWriteSerializer(serializers.ModelSerializer):
@@ -153,15 +167,11 @@ class AgenciaWriteSerializer(serializers.ModelSerializer):
     responsable = serializers.PrimaryKeyRelatedField(
         queryset=Persona.objects.all(), allow_null=True, required=False
     )
-    empresa = serializers.PrimaryKeyRelatedField(
-        queryset=Persona.objects.all(), allow_null=True, required=False
-    )
 
     class Meta:
         model = Agencia
         # reproducimos el exclude = ["empresa", "tipo"] del formulario original:
         exclude = ["empresa", "tipo"]
-        # si prefieres lista explícita, reemplaza por fields = [...]
 
 
 # endregion
