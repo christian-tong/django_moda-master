@@ -1,8 +1,13 @@
-# BACKEND apps/empresa/api/serializers.py
-
 # region Imports
 from rest_framework import serializers
-from apps.empresa.models import Conductor, Agencia, AgenciaDocumento, Vehiculo, Asiento
+from apps.empresa.models import (
+    Conductor,
+    Agencia,
+    AgenciaDocumento,
+    Ruta,
+    Vehiculo,
+    Asiento,
+)
 from apps.persona.models import Persona
 from apps.catalogoSunat.models import Ubigeo, TipoDocumento
 
@@ -53,13 +58,6 @@ class TipoDocumentoSimpleSerializer(serializers.ModelSerializer):
 
 # region ConductorSerializers
 class ConductorListSerializer(serializers.ModelSerializer):
-    """
-    /// <summary>
-    /// Listado ligero de conductores.
-    /// Mantiene clave 'chofer' como objeto simple (id + denominacion).
-    /// </summary>
-    """
-
     chofer = PersonaSimpleSerializer(read_only=True)
 
     class Meta:
@@ -94,12 +92,6 @@ class ConductorDetailSerializer(serializers.ModelSerializer):
 
 
 class ConductorWriteSerializer(serializers.ModelSerializer):
-    """
-    /// <summary>
-    /// Escritura: acepta 'chofer' como PK de Persona.
-    /// </summary>
-    """
-
     chofer = serializers.PrimaryKeyRelatedField(queryset=Persona.objects.all())
 
     class Meta:
@@ -119,9 +111,6 @@ class ConductorWriteSerializer(serializers.ModelSerializer):
 
 
 # region AgenciaSerializers
-# region AgenciaSerializers
-
-
 class AgenciaListSerializer(serializers.ModelSerializer):
     ubigeo = UbigeoSimpleSerializer(read_only=True)
     responsable = PersonaSimpleSerializer(read_only=True)
@@ -144,7 +133,7 @@ class AgenciaListSerializer(serializers.ModelSerializer):
             "activo",
             "codigoSerieDocumento",
             "isruta",
-            "foto",  # 👈 agregado aquí también (si quieres en listado)
+            "foto",
         ]
 
 
@@ -153,16 +142,9 @@ class AgenciaDetailSerializer(AgenciaListSerializer):
 
     class Meta(AgenciaListSerializer.Meta):
         fields = AgenciaListSerializer.Meta.fields + ["foto"]
-        # 👆 así heredas los fields del List y añades 'foto'
 
 
 class AgenciaWriteSerializer(serializers.ModelSerializer):
-    """
-    /// <summary>
-    /// Escritura: ubigeo y responsable como PKs; 'empresa' no se espera en create (se asigna automáticamente en create como en la vista original).
-    /// </summary>
-    """
-
     ubigeo = serializers.PrimaryKeyRelatedField(queryset=Ubigeo.objects.all())
     responsable = serializers.PrimaryKeyRelatedField(
         queryset=Persona.objects.all(), allow_null=True, required=False
@@ -170,14 +152,13 @@ class AgenciaWriteSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Agencia
-        # reproducimos el exclude = ["empresa", "tipo"] del formulario original:
         exclude = ["empresa", "tipo"]
 
 
 # endregion
 
 
-# region Otros (opcional)
+# region Otros
 class AgenciaDocumentoSerializer(serializers.ModelSerializer):
     documento = TipoDocumentoSimpleSerializer(read_only=True)
 
@@ -255,6 +236,44 @@ class AsientoWriteSerializer(serializers.ModelSerializer):
             "saltofila",
             "estado",
         ]
+
+
+# endregion
+
+
+# region RutaSerializers
+class AgenciaSimpleSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Agencia
+        fields = ["id", "nombre"]
+
+
+class RutaSerializer(serializers.ModelSerializer):
+    origen = AgenciaSimpleSerializer(read_only=True)
+    destino = AgenciaSimpleSerializer(read_only=True)
+    km_promedio = serializers.DecimalField(
+        source="distancia_km", max_digits=6, decimal_places=2, required=False
+    )
+    tiempo_promedio = serializers.DurationField(
+        source="duracion_aprox", required=False, allow_null=True
+    )
+
+    class Meta:
+        model = Ruta
+        fields = ["id", "origen", "destino", "km_promedio", "tiempo_promedio", "activo"]
+
+
+class RutaWriteSerializer(serializers.ModelSerializer):
+    km_promedio = serializers.DecimalField(
+        source="distancia_km", max_digits=6, decimal_places=2, required=False, default=0
+    )
+    tiempo_promedio = serializers.DurationField(
+        source="duracion_aprox", required=False, allow_null=True
+    )
+
+    class Meta:
+        model = Ruta
+        fields = ["id", "origen", "destino", "km_promedio", "tiempo_promedio", "activo"]
 
 
 # endregion

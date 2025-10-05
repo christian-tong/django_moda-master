@@ -1,3 +1,6 @@
+# BACKEND apps\caja\models.py 
+
+
 from django.db import models
 from apps.persona.models import Persona
 from apps.empresa.models import Agencia

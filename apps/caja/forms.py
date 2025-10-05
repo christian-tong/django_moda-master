@@ -1,3 +1,6 @@
+# BACKEND apps\caja\forms.py 
+ 
+
 from django import forms
 from django.forms import BaseFormSet
 from .models import Caja, MovimientoCaja, MedioPago

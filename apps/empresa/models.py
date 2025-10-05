@@ -145,3 +145,25 @@ class AgenciaDocumento(models.Model):
         self.correlativo -= 1
         self.save(update_fields=["correlativo"])
         return correlativo
+
+
+class Ruta(models.Model):
+    origen = models.ForeignKey(
+        "empresa.Agencia", on_delete=models.PROTECT, related_name="rutas_origen"
+    )
+    destino = models.ForeignKey(
+        "empresa.Agencia", on_delete=models.PROTECT, related_name="rutas_destino"
+    )
+    distancia_km = models.DecimalField(
+        max_digits=6, decimal_places=2, blank=True, null=True
+    )
+    duracion_aprox = models.DurationField(blank=True, null=True)
+    activo = models.BooleanField(default=True)
+
+    class Meta:
+        verbose_name = "Ruta"
+        verbose_name_plural = "Rutas"
+        unique_together = ("origen", "destino")  # Evita duplicados
+
+    def __str__(self):
+        return f"{self.origen.nombre} → {self.destino.nombre}"

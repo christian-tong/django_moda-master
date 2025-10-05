@@ -1,3 +1,5 @@
+# BACKEND  apps\facturacion\views.py
+
 import io
 import qrcode
 import qrcode.image.svg

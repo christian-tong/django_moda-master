@@ -1,0 +1,81 @@
+{% comment %} templates\apps\facturacion\print-detalle.html {% endcomment %}
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Detalle</title>
+  <style>
+    /* ======== ESTILOS DEL TICKET ======== */
+    .ticket {
+      font-size: 12px;
+      font-family: "arial", serif;
+      color: black;
+    }
+
+    td, th, tr, table {
+      border-top: 1px solid black;
+      border-collapse: collapse;
+      font-size: 12px;
+    }
+
+    td.producto, th.producto { width: 150px; max-width: 150px; }
+    td.cantidad, th.cantidad { width: 40px; max-width: 40px; word-break: break-all; }
+    td.importe, th.importe { width: 30px; max-width: 40px; word-break: break-all; }
+    td.pu, th.pu { width: 30px; max-width: 40px; word-break: break-all; }
+
+    .centrado {
+      text-align: center;
+      align-content: center;
+    }
+
+    .ticket {
+      width: 250px;
+      max-width: 250px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    img#logo { max-width: inherit; width: inherit; }
+
+    p { margin: 0px !important; font-size: 12px; }
+
+    .huella {
+      border: solid 1px;
+      height: 7em;
+      width: 8em;
+      margin-left: 28%;
+      margin-bottom: 2em;
+    }
+
+    .contenet-cut {
+      border-bottom: dashed red 1px;
+      margin-bottom: 1em;
+    }
+
+    @page {
+      size: 80mm 220mm !important;
+      margin: 0;
+    }
+
+    @media print {
+      html, body {
+        width: 80mm;
+        min-height: 0;
+        color: #000000 !important;
+        font-size: 12px;
+        font-family: "arial", serif;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="ticket guia">
+    {% ifequal tipomovi "encomiendaSalida" %}
+      {% include 'apps/facturacion/guia.html' %}
+    {% else %}
+      {% include 'apps/facturacion/embarque.html' %}
+    {% endifequal %}
+  </div>
+</body>
+</html>

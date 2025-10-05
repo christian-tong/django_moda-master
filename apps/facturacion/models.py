@@ -1,3 +1,5 @@
+# BACKEND  apps\facturacion\models.py
+
 from django.db import models
 from apps.catalogoSunat.models import TipoDocumento
 from apps.persona.models import Persona

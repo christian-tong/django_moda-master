@@ -9,6 +9,7 @@ from rest_framework import serializers
 from ..models import ProgramacionViaje, ProgramacionAsiento, Embarque, Manifiesto
 from apps.empresa.models import Vehiculo, Conductor, Agencia, Asiento
 from apps.persona.models import Persona
+from apps.caja.models import MovimientoCaja  # 👈 necesario para verificar pago
 
 
 # -----------------------------
@@ -77,6 +78,7 @@ class ProgramacionAsientoWriteSerializer(serializers.ModelSerializer):
 class EmbarqueListSerializer(serializers.ModelSerializer):
     pasajero = serializers.StringRelatedField()
     programacionViaje = serializers.StringRelatedField()
+    pagado = serializers.SerializerMethodField()  # 👈 campo adicional
 
     class Meta:
         model = Embarque
@@ -90,7 +92,13 @@ class EmbarqueListSerializer(serializers.ModelSerializer):
             "enSala",
             "telefono",
             "create",
+            "pagado",  # 👈 ahora se expone
         ]
+
+    def get_pagado(self, obj: Embarque):
+        if not obj.venta_id:
+            return False
+        return MovimientoCaja.objects.filter(venta=obj.venta).exists()
 
 
 class EmbarqueDetailSerializer(serializers.ModelSerializer):
@@ -98,16 +106,36 @@ class EmbarqueDetailSerializer(serializers.ModelSerializer):
     lugar_abordo = serializers.StringRelatedField()
     lugar_bajada = serializers.StringRelatedField()
     programacionViaje = serializers.StringRelatedField()
+    pagado = serializers.SerializerMethodField()  # 👈 también en detail
 
     class Meta:
         model = Embarque
         fields = "__all__"
 
+    def get_pagado(self, obj: Embarque):
+        if not obj.venta_id:
+            return False
+        return MovimientoCaja.objects.filter(venta=obj.venta).exists()
 
+
+# --- EmbarqueWriteSerializer: valida y bloquea numDocumento en update ---
 class EmbarqueWriteSerializer(serializers.ModelSerializer):
     class Meta:
         model = Embarque
         fields = "__all__"
+
+    def update(self, instance, validated_data):
+        # numDocumento es inmutable
+        if (
+            "numDocumento" in validated_data
+            and validated_data["numDocumento"] != instance.numDocumento
+        ):
+            raise serializers.ValidationError(
+                {
+                    "numDocumento": "No se permite modificar el número de documento una vez emitido."
+                }
+            )
+        return super().update(instance, validated_data)
 
 
 # -----------------------------
@@ -118,7 +146,14 @@ class ManifiestoListSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Manifiesto
-        fields = ["id", "numDocumento", "fechaViaje", "vehiculo", "programacionViaje", "seGenero"]
+        fields = [
+            "id",
+            "numDocumento",
+            "fechaViaje",
+            "vehiculo",
+            "programacionViaje",
+            "seGenero",
+        ]
 
 
 class ManifiestoDetailSerializer(serializers.ModelSerializer):

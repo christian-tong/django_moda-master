@@ -1,3 +1,5 @@
+# BACKEND apps\caja\urls.py
+
 from django.urls import path
 from .views.movimiento import movimiento_add
 from .views.caja import CajaListView, CajaCreateView, CajaEditView

@@ -101,6 +101,13 @@ urlpatterns = [
                     ),
                 ),
                 path(
+                    "facturacion/",
+                    include(
+                        ("apps.facturacion.api.urls", "api-facturacion"),
+                        namespace="api-facturacion",
+                    ),
+                ),
+                path(
                     "catalogosunat/",
                     include(
                         ("apps.catalogoSunat.api.urls", "api-catalogosunat"),

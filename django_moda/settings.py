@@ -73,6 +73,7 @@ INSTALLED_APPS = [
     "apps.sistema",
     "apps.sistema.api.apps.SistemaApiConfig",
     "apps.empresa.api.apps.EmpresaApiConfig",
+    "apps.facturacion.api.apps.FacturacionApiConfig",
     "apps.catalogoSunat",
     "apps.persona",
     "apps.empresa",

@@ -10,11 +10,13 @@ from rest_framework.decorators import action
 from django.urls import reverse_lazy
 from collections import defaultdict
 
-from apps.empresa.models import Asiento
+from apps.empresa.models import Asiento, Ruta
 from .serializers import (
     AsientoListSerializer,
     AsientoDetailSerializer,
     AsientoWriteSerializer,
+    RutaSerializer,
+    RutaWriteSerializer,
 )
 
 from apps.empresa.models import Vehiculo
@@ -91,6 +93,24 @@ class ConductorViewSet(viewsets.ModelViewSet):
         elif self.action in ["retrieve"]:
             return ConductorDetailSerializer
         return ConductorWriteSerializer
+
+    # ... tus métodos existentes ...
+
+    @action(detail=False, methods=["get"], url_path="combo")
+    def combo(self, request):
+        """
+        Devuelve todos los conductores activos sin paginación
+        (id + denominación del chofer), ideal para selects.
+        """
+        conductores = (
+            Conductor.objects.filter(activo=True)
+            .select_related("chofer")
+            .order_by("chofer__denominacion")
+        )
+        data = [
+            {"id": c.id, "denominacion": c.chofer.denominacion} for c in conductores
+        ]
+        return ok(data)
 
     def list(self, request, *args, **kwargs):
         qs = self.get_queryset()
@@ -244,6 +264,16 @@ class AgenciaViewSet(viewsets.ModelViewSet):
             )
         return fail(errors=serializer.errors)
 
+    @action(detail=False, methods=["get"], url_path="combo")
+    def combo(self, request):
+        """
+        Devuelve todas las agencias activas (sin paginación),
+        solo con id y nombre, ideal para selects en frontend.
+        """
+        agencias = Agencia.objects.filter(activo=True).order_by("nombre")
+        data = [{"id": a.id, "nombre": a.nombre} for a in agencias]
+        return ok(data)
+
 
 # endregion
 
@@ -265,6 +295,18 @@ class VehiculoViewSet(viewsets.ModelViewSet):
         elif self.action == "retrieve":
             return VehiculoDetailSerializer
         return VehiculoWriteSerializer
+
+    # ... tus métodos existentes ...
+
+    @action(detail=False, methods=["get"], url_path="combo")
+    def combo(self, request):
+        """
+        Devuelve todos los vehículos activos sin paginación
+        (id + placa + marca), ideal para selects.
+        """
+        vehiculos = Vehiculo.objects.all().order_by("placa")
+        data = [{"id": v.id, "placa": v.placa, "marca": v.marca} for v in vehiculos]
+        return ok(data)
 
     def list(self, request, *args, **kwargs):
         qs = self.get_queryset()
@@ -413,3 +455,26 @@ class AsientoViewSet(viewsets.ModelViewSet):
 
 
 # endregion
+
+
+class RutaViewSet(viewsets.ModelViewSet):
+    queryset = Ruta.objects.all().select_related("origen", "destino")
+    permission_classes = [IsAuthenticated]
+    pagination_class = StandardResultsSetPagination
+
+    def get_serializer_class(self):
+        if self.action in ["list", "retrieve"]:
+            return RutaSerializer
+        return RutaWriteSerializer
+
+    def list(self, request, *args, **kwargs):
+        qs = self.get_queryset()
+        origen = request.GET.get("origen")
+        destino = request.GET.get("destino")
+        if origen:
+            qs = qs.filter(origen_id=origen)
+        if destino:
+            qs = qs.filter(destino_id=destino)
+        page = self.paginate_queryset(qs)
+        serializer = self.get_serializer(page, many=True)
+        return self.get_paginated_response({"entity": serializer.data})
