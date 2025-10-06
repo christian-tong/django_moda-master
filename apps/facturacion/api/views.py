@@ -181,36 +181,43 @@ class FaturaBoletaViewSet(viewsets.ModelViewSet):
         return HttpResponse(html)
 
     # ====================================================
-    # 📊 Exportar Comprobante Excel
+    # 📈 Comprobantes por rango de fechas (Excel/JSON)
     # ====================================================
-    @action(detail=False, methods=["get"], url_path="comprobante/excel")
-    def comprobante_excel(self, request):
-        periodo = request.GET.get("periodo")
-        year, mes = int(periodo[:4]), int(periodo[5:])
-        columns = [
-            "Tipo Comprobante",
-            "Serie",
-            "Numero",
-            "Cliente",
-            "Tipo Documento",
-            "Numero",
-            "Monto",
-            "Fecha",
-            "Detalle",
-        ]
-        obj = FaturaBoleta.objects.filter(
-            fechaFact__year=year,
-            fechaFact__month=mes,
-            estaFacturado=True,
-        ).values_list(
-            "tipoDocumento__descripcion",
-            "serie",
-            "numero",
-            "cliente__denominacion",
-            "cliente__tipoDoc__descripcion",
-            "cliente__numDoc",
-            "monto",
-            "fechaFact",
-            "ventaMovimiento__detallemov__descripcion",
+    @action(detail=False, methods=["get"], url_path="comprobante/rango")
+    def comprobante_rango(self, request):
+        """
+        Devuelve todas las facturas/boletas en un rango de fechas,
+        ordenadas ascendentemente por fecha.
+        """
+        fecha_inicio = request.GET.get("fechaInicio")
+        fecha_fin = request.GET.get("fechaFin")
+
+        if not fecha_inicio or not fecha_fin:
+            return fail("Los parámetros 'fechaInicio' y 'fechaFin' son requeridos")
+
+        qs = (
+            FaturaBoleta.objects.filter(
+                fechaFact__range=[fecha_inicio, fecha_fin],
+                estaFacturado=True,
+            )
+            .select_related("tipoDocumento", "cliente")
+            .order_by("fechaFact", "id")
         )
-        return FormatoExcel(columns, obj, "export-comprobantes", f"documento-{periodo}")
+
+        data = [
+            {
+                "id": f.id,
+                "tipoComprobante": f.tipoDocumento.descripcion,
+                "serie": f.serie,
+                "numero": f.numero,
+                "cliente": f.cliente.denominacion,
+                "tipoDocumento": getattr(f.cliente.tipoDoc, "descripcion", ""),
+                "numDocumento": f.cliente.numDoc,
+                "monto": float(f.monto or 0),
+                "fechaFact": f.fechaFact.strftime("%Y-%m-%d"),
+                "estaFacturado": f.estaFacturado,
+            }
+            for f in qs
+        ]
+
+        return ok(entity=data, message=f"Comprobantes del {fecha_inicio} al {fecha_fin}")

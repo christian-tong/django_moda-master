@@ -1,9 +1,9 @@
 # apps/sistema/api/urls.py
-
 from django.urls import path
 from .views import (
     UserListView,
     UserAddView,
+    UserDetailView,  # ✅ nueva vista para GET/PUT/DELETE
     AccountLoginView,
     AccountLogoutView,
     MenuListView,
@@ -13,35 +13,22 @@ from .views import (
 
 app_name = "api-sistema"
 
-
 urlpatterns = [
     # 📌 Usuarios
+    path("users/", UserListView.as_view(), name="api-user-list"),  # GET → lista
+    path("users/add/", UserAddView.as_view(), name="api-user-add"),  # POST → crear
     path(
-        "users/", UserListView.as_view(), name="api-user-list"
-    ),  # GET → lista usuarios
-    path(
-        "users/add/", UserAddView.as_view(), name="api-user-add"
-    ),  # POST → crear usuario
+        "users/<int:pk>/", UserDetailView.as_view(), name="api-user-detail"
+    ),  # ✅ detalle CRUD individual
     # 📌 Autenticación
-    path("auth/login/", AccountLoginView.as_view(), name="api-login"),  # POST → login
-    path("auth/login", AccountLoginView.as_view()),  # Alias
-    path(
-        "auth/logout/", AccountLogoutView.as_view(), name="api-logout"
-    ),  # POST → logout
-    path(
-        "auth/logout",
-        AccountLogoutView.as_view(),
-    ),  # Alias
+    path("auth/login/", AccountLoginView.as_view(), name="api-login"),
+    path("auth/login", AccountLoginView.as_view()),  # alias
+    path("auth/logout/", AccountLogoutView.as_view(), name="api-logout"),
+    path("auth/logout", AccountLogoutView.as_view()),  # alias
     # 📌 Menús
-    path(
-        "menus/", MenuListView.as_view(), name="api-menu-list"
-    ),  # GET → menús y submenús
+    path("menus/", MenuListView.as_view(), name="api-menu-list"),
     # 📌 Agencias
-    path(
-        "users/agencia/", UserAgenciaView.as_view(), name="api-user-agencia"
-    ),  # POST → seleccionar agencia
+    path("users/agencia/", UserAgenciaView.as_view(), name="api-user-agencia"),
     # 📌 Dashboard / Home
-    path(
-        "home/", HomeIndexView.as_view(), name="api-home-index"
-    ),  # GET → datos dashboard
+    path("home/", HomeIndexView.as_view(), name="api-home-index"),
 ]
