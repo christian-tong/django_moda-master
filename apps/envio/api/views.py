@@ -20,6 +20,9 @@ from apps.envio.api.serializers import (
 )
 from rest_framework.parsers import MultiPartParser, FormParser
 
+from apps.envio.views import liquidacionRecepcion
+from desatendidos.htmlPdf import render_to_pdf  # si ya existe el helper
+
 
 # ==========================================================
 # PAGINACIÓN ESTÁNDAR
@@ -460,12 +463,10 @@ class EncomiendaViewSet(viewsets.ModelViewSet):
 # ==========================================================
 # LIQUIDACIÓN VIEWSET
 # ==========================================================
+
 class LiquidacionViewSet(viewsets.ModelViewSet):
     """
-    CRUD de Liquidación con paginación, búsqueda y acciones personalizadas:
-    - finalizar
-    - agregar_encomiendas
-    - quitar_encomiendas
+    CRUD de Liquidación con paginación, búsqueda y acciones personalizadas.
     """
 
     queryset = Liquidacion.objects.all().select_related(
@@ -473,14 +474,18 @@ class LiquidacionViewSet(viewsets.ModelViewSet):
     )
     permission_classes = [IsAuthenticated]
     pagination_class = StandardResultsSetPagination
+    parser_classes = [MultiPartParser, FormParser]
 
     def get_serializer_class(self):
         if self.action in ["list"]:
             return LiquidacionListSerializer
-        elif self.action in ["retrieve"]:
+        elif self.action in ["retrieve", "recepcion_data"]:
             return LiquidacionDetailSerializer
         return LiquidacionWriteSerializer
 
+    # ------------------------------------------------------
+    # 🔍 LISTADO GENERAL
+    # ------------------------------------------------------
     def list(self, request, *args, **kwargs):
         q = request.GET.get("q", "").strip()
         qs = self.queryset
@@ -492,7 +497,6 @@ class LiquidacionViewSet(viewsets.ModelViewSet):
                 | Q(agenciaDestino__nombre__icontains=q)
                 | Q(vehiculo__placa__icontains=q)
                 | Q(conductor__chofer__denominacion__icontains=q)
-                | Q(conductor__numLicencia__icontains=q)
                 | Q(observacion__icontains=q)
             )
 
@@ -501,6 +505,9 @@ class LiquidacionViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(page, many=True)
         return self.get_paginated_response({"entity": serializer.data})
 
+    # ------------------------------------------------------
+    # ➕ CREAR LIQUIDACIÓN (POST)
+    # ------------------------------------------------------
     def create(self, request, *args, **kwargs):
         serializer = LiquidacionWriteSerializer(data=request.data)
         if serializer.is_valid():
@@ -516,31 +523,128 @@ class LiquidacionViewSet(viewsets.ModelViewSet):
                 **data,
             )
             out = LiquidacionDetailSerializer(liq)
-            return ok(out.data, status_code=status.HTTP_201_CREATED)
+            return ok(out.data, message="Liquidación creada correctamente.")
         return fail(errors=serializer.errors)
 
+    # ------------------------------------------------------
+    # 🧾 AGREGAR ENCOMIENDAS A LIQUIDACIÓN
+    # ------------------------------------------------------
+    @action(detail=True, methods=["post"], url_path="agregar-encomiendas")
+    def agregar_encomiendas(self, request, pk=None):
+        """
+        Agrega una lista de encomiendas (ids) a la liquidación.
+        Filtra solo las que estén en estado 'agenciaOrigen'.
+        """
+        liquidacion = self.get_object()
+        encom_ids = request.data.get("encomiendas", [])
+        disponibles = Encomienda.objects.filter(
+            id__in=encom_ids, estado="agenciaOrigen"
+        )
+        liquidacion.encomienda.add(*disponibles)
+        return ok(
+            {"added": [e.id for e in disponibles]},
+            message=f"Se agregaron {len(disponibles)} encomiendas a la liquidación.",
+        )
+
+    # ------------------------------------------------------
+    # 🗑️ QUITAR ENCOMIENDAS DE LIQUIDACIÓN
+    # ------------------------------------------------------
+    @action(detail=True, methods=["post"], url_path="quitar-encomiendas")
+    def quitar_encomiendas(self, request, pk=None):
+        liquidacion = self.get_object()
+        encom_ids = request.data.get("encomiendas", [])
+        liquidacion.encomienda.remove(*encom_ids)
+        return ok(
+            {"removed": encom_ids},
+            message=f"Se quitaron {len(encom_ids)} encomiendas de la liquidación.",
+        )
+
+    # ------------------------------------------------------
+    # 🚚 FINALIZAR LIQUIDACIÓN
+    # ------------------------------------------------------
     @action(detail=True, methods=["post"], url_path="finalizar")
     def finalizar(self, request, pk=None):
-        """Finaliza una liquidación y marca sus encomiendas como 'enCamino'."""
+        """
+        Marca la liquidación como finalizada y pone sus encomiendas en 'enCamino'.
+        """
         liquidacion = self.get_object()
+        if liquidacion.finalizado:
+            return fail(message="La liquidación ya fue finalizada.")
+
         liquidacion.finalizado = True
         liquidacion.usuario = request.user.persona
         liquidacion.encomienda.update(estado="enCamino")
         liquidacion.save()
-        return ok({"id": liquidacion.id, "finalizado": True})
+        return ok(
+            {"id": liquidacion.id, "finalizado": True},
+            message="Liquidación finalizada correctamente.",
+        )
 
-    @action(detail=True, methods=["post"], url_path="agregar-encomiendas")
-    def agregar_encomiendas(self, request, pk=None):
-        """Agrega una lista de encomiendas a la liquidación."""
+    # ------------------------------------------------------
+    # 📦 RECEPCIÓN DE LIQUIDACIÓN (llega a destino)
+    # ------------------------------------------------------
+    @action(detail=True, methods=["post"], url_path="recepcion")
+    def recepcion_liquidacion(self, request, pk=None):
+        """
+        Registra la llegada de la liquidación a la agencia destino.
+        Cambia estado de encomiendas a 'agenciaDestino' y guarda observación.
+        """
         liquidacion = self.get_object()
-        encomiendas_ids = request.data.get("encomiendas", [])
-        liquidacion.encomienda.add(*encomiendas_ids)
-        return ok({"added": encomiendas_ids})
+        observacion = request.data.get("observacion", "")
+        recp, created = liquidacionRecepcion.objects.get_or_create(
+            liquidacion=liquidacion,
+            defaults={
+                "usuario": request.user.persona,
+                "observacion": observacion,
+            },
+        )
 
-    @action(detail=True, methods=["post"], url_path="quitar-encomiendas")
-    def quitar_encomiendas(self, request, pk=None):
-        """Quita una lista de encomiendas de la liquidación."""
-        liquidacion = self.get_object()
-        encomiendas_ids = request.data.get("encomiendas", [])
-        liquidacion.encomienda.remove(*encomiendas_ids)
-        return ok({"removed": encomiendas_ids})
+        # Actualizar estado de encomiendas a 'agenciaDestino'
+        liquidacion.encomienda.update(estado="agenciaDestino")
+        return ok(
+            {"id": liquidacion.id, "recepcion": True},
+            message="Recepción registrada correctamente.",
+        )
+
+    # ------------------------------------------------------
+    # 🧾 IMPRESIÓN DETALLE (PDF)
+    # ------------------------------------------------------
+    @action(detail=True, methods=["get"], url_path="print")
+    def print_liquidacion(self, request, pk=None):
+        """
+        Genera PDF de la liquidación con totales y comisiones.
+        """
+        liq = self.get_object()
+        encomiendas = liq.encomienda.all().order_by(
+            "-agenciaDestino", "esContraEntrega"
+        )
+        suma_directa = (
+            liq.encomienda.filter(esContraEntrega=False).aggregate(Sum("precio"))[
+                "precio__sum"
+            ]
+            or 0
+        )
+        suma_contra_entrega = (
+            liq.encomienda.filter(esContraEntrega=True).aggregate(Sum("precio"))[
+                "precio__sum"
+            ]
+            or 0
+        )
+
+        suma_total = suma_directa + suma_contra_entrega
+        comision_chofer = suma_total * 0.6
+        comision_agencia = suma_total * 0.4
+
+        context = {
+            "liquidacion": liq,
+            "encomiendas": encomiendas,
+            "suma_directa": suma_directa,
+            "suma_contra_entrega": suma_contra_entrega,
+            "suma_total": suma_total,
+            "comision_chofer": comision_chofer,
+            "comision_agencia": comision_agencia,
+        }
+
+        html = get_template("apps/envio/liquidacion/print.html").render(context)
+        pdf = render_to_pdf("apps/envio/liquidacion/print.html", context)
+        return HttpResponse(pdf, content_type="application/pdf")
