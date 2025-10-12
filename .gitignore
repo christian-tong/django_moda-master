@@ -5,3 +5,5 @@ access.log
 __pycache__/
 **/__pycache__/
 **/*.pyc
+*/*.pyc
+apps/persona/API/__pycache__/*.pyc

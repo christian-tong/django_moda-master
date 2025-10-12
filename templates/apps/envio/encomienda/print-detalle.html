@@ -1,0 +1,77 @@
+{% comment %}
+Template simplificado solo con el contenido del ticket.
+No incluye <html>, <head> ni dependencias estáticas externas.
+Se usa exclusivamente desde la API DRF /print-detalle/.
+{% endcomment %}
+
+<div class="ticket" style="font-family: 'Georgia'; font-size: 12px; width: 250px; max-width: 250px; color: #000;">
+  <img id="logo" src="/img/ModaLogoV3.png" alt="Logo Moda Tours" style="width: 200px; height: 80px; display: block; margin: 0 auto 8px auto;" />
+
+  <p style="text-align:center;"><b>MODA TOURS S.A.C</b></p>
+  <p style="text-align:center;">
+    {{ encomienda.agenciaOrigen.direccion }} <br />
+    {{ encomienda.agenciaOrigen.ubigeo }} <br />
+    RUC: {{ encomienda.agenciaOrigen.empresa.numDoc }}<br />
+    TELÉFONO: {{ encomienda.agenciaOrigen.movilUno }}
+  </p>
+
+  <hr />
+  <p style="text-align:center;">GUÍA DE ENVÍO<br />N°.000{{ encomienda.numDocumento }}</p>
+  <hr />
+
+  <p><b>ORIGEN:</b> {{ encomienda.agenciaOrigen }}</p>
+  <p><b>DESTINO:</b> {{ encomienda.agenciaDestino }}</p>
+  <p><b>REMITENTE:</b> {{ encomienda.remite }}</p>
+  <p><b>CONSIGNADO:</b> {{ encomienda.consignado }}</p>
+
+  {% if encomienda.aDomicilio %}
+    <p><b>DIRECCIÓN:</b> {{ encomienda.domicilio }}</p>
+  {% else %}
+    <p><b>TIPO ENTREGA:</b> AGENCIA</p>
+  {% endif %}
+
+  {% if encomienda.esContraEntrega %}
+    <p><b>PAGO:</b> CONTRA ENTREGA</p>
+  {% else %}
+    <p><b>PAGO:</b> EN EFECTIVO</p>
+  {% endif %}
+
+  <p><b>TELÉFONO:</b> {{ encomienda.numeroContacto }}</p>
+
+  <p>Fecha: {{ encomienda.venta.create }}</p>
+
+  <table style="width:100%; border-collapse:collapse; margin-top:5px;">
+    <thead>
+      <tr>
+        <th style="border-top:1px solid #000;">CANT.</th>
+        <th style="border-top:1px solid #000;">DESCRIPCIÓN</th>
+        <th style="border-top:1px solid #000;">P.U</th>
+        <th style="border-top:1px solid #000;">IMPORTE</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for item in encomienda.venta.detallemov_set.all %}
+        <tr>
+          <td>{{ item.cantidad }}</td>
+          <td>{{ item.descripcion }}</td>
+          <td>{{ item.valorUnitario }}</td>
+          <td style="text-align:right;">{{ item.subTotal }}</td>
+        </tr>
+      {% endfor %}
+      <tr>
+        <td colspan="3"><b>TOTAL</b></td>
+        <td style="text-align:right;"><b>S/. {{ total }}</b></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p style="text-align:center; margin-top:10px;">¡GRACIAS POR SU PREFERENCIA!</p>
+
+  <hr />
+  <p style="text-align:center;"><b>DATOS DE RECEPCIÓN</b></p>
+  <p>Nombres y Apellidos:</p>
+  <p>DNI:</p>
+  <p>Fecha: <span style="float:right;">Firma:</span></p>
+  <p>Hora: <span style="float:right;">Huella Digital</span></p>
+  <div style="border:1px solid #000; height:7em; width:8em; margin:0 auto;"></div>
+</div>

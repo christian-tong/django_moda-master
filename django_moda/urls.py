@@ -108,6 +108,12 @@ urlpatterns = [
                     ),
                 ),
                 path(
+                    "envio/",
+                    include(
+                        ("apps.envio.api.urls", "api-envio"), namespace="api-envio"
+                    ),
+                ),
+                path(
                     "catalogosunat/",
                     include(
                         ("apps.catalogoSunat.api.urls", "api-catalogosunat"),
