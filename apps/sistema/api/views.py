@@ -112,6 +112,7 @@ class UserAddView(APIView):
             status=status.HTTP_201_CREATED,
         )
 
+
 # ================================================================
 # 📌 DETALLE / EDITAR / ELIMINAR USUARIO
 # ================================================================
@@ -172,10 +173,12 @@ class AccountLoginView(APIView):
 
             if user and user.is_active:
                 login(request, user)
-                agencias = Usuario.objects.get(id=request.user.id).agencia.all()
                 user_data = UsuarioSerializer(user).data
+                agencias = Usuario.objects.get(id=user.id).agencia.all()
 
+                # ✅ Si tiene agencias asignadas
                 if agencias.exists():
+                    # Si solo tiene una agencia, la establecemos directamente
                     if agencias.count() == 1:
                         agencia = agencias.first()
                         request.session["agencia_id"] = agencia.id
@@ -190,6 +193,12 @@ class AccountLoginView(APIView):
                             status=status.HTTP_200_OK,
                         )
                     else:
+                        # Si tiene varias, redirige para seleccionar
+                        # pero ya establecemos una agencia por defecto (la primera)
+                        agencia_default = agencias.first()
+                        request.session["agencia_id"] = agencia_default.id
+                        request.session["agencia_nombre"] = agencia_default.nombre
+                        request.session["agencia_uno"] = False
                         return Response(
                             {
                                 "success": True,
@@ -199,13 +208,28 @@ class AccountLoginView(APIView):
                             status=status.HTTP_200_OK,
                         )
 
-                # 🚫 Sin agencias
+                # 🚫 Caso sin agencias asignadas
+                # (esto evita el KeyError en futuras vistas)
+                from apps.empresa.models import Agencia
+
+                agencia_fallback = Agencia.objects.filter(activo=True).first()
+                if agencia_fallback:
+                    request.session["agencia_id"] = agencia_fallback.id
+                    request.session["agencia_nombre"] = agencia_fallback.nombre
+                    request.session["agencia_uno"] = False
+
                 return Response(
                     {
-                        "success": False,
-                        "error": "Accedió con éxito, pero no tiene una agencia asignada.",
+                        "success": True,
+                        "redirect": "/dashboard",
+                        "user": user_data,
+                        "session": {
+                            "agencia_id": request.session.get("agencia_id"),
+                            "agencia_nombre": request.session.get("agencia_nombre"),
+                            "agencia_uno": request.session.get("agencia_uno"),
+                        },
                     },
-                    status=status.HTTP_400_BAD_REQUEST,
+                    status=status.HTTP_200_OK,
                 )
 
             return Response(

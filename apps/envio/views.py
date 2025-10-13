@@ -1,4 +1,4 @@
-#BACKEND apps\envio\views.py
+# BACKEND apps\envio\views.py
 
 from io import BytesIO
 
@@ -111,12 +111,14 @@ def encomiendaAdd(request):
                 consignado_id=request.POST["consignado"],
                 agenciaOrigen_id=request.POST["agenciaOrigen"],
                 agenciaDestino_id=request.POST["agenciaDestino"],
-                esContraEntrega=True
-                if request.POST.get("esContraEntrega", False) == "on"
-                else False,
-                aDomicilio=True
-                if request.POST.get("aDomicilio", False) == "on"
-                else False,
+                esContraEntrega=(
+                    True
+                    if request.POST.get("esContraEntrega", False) == "on"
+                    else False
+                ),
+                aDomicilio=(
+                    True if request.POST.get("aDomicilio", False) == "on" else False
+                ),
                 domicilio=request.POST["domicilio"],
                 seguridadClave=request.POST["seguridadClave"],
                 observacion=request.POST["observacion"],
@@ -411,10 +413,35 @@ def liquidacionList(request):
 
 def liquidacionAdd(request):
     liquidacion = LiquidacionForm()
-    correlativoAgeUpd = AgenciaDocumento.objects.get(
-        agencia=request.user.agencia.get(id=request.session["agencia_id"]),
+
+    # ✅ Nueva forma segura de obtener la agencia
+    agencia_id = request.session.get("agencia_id")
+    if agencia_id:
+        agencia = request.user.agencia.filter(id=agencia_id).first()
+    else:
+        # Fallback: buscar cualquier agencia activa asociada al usuario o general
+        from apps.empresa.models import Agencia
+
+        agencia = (
+            request.user.agencia.first() or Agencia.objects.filter(activo=True).first()
+        )
+
+    if not agencia:
+        messages.error(
+            request, "No se pudo determinar la agencia activa para el usuario."
+        )
+        return redirect("envio:liquidacion-list")
+
+    correlativoAgeUpd = AgenciaDocumento.objects.filter(
+        agencia=agencia,
         documento__codigo="LI",
-    )
+    ).first()
+
+    if not correlativoAgeUpd:
+        messages.error(
+            request, "No se encontró documento LI para la agencia seleccionada."
+        )
+        return redirect("envio:liquidacion-list")
 
     if request.method == "POST":
         liquidacion = LiquidacionForm(request.POST)
@@ -436,7 +463,10 @@ def liquidacionAdd(request):
                 f"{reverse('envio:liquidacion-add-encomienda')}?{urlencode(parametro)}"
             )
 
-    context = {"liquidacion": liquidacion, "correlativo": correlativoAgeUpd.correlativo}
+    context = {
+        "liquidacion": liquidacion,
+        "correlativo": correlativoAgeUpd.correlativo if correlativoAgeUpd else "000000",
+    }
 
     return render(request, "apps/envio/liquidacion/add.html", context)
 

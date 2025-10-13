@@ -1,0 +1,144 @@
+{% load my_templatetag %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <style>
+    body {
+      margin: 0 auto;
+      padding: 10px 25px;
+      font-family: "Helvetica", sans-serif;
+      color: #000;
+      width: 190mm;
+    }
+
+    /* ===== ENCABEZADO ===== */
+    .encabezado {
+      text-align: center;
+      border-bottom: 2px solid #4416c4;
+      margin-bottom: 10px;
+      padding-bottom: 5px;
+    }
+    .empresa {
+      color: #4416c4;
+      font-size: 30px;
+      font-weight: bold;
+      font-style: italic;
+      letter-spacing: 2px;
+      margin: 0;
+    }
+    .slogan {
+      font-size: 14px;
+      color: #000;
+      margin: 0;
+    }
+    .ruc {
+      color: #d00;
+      font-weight: bold;
+      font-size: 14px;
+    }
+
+    /* ===== TÍTULO ===== */
+    h2 {
+      text-align: center;
+      color: #000;
+      font-size: 18px;
+      margin: 8px 0 10px 0;
+      text-transform: uppercase;
+    }
+    .num-doc {
+      color: #d00;
+      font-weight: bold;
+    }
+
+    /* ===== TABLAS ===== */
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      font-size: 13px;
+      margin-top: 10px;
+    }
+    th, td {
+      border: 1px solid #999;
+      padding: 4px 6px;
+      text-align: left;
+    }
+    .no-border td, .no-border th {
+      border: none !important;
+      padding: 3px 0;
+    }
+    .total {
+      font-weight: bold;
+      border-top: 2px solid #000;
+    }
+
+    /* ===== PIE ===== */
+    .footer {
+      margin-top: 15px;
+    }
+    .footer p {
+      margin: 3px 0;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 🔹 Encabezado -->
+  <div class="encabezado">
+    <p class="empresa">MODA TOURS</p>
+    <p class="slogan">El Encanto de Viajar &nbsp;|&nbsp; <span class="ruc">RUC: 20393819660</span></p>
+  </div>
+
+  <!-- 🔹 Título del documento -->
+  <h2>
+    LIQUIDACIÓN DE ENCOMIENDAS &nbsp;<span class="num-doc">N° {{ liquidacion.numDocumento }}</span>
+  </h2>
+
+  <!-- 🔹 Datos principales -->
+  <table class="no-border">
+    <tr><th>Origen:</th><td>{{ liquidacion.agenciaOrigen }}</td></tr>
+    <tr><th>Destino:</th><td>{{ liquidacion.agenciaDestino }}</td></tr>
+    <tr><th>Fecha de Envío:</th><td>{{ liquidacion.fecha }}</td></tr>
+    <tr><th>Placa Vehicular:</th><td>{{ liquidacion.vehiculo.placa }}</td></tr>
+    <tr><th>Encargado de Viaje:</th><td>{{ liquidacion.conductor }}</td></tr>
+  </table>
+
+  <!-- 🔹 Detalle de encomiendas -->
+  <table>
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>BOLETO</th>
+        <th>DESTINO</th>
+        <th>VALOR</th>
+        <th>CONTRA ENTREGA</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for encomienda in encomiendas %}
+      <tr>
+        <td>{{ forloop.counter }}</td>
+        <td>{{ encomienda.numDocumento }}</td>
+        <td>{{ encomienda.agenciaDestino }}</td>
+        <td>{{ encomienda.precio }}</td>
+        <td>{{ encomienda.esContraEntrega|estadosino }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <!-- 🔹 Totales -->
+  <table class="no-border" style="margin-top: 20px;">
+    <tr><th>Total Efectivo:</th><td>s/. {{ suma_directa }}</td></tr>
+    <tr><th>Total Contra Entrega:</th><td>s/. {{ suma_contra_entrega }}</td></tr>
+    <tr class="total"><th>Total:</th><td>s/. {{ suma_total }}</td></tr>
+  </table>
+
+  <!-- 🔹 Comisiones -->
+  <div class="footer">
+    <p><b>Comisión de Chofer (60%):</b> s/. {{ comision_chofer }}</p>
+    <p><b>Comisión de Agencia (40%):</b> s/. {{ comision_agencia }}</p>
+  </div>
+
+</body>
+</html>

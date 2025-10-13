@@ -21,7 +21,6 @@ from apps.envio.api.serializers import (
 from rest_framework.parsers import MultiPartParser, FormParser
 
 from apps.envio.views import liquidacionRecepcion
-from desatendidos.htmlPdf import render_to_pdf  # si ya existe el helper
 
 
 # ==========================================================
@@ -464,6 +463,7 @@ class EncomiendaViewSet(viewsets.ModelViewSet):
 # LIQUIDACIÓN VIEWSET
 # ==========================================================
 
+
 class LiquidacionViewSet(viewsets.ModelViewSet):
     """
     CRUD de Liquidación con paginación, búsqueda y acciones personalizadas.
@@ -506,35 +506,140 @@ class LiquidacionViewSet(viewsets.ModelViewSet):
         return self.get_paginated_response({"entity": serializer.data})
 
     # ------------------------------------------------------
-    # ➕ CREAR LIQUIDACIÓN (POST)
+    # ➕ CREAR LIQUIDACIÓN CON CORRELATIVO DINÁMICO (POST)
     # ------------------------------------------------------
     def create(self, request, *args, **kwargs):
-        serializer = LiquidacionWriteSerializer(data=request.data)
-        if serializer.is_valid():
-            data = serializer.validated_data
-            agencia_doc = AgenciaDocumento.objects.filter(
-                agencia=data.get("agenciaOrigen"), documento__codigo="LI"
-            ).first()
-            num_doc = agencia_doc.correlativoMas() if agencia_doc else None
+        """
+        Crea una nueva liquidación asegurando el correlativo correcto según
+        la agencia de origen. Si no hay correlativo en AgenciaDocumento,
+        se toma el último numDocumento registrado en la tabla envio_liquidacion.
+        """
+        from apps.empresa.models import AgenciaDocumento
 
+        serializer = LiquidacionWriteSerializer(data=request.data)
+        if not serializer.is_valid():
+            return fail(errors=serializer.errors)
+
+        data = serializer.validated_data
+        agencia_origen = data.get("agenciaOrigen")
+
+        if not agencia_origen:
+            return fail(message="Debe seleccionar una agencia de origen.")
+
+        try:
+            # 🔎 Buscar documento de tipo 'LI' (Liquidación) para la agencia
+            agencia_doc = AgenciaDocumento.objects.filter(
+                agencia=agencia_origen, documento__codigo="LI"
+            ).first()
+
+            # 🔢 Obtener correlativo actual desde base de datos
+            ultima_liq = (
+                Liquidacion.objects.filter(agenciaOrigen=agencia_origen)
+                .exclude(numDocumento__isnull=True)
+                .order_by("-numDocumento")
+                .first()
+            )
+            correlativo_db = ultima_liq.numDocumento if ultima_liq else 0
+
+            # 🧮 Determinar correlativo siguiente
+            if agencia_doc and agencia_doc.correlativo:
+                correlativo_doc = agencia_doc.correlativo
+                if correlativo_db >= correlativo_doc:
+                    next_num = correlativo_db + 1
+                    source = "BD (último registro)"
+                else:
+                    next_num = correlativo_doc + 1
+                    source = "AgenciaDocumento"
+            else:
+                next_num = correlativo_db + 1
+                source = "Fallback inicial"
+
+            # 💾 Crear la liquidación
             liq = Liquidacion.objects.create(
-                numDocumento=num_doc,
+                numDocumento=next_num,
                 usuario=request.user.persona,
                 **data,
             )
+
+            # 🔄 Actualizar correlativo en AgenciaDocumento (mantener sincronizado)
+            if agencia_doc:
+                agencia_doc.correlativo = next_num
+                agencia_doc.save(update_fields=["correlativo"])
+
             out = LiquidacionDetailSerializer(liq)
-            return ok(out.data, message="Liquidación creada correctamente.")
-        return fail(errors=serializer.errors)
+            return ok(
+                out.data,
+                message=f"Liquidación creada correctamente con correlativo {next_num} ({source}).",
+            )
+
+        except Exception as e:
+            return fail(message=f"Error al crear liquidación: {str(e)}")
+
+    # ------------------------------------------------------
+    # 🧾 OBTENER CORRELATIVO SIGUIENTE (auto incrementable)
+    # ------------------------------------------------------
+    @action(detail=False, methods=["get"], url_path="next-numero")
+    def next_numero(self, request):
+        """
+        Devuelve el correlativo actual o el siguiente número de liquidación
+        según la agencia origen del usuario o la indicada por query param.
+        """
+        from apps.empresa.models import Agencia, AgenciaDocumento
+
+        try:
+            # 🧭 1️⃣ Determinar agencia (prioriza ?agencia_id=)
+            agencia_id = request.GET.get("agencia_id") or request.session.get(
+                "agencia_id"
+            )
+            if agencia_id:
+                agencia_obj = Agencia.objects.filter(id=agencia_id).first()
+            else:
+                agencia_obj = Agencia.objects.filter(activo=True).first()
+
+            if not agencia_obj:
+                return fail(message="No hay agencias activas registradas.")
+
+            # 🧾 2️⃣ Buscar documento tipo 'LI'
+            agencia_doc = AgenciaDocumento.objects.filter(
+                agencia=agencia_obj, documento__codigo="LI"
+            ).first()
+
+            # 3️⃣ Obtener correlativos desde doc y BD
+            correlativo_doc = agencia_doc.correlativo if agencia_doc else None
+            ultima_liq = (
+                Liquidacion.objects.filter(agenciaOrigen=agencia_obj)
+                .exclude(numDocumento__isnull=True)
+                .order_by("-numDocumento")
+                .first()
+            )
+            correlativo_db = ultima_liq.numDocumento if ultima_liq else None
+
+            # 4️⃣ Determinar siguiente número
+            if correlativo_db and (
+                not correlativo_doc or correlativo_db >= correlativo_doc
+            ):
+                next_num = correlativo_db + 1
+                source = "BD (último registro)"
+            elif correlativo_doc:
+                next_num = correlativo_doc + 1
+                source = "AgenciaDocumento"
+            else:
+                next_num = 1
+                source = "Fallback inicial"
+
+            return ok(
+                {"numLiquidacion": next_num},
+                message=f"Correlativo obtenido desde {source} para {agencia_obj.nombre}.",
+            )
+
+        except Exception as e:
+            return fail(message=f"Error al obtener correlativo: {str(e)}")
 
     # ------------------------------------------------------
     # 🧾 AGREGAR ENCOMIENDAS A LIQUIDACIÓN
     # ------------------------------------------------------
     @action(detail=True, methods=["post"], url_path="agregar-encomiendas")
     def agregar_encomiendas(self, request, pk=None):
-        """
-        Agrega una lista de encomiendas (ids) a la liquidación.
-        Filtra solo las que estén en estado 'agenciaOrigen'.
-        """
         liquidacion = self.get_object()
         encom_ids = request.data.get("encomiendas", [])
         disponibles = Encomienda.objects.filter(
@@ -564,9 +669,6 @@ class LiquidacionViewSet(viewsets.ModelViewSet):
     # ------------------------------------------------------
     @action(detail=True, methods=["post"], url_path="finalizar")
     def finalizar(self, request, pk=None):
-        """
-        Marca la liquidación como finalizada y pone sus encomiendas en 'enCamino'.
-        """
         liquidacion = self.get_object()
         if liquidacion.finalizado:
             return fail(message="La liquidación ya fue finalizada.")
@@ -581,59 +683,89 @@ class LiquidacionViewSet(viewsets.ModelViewSet):
         )
 
     # ------------------------------------------------------
-    # 📦 RECEPCIÓN DE LIQUIDACIÓN (llega a destino)
+    # 🔎 DETALLE CON RECEPCIONADO_POR (detecta related_name dinámicamente)
+    # ------------------------------------------------------
+    def retrieve(self, request, *args, **kwargs):
+        instance = self.get_object()
+        serializer = self.get_serializer(instance)
+
+        # Detecta automáticamente la relación según el modelo real
+        recepcion = getattr(instance, "liquidacionrecepcion", None) or getattr(
+            instance, "liquidacionrecepcion_set", None
+        )
+        if hasattr(recepcion, "first"):
+            recepcion = recepcion.first()
+
+        recepcionado_por = None
+        fecha_recepcion = None
+        observacion_recep = None
+
+        if recepcion:
+            usuario = getattr(recepcion, "usuario", None)
+            recepcionado_por = (
+                str(usuario.denominacion)
+                if hasattr(usuario, "denominacion")
+                else str(usuario) if usuario else None
+            )
+            fecha_recepcion = (
+                recepcion.fecha.isoformat() if hasattr(recepcion, "fecha") else None
+            )
+            observacion_recep = getattr(recepcion, "observacion", None)
+
+        data = serializer.data
+        data["recepcionado_por"] = recepcionado_por
+        data["fecha_recepcion"] = fecha_recepcion
+        data["observacion_recep"] = observacion_recep
+
+        return ok(data)
+
+    # ------------------------------------------------------
+    # 📦 RECEPCIÓN DE LIQUIDACIÓN
     # ------------------------------------------------------
     @action(detail=True, methods=["post"], url_path="recepcion")
     def recepcion_liquidacion(self, request, pk=None):
-        """
-        Registra la llegada de la liquidación a la agencia destino.
-        Cambia estado de encomiendas a 'agenciaDestino' y guarda observación.
-        """
         liquidacion = self.get_object()
         observacion = request.data.get("observacion", "")
         recp, created = liquidacionRecepcion.objects.get_or_create(
             liquidacion=liquidacion,
-            defaults={
-                "usuario": request.user.persona,
-                "observacion": observacion,
-            },
+            defaults={"usuario": request.user.persona, "observacion": observacion},
         )
-
-        # Actualizar estado de encomiendas a 'agenciaDestino'
         liquidacion.encomienda.update(estado="agenciaDestino")
-        return ok(
-            {"id": liquidacion.id, "recepcion": True},
-            message="Recepción registrada correctamente.",
-        )
+
+        data = {
+            "id": liquidacion.id,
+            "recepcion": True,
+            "recepcionado_por": (
+                str(recp.usuario.denominacion)
+                if hasattr(recp.usuario, "denominacion")
+                else str(recp.usuario)
+            ),
+            "fecha_recepcion": recp.fecha.isoformat(),
+            "observacion_recep": recp.observacion,
+        }
+        return ok(data, message="Recepción registrada correctamente.")
 
     # ------------------------------------------------------
-    # 🧾 IMPRESIÓN DETALLE (PDF)
+    # 🧾 IMPRESIÓN DETALLE (HTML)
     # ------------------------------------------------------
-    @action(detail=True, methods=["get"], url_path="print")
-    def print_liquidacion(self, request, pk=None):
-        """
-        Genera PDF de la liquidación con totales y comisiones.
-        """
+    @action(detail=True, methods=["get"], url_path="print-detalle")
+    def print_liquidacion_detalle(self, request, pk=None):
+        from decimal import Decimal
+
         liq = self.get_object()
         encomiendas = liq.encomienda.all().order_by(
             "-agenciaDestino", "esContraEntrega"
         )
-        suma_directa = (
-            liq.encomienda.filter(esContraEntrega=False).aggregate(Sum("precio"))[
-                "precio__sum"
-            ]
-            or 0
-        )
-        suma_contra_entrega = (
-            liq.encomienda.filter(esContraEntrega=True).aggregate(Sum("precio"))[
-                "precio__sum"
-            ]
-            or 0
-        )
+        suma_directa = liq.encomienda.filter(esContraEntrega=False).aggregate(
+            Sum("precio")
+        ).get("precio__sum") or Decimal("0")
+        suma_contra_entrega = liq.encomienda.filter(esContraEntrega=True).aggregate(
+            Sum("precio")
+        ).get("precio__sum") or Decimal("0")
 
-        suma_total = suma_directa + suma_contra_entrega
-        comision_chofer = suma_total * 0.6
-        comision_agencia = suma_total * 0.4
+        suma_total = Decimal(suma_directa) + Decimal(suma_contra_entrega)
+        comision_chofer = suma_total * Decimal("0.6")
+        comision_agencia = suma_total * Decimal("0.4")
 
         context = {
             "liquidacion": liq,
@@ -645,6 +777,11 @@ class LiquidacionViewSet(viewsets.ModelViewSet):
             "comision_agencia": comision_agencia,
         }
 
-        html = get_template("apps/envio/liquidacion/print.html").render(context)
-        pdf = render_to_pdf("apps/envio/liquidacion/print.html", context)
-        return HttpResponse(pdf, content_type="application/pdf")
+        view_mode = request.GET.get("view", "pdf").lower()
+        template_name = (
+            "apps/envio/liquidacion/print.html"
+            if view_mode == "original"
+            else "apps/envio/liquidacion/print_simplificado.html"
+        )
+        html = get_template(template_name).render(context)
+        return HttpResponse(html, content_type="text/html")
