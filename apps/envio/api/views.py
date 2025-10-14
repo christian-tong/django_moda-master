@@ -9,7 +9,6 @@ from django.template.loader import get_template
 from django.http import HttpResponse
 
 from apps.envio.models import Encomienda, Liquidacion, ClienteRecepcion
-from apps.empresa.models import AgenciaDocumento
 from apps.envio.api.serializers import (
     EncomiendaListSerializer,
     EncomiendaDetailSerializer,
@@ -18,9 +17,10 @@ from apps.envio.api.serializers import (
     LiquidacionDetailSerializer,
     LiquidacionWriteSerializer,
 )
-from rest_framework.parsers import MultiPartParser, FormParser
 
 from apps.envio.views import liquidacionRecepcion
+
+from rest_framework.parsers import JSONParser
 
 
 # ==========================================================
@@ -474,7 +474,7 @@ class LiquidacionViewSet(viewsets.ModelViewSet):
     )
     permission_classes = [IsAuthenticated]
     pagination_class = StandardResultsSetPagination
-    parser_classes = [MultiPartParser, FormParser]
+    parser_classes = [JSONParser]
 
     def get_serializer_class(self):
         if self.action in ["list"]:
@@ -511,12 +511,12 @@ class LiquidacionViewSet(viewsets.ModelViewSet):
     def create(self, request, *args, **kwargs):
         """
         Crea una nueva liquidación asegurando el correlativo correcto según
-        la agencia de origen. Si no hay correlativo en AgenciaDocumento,
-        se toma el último numDocumento registrado en la tabla envio_liquidacion.
+        la agencia de origen. Compatible con application/json.
         """
         from apps.empresa.models import AgenciaDocumento
 
-        serializer = LiquidacionWriteSerializer(data=request.data)
+        data = request.data
+        serializer = LiquidacionWriteSerializer(data=data)
         if not serializer.is_valid():
             return fail(errors=serializer.errors)
 
@@ -554,14 +554,16 @@ class LiquidacionViewSet(viewsets.ModelViewSet):
                 next_num = correlativo_db + 1
                 source = "Fallback inicial"
 
-            # 💾 Crear la liquidación
+            # 💾 Crear la liquidación (evitando duplicidad)
+            data.pop("numDocumento", None)  # 👈 evita el error de argumentos duplicados
+
             liq = Liquidacion.objects.create(
                 numDocumento=next_num,
                 usuario=request.user.persona,
                 **data,
             )
 
-            # 🔄 Actualizar correlativo en AgenciaDocumento (mantener sincronizado)
+            # 🔄 Actualizar correlativo en AgenciaDocumento
             if agencia_doc:
                 agencia_doc.correlativo = next_num
                 agencia_doc.save(update_fields=["correlativo"])
@@ -569,7 +571,8 @@ class LiquidacionViewSet(viewsets.ModelViewSet):
             out = LiquidacionDetailSerializer(liq)
             return ok(
                 out.data,
-                message=f"Liquidación creada correctamente con correlativo {next_num} ({source}).",
+                message=f"✅ Liquidación creada correctamente con correlativo {next_num} ({source}).",
+                status_code=status.HTTP_201_CREATED,
             )
 
         except Exception as e:
@@ -636,33 +639,115 @@ class LiquidacionViewSet(viewsets.ModelViewSet):
             return fail(message=f"Error al obtener correlativo: {str(e)}")
 
     # ------------------------------------------------------
-    # 🧾 AGREGAR ENCOMIENDAS A LIQUIDACIÓN
+    # 📋 LISTAR ENCOMIENDAS DISPONIBLES PARA AGREGAR A UNA LIQUIDACIÓN
+    # ------------------------------------------------------
+    @action(detail=True, methods=["get"], url_path="encomiendas-disponibles")
+    def encomiendas_disponibles(self, request, pk=None):
+        """
+        Devuelve las encomiendas que pertenecen a la agencia de origen de la liquidación,
+        que aún no están agregadas a ninguna liquidación y cuyo estado es 'agenciaOrigen'.
+        Similar al template liquidacion/add-encomienda.html.
+        """
+        try:
+            liquidacion = self.get_object()
+
+            # 🔎 Buscar encomiendas pendientes (solo de esa agenciaOrigen)
+            disponibles = (
+                Encomienda.objects.filter(
+                    agenciaOrigen=liquidacion.agenciaOrigen,
+                    estado="agenciaOrigen",
+                )
+                .exclude(
+                    id__in=liquidacion.encomienda.all().values_list("id", flat=True)
+                )
+                .select_related("remite", "consignado", "agenciaDestino", "venta")
+                .order_by("-venta__create")
+            )
+
+            serializer = EncomiendaListSerializer(disponibles, many=True)
+            entity = serializer.data
+
+            # 🧩 Agregamos info adicional como fechas, remite, consignado y detalle
+            for item in entity:
+                encomienda = disponibles.filter(id=item["id"]).first()
+                if encomienda and hasattr(encomienda, "venta"):
+                    item["fechaCreacion"] = (
+                        encomienda.venta.create.isoformat()
+                        if encomienda.venta
+                        else None
+                    )
+                    item["detalle"] = list(
+                        encomienda.venta.detallemov_set.values(
+                            "descripcion", "cantidad", "valorUnitario", "subTotal"
+                        )
+                    )
+
+            return ok(
+                entity,
+                message=f"Se encontraron {len(entity)} encomiendas disponibles para agregar.",
+            )
+
+        except Exception as e:
+            return fail(message=f"Error al obtener encomiendas disponibles: {str(e)}")
+
+    # ------------------------------------------------------
+    # ➕ AGREGAR ENCOMIENDAS A UNA LIQUIDACIÓN (ya existente)
     # ------------------------------------------------------
     @action(detail=True, methods=["post"], url_path="agregar-encomiendas")
     def agregar_encomiendas(self, request, pk=None):
-        liquidacion = self.get_object()
-        encom_ids = request.data.get("encomiendas", [])
-        disponibles = Encomienda.objects.filter(
-            id__in=encom_ids, estado="agenciaOrigen"
-        )
-        liquidacion.encomienda.add(*disponibles)
-        return ok(
-            {"added": [e.id for e in disponibles]},
-            message=f"Se agregaron {len(disponibles)} encomiendas a la liquidación.",
-        )
+        """
+        Agrega una lista de encomiendas (por id) a la liquidación.
+        Similar al formulario 'add-encomienda.html' original.
+        """
+        try:
+            liquidacion = self.get_object()
+            encom_ids = request.data.get("encomiendas", [])
+
+            if not isinstance(encom_ids, list) or not encom_ids:
+                return fail(
+                    message="Debe enviar una lista de IDs de encomiendas válidas."
+                )
+
+            disponibles = Encomienda.objects.filter(
+                id__in=encom_ids, estado="agenciaOrigen"
+            )
+            liquidacion.encomienda.add(*disponibles)
+
+            return ok(
+                {"added": [e.id for e in disponibles]},
+                message=f"Se agregaron {len(disponibles)} encomiendas a la liquidación {liquidacion.numDocumento}.",
+            )
+
+        except Exception as e:
+            return fail(message=f"Error al agregar encomiendas: {str(e)}")
 
     # ------------------------------------------------------
-    # 🗑️ QUITAR ENCOMIENDAS DE LIQUIDACIÓN
+    # 🗑️ QUITAR ENCOMIENDAS DE UNA LIQUIDACIÓN
     # ------------------------------------------------------
     @action(detail=True, methods=["post"], url_path="quitar-encomiendas")
     def quitar_encomiendas(self, request, pk=None):
-        liquidacion = self.get_object()
-        encom_ids = request.data.get("encomiendas", [])
-        liquidacion.encomienda.remove(*encom_ids)
-        return ok(
-            {"removed": encom_ids},
-            message=f"Se quitaron {len(encom_ids)} encomiendas de la liquidación.",
-        )
+        """
+        Quita encomiendas seleccionadas (por id) de la liquidación.
+        Similar al formulario 'sacar-encomienda.html' original.
+        """
+        try:
+            liquidacion = self.get_object()
+            encom_ids = request.data.get("encomiendas", [])
+
+            if not isinstance(encom_ids, list) or not encom_ids:
+                return fail(
+                    message="Debe enviar una lista de IDs de encomiendas válidas."
+                )
+
+            liquidacion.encomienda.remove(*encom_ids)
+
+            return ok(
+                {"removed": encom_ids},
+                message=f"Se quitaron {len(encom_ids)} encomiendas de la liquidación {liquidacion.numDocumento}.",
+            )
+
+        except Exception as e:
+            return fail(message=f"Error al quitar encomiendas: {str(e)}")
 
     # ------------------------------------------------------
     # 🚚 FINALIZAR LIQUIDACIÓN
