@@ -20,11 +20,14 @@ from rest_framework.permissions import AllowAny
 from rest_framework.generics import RetrieveUpdateDestroyAPIView
 
 from apps.caja.models import MovimientoCaja
+from apps.facturacion.models import FaturaBoleta
 from apps.persona.models import Persona, PersonaNatural
 from apps.persona.views import listHappy
 from apps.sistema.forms import UsuarioAgenciaForm, UsuarioLoginForm
 from apps.sistema.models import Menu, Usuario
 from .serializers import UsuarioSerializer
+
+from datetime import datetime
 
 
 # ================================================================
@@ -297,35 +300,80 @@ class UserAgenciaView(APIView):
 # ================================================================
 # 📌 DASHBOARD / HOME
 # ================================================================
+
+
 class HomeIndexView(APIView):
-    """GET: Devuelve métricas y cumpleaños del día para el Dashboard."""
+    """
+    GET: Devuelve métricas generales del sistema para el Dashboard.
+    Adicionalmente incluye:
+    - Totales de facturación por día en un rango.
+    """
 
     def get(self, request):
+        # 🔹 Fechas (parámetros opcionales ?fechaInicio=YYYY-MM-DD&fechaFin=YYYY-MM-DD)
+        fecha_inicio = request.GET.get("fechaInicio")
+        fecha_fin = request.GET.get("fechaFin")
+
+        try:
+            if not fecha_inicio or not fecha_fin:
+                # Si no llegan fechas, usar los últimos 7 días por defecto
+                hoy = datetime.now().date()
+                fecha_fin = hoy
+                fecha_inicio = hoy.replace(day=max(1, hoy.day - 7))
+            else:
+                fecha_inicio = datetime.strptime(fecha_inicio, "%Y-%m-%d").date()
+                fecha_fin = datetime.strptime(fecha_fin, "%Y-%m-%d").date()
+        except Exception:
+            return Response(
+                {"ok": False, "message": "Formato de fecha inválido (use YYYY-MM-DD)"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        # 🔹 Totales del sistema
         tclientes = Persona.objects.count()
         stingresos = (
-            MovimientoCaja.objects.filter(tipoMov__tipo="ingreso").aggregate(
-                Sum("monto")
-            )["monto__sum"]
+            MovimientoCaja.objects.filter(tipoMov__tipo="ingreso")
+            .aggregate(Sum("monto"))
+            .get("monto__sum")
             or 0
         )
         stegresos = (
-            MovimientoCaja.objects.filter(tipoMov__tipo="egreso").aggregate(
-                Sum("monto")
-            )["monto__sum"]
+            MovimientoCaja.objects.filter(tipoMov__tipo="egreso")
+            .aggregate(Sum("monto"))
+            .get("monto__sum")
             or 0
         )
         saldo = stingresos - stegresos
-        happyday = listHappy(request)
 
+        # 🔹 Facturación por fecha
+        facturas = (
+            FaturaBoleta.objects.filter(
+                fechaFact__range=[fecha_inicio, fecha_fin],
+                estaFacturado=True,
+            )
+            .values("fechaFact")
+            .annotate(total_dia=Sum("monto"))
+            .order_by("fechaFact")
+        )
+
+        facturacion_diaria = [
+            {
+                "fecha": f["fechaFact"].strftime("%Y-%m-%d"),
+                "monto": float(f["total_dia"] or 0),
+            }
+            for f in facturas
+        ]
+
+        # 🔹 Estructura JSON
         data = {
-            "tclientes": tclientes,
-            "tingresos": stingresos,
-            "tegresos": stegresos,
-            "saldo": saldo,
-            "entity": happyday["entity"],
-            "paginator": happyday["paginator"],
-            "add_ruta_get": happyday["add_ruta_get"],
-            "q": happyday["q"],
+            "ok": True,
+            "entity": {
+                "tclientes": tclientes,
+                "tingresos": float(stingresos),
+                "tegresos": float(stegresos),
+                "saldo": float(saldo),
+                "facturacion": facturacion_diaria,
+            },
         }
 
         return Response(data, status=status.HTTP_200_OK)

@@ -18,7 +18,7 @@ from apps.envio.api.serializers import (
     LiquidacionWriteSerializer,
 )
 
-from apps.envio.views import liquidacionRecepcion
+from apps.envio.models import liquidacionRecepcion
 
 from rest_framework.parsers import JSONParser
 
@@ -458,6 +458,46 @@ class EncomiendaViewSet(viewsets.ModelViewSet):
             message="Encomienda entregada correctamente.",
         )
 
+    @action(detail=True, methods=["post"], url_path="recoger")
+    def recoger_encomienda(self, request, pk=None):
+        """
+        Valida la clave de seguridad y marca la encomienda como entregada (recepcionado).
+        Estado final: 'recepcionado' (Entrega Exitosa).
+        """
+        try:
+            encomienda = self.get_object()
+            clave = request.data.get("clave", "").strip()
+
+            # 🧩 Validaciones
+            if not clave:
+                return fail(message="Debe ingresar la clave de seguridad.")
+            if encomienda.seguridadClave != clave:
+                return fail(message="Clave incorrecta.")
+            if encomienda.estado == "recepcionado":
+                return fail(message="La encomienda ya fue entregada previamente.")
+            if encomienda.estado not in ["agenciaDestino"]:
+                return fail(message="La encomienda aún no llegó a la agencia destino.")
+
+            # 🔄 Cambiar estado
+            encomienda.estado = "recepcionado"
+            encomienda.save(update_fields=["estado"])
+
+            # 🧾 Registrar recepción (si no existe)
+            ClienteRecepcion.objects.get_or_create(
+                encomienda=encomienda,
+                defaults={"usuario": request.user.persona},
+            )
+
+            # ✅ Respuesta
+            serializer = EncomiendaDetailSerializer(encomienda)
+            return ok(
+                serializer.data,
+                message="✅ Encomienda marcada como entrega exitosa correctamente.",
+            )
+
+        except Exception as e:
+            return fail(message=f"Error al registrar entrega: {str(e)}")
+
 
 # ==========================================================
 # LIQUIDACIÓN VIEWSET
@@ -501,9 +541,27 @@ class LiquidacionViewSet(viewsets.ModelViewSet):
             )
 
         qs = qs.order_by("-fecha")
+
+        # 🔁 Serialización base
         page = self.paginate_queryset(qs)
         serializer = self.get_serializer(page, many=True)
-        return self.get_paginated_response({"entity": serializer.data})
+        data = serializer.data
+
+        # ➕ Agregar estado de recepción
+
+        for item in data:
+            liq_id = item.get("id")
+            if not liq_id:
+                continue
+
+            # Verificar si tiene una recepción asociada
+            existe_recepcion = liquidacionRecepcion.objects.filter(
+                liquidacion_id=liq_id
+            ).exists()
+
+            item["recepcionado"] = existe_recepcion
+
+        return self.get_paginated_response({"entity": data})
 
     # ------------------------------------------------------
     # ➕ CREAR LIQUIDACIÓN CON CORRELATIVO DINÁMICO (POST)
@@ -809,26 +867,48 @@ class LiquidacionViewSet(viewsets.ModelViewSet):
     # ------------------------------------------------------
     @action(detail=True, methods=["post"], url_path="recepcion")
     def recepcion_liquidacion(self, request, pk=None):
-        liquidacion = self.get_object()
-        observacion = request.data.get("observacion", "")
-        recp, created = liquidacionRecepcion.objects.get_or_create(
-            liquidacion=liquidacion,
-            defaults={"usuario": request.user.persona, "observacion": observacion},
-        )
-        liquidacion.encomienda.update(estado="agenciaDestino")
+        """
+        Registra la recepción de una liquidación (en destino).
+        Crea un registro en LiquidacionRecepcion y cambia el estado
+        de todas las encomiendas asociadas a 'agenciaDestino'.
+        """
+        try:
+            liquidacion = self.get_object()
+            observacion = request.data.get("observacion", "").strip()
 
-        data = {
-            "id": liquidacion.id,
-            "recepcion": True,
-            "recepcionado_por": (
-                str(recp.usuario.denominacion)
-                if hasattr(recp.usuario, "denominacion")
-                else str(recp.usuario)
-            ),
-            "fecha_recepcion": recp.fecha.isoformat(),
-            "observacion_recep": recp.observacion,
-        }
-        return ok(data, message="Recepción registrada correctamente.")
+            # 🧾 Crear o reutilizar registro
+            recp, created = liquidacionRecepcion.objects.get_or_create(
+                liquidacion=liquidacion,
+                defaults={
+                    "usuario": request.user.persona,
+                    "observacion": observacion or "Sin observaciones",
+                },
+            )
+
+            # 🔁 Actualizar si ya existía
+            if not created and observacion:
+                recp.observacion = observacion
+                recp.save(update_fields=["observacion"])
+
+            # 🔄 Cambiar estado de todas las encomiendas
+            liquidacion.encomienda.update(estado="agenciaDestino")
+
+            # 🧩 Preparar respuesta
+            data = {
+                "id": liquidacion.id,
+                "recepcion": True,
+                "recepcionado_por": (
+                    str(recp.usuario.denominacion)
+                    if hasattr(recp.usuario, "denominacion")
+                    else str(recp.usuario)
+                ),
+                "fecha_recepcion": recp.fecha.isoformat(),
+                "observacion_recep": recp.observacion,
+            }
+            return ok(data, message="Recepción registrada correctamente.")
+
+        except Exception as e:
+            return fail(message=f"Error al registrar recepción: {str(e)}")
 
     # ------------------------------------------------------
     # 🧾 IMPRESIÓN DETALLE (HTML)
